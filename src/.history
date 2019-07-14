@@ -1,0 +1,100 @@
+:q
+let addOne x = 1 + x in addOne 2
+let rec fact n = if n == 0 then 1 else n * (fact (n - 1)) in fact 5
+fact 5
+:t fact
+let rec fact n = if n == 0 then 1 else n * (fact (n - 1))
+let rec x = 1 + x in x
+let x = 1 + x in x
+:q
+let fix e = e (fix e)
+:q
+x
+let x = 2 + 5
+let x = 2 + 5 in x
+:q
+:q
+:t compose id
+:browse
+let compose f g x = f (g x)
+:browse
+let id x = x
+:browse
+fact 5
+:browse
+let fact = fix (\fact n -> if n == 0 then 1 else n * (fact (n - 1)))
+:q
+\f -> f f
+fib 5
+fib 4
+fib 3
+fib 2
+fib 1
+fib 0
+fib 3
+:t fib
+let rec fib n = if n == 0 then 0 else if n == 1 then 1 else fib (n - 1) + fib (n - 2)
+fact 5
+:t fact
+let fact = fix (\fact n -> if n == 0 then 1 else n * (fact (n - 1)))
+let fact = fix (\fact n ->
+it == it
+compose
+let compose f g x = f (g x)
+:t g
+:t f
+f 0 + g 0
+let g x = x
+let f x = x
+:q
+(\f x -> let g = f in g 0) (\x -> if x then True else False) True
+\x y -> x + y
+\a -> let id = \x -> x in if id True then id 0 else id 1
+let id = \x -> x in if id True then id 0 else id 1
+\y -> y + 1
+\y -> let x = y + 1 in x
+:q
+\x -> if not x then x else x + 1
+not
+let not x = if x then False else True
+(let rec x = x in x)
+if id True then id 0 else id 1
+id
+let id x = x
+\y -> let x = y + 1 in x
+\x -> x + 1
+x
+let x = 4
+True
+4
+:q
+:t \y -> let x = y + 1 in x
+:q
+:t \y -> let x = y + 1 in x
+:q
+:t \y -> let x = y + 1 in x
+:q
+:t \y -> let x = y + 1 in x
+:q
+:t \y -> let x = y + 1 in x
+:q
+:t \y -> let x = y + 1 in x
+:t \y -> y + 1
+:q
+:t \y -> y + 1
+:t y + 1
+:t \y -> let x = y+1 in x
+:q
+:t \y -> let x = y+1 in x
+:q
+:t \y -> let x = y + 1 in x
+:q
+:t \y -> let x = y + 1 in x
+:q
+let omega f = f f
+:t \y -> y + 1
+:t \y -> let x = True in x
+:t \y -> let x = y == 0 in x
+:t \y -> let x = y - 1 in x
+:t \y -> let x = y / 1 in x
+:t \y -> let x = y * 1 in x
