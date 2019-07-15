@@ -2,83 +2,45 @@ module Compiler.PhSyn.PhType where
 
 import Data.String
 
+import Compiler.BasicTypes.SrcLoc
 import Utils.Outputable
 
-newtype TVar id = TV id
-  deriving (Show, Eq, Ord)
+type LPhType id = Located (PhType id)
+data PhType id
+       -- Type variable or type constructor
+     = PhVarTy id
 
-instance IsString id => IsString (TVar id) where
-    fromString = TV . fromString
+       -- Context => type
+     | PhQualTy [Pred id]    -- context (C in C => A)
+                (LPhType id) -- payload (A in C => A)
 
-instance Outputable id => Outputable (TVar id) where
-    ppr (TV name) = ppr name
+     | PhAppTy (LPhType id) (LPhType id)
 
-data Type id
-     = TVar (TVar id)
-     | TCon (TyCon id)
-     | TApp (Type id) (Type id)
-     | (Type id) :-> (Type id)
-     | Kinded Kind (Type id)    -- Constructed during type inference
+     | PhFunTy (LPhType id) (LPhType id)
+
+     | PhListTy (LPhType id)
+
+     | PhTupleTy [LPhType id]
+
+     | PhParTy (LPhType id) -- parenthesized type
+       -- See NOTE: [Par constructors in syn] in Compiler/PhSyn/PhExpr
+
      deriving (Show, Eq, Ord)
 
-infixr :->
+data Pred id = IsIn id (PhType id) -- Eq a, Eq [a] etc.
+  deriving (Eq, Ord, Show)
 
-data Kind
-     = KStar
-     | KArr Kind Kind
-     | KConstraint
-     deriving (Show, Eq, Ord)
+instance Outputable id => Outputable (PhType id) where
+    ppr (PhVarTy id) = ppr id
+    ppr (PhQualTy ctxt t) = case ctxt of
+        [] -> ppr t
+        [c] -> ppr c <+> text "=>" <+> ppr t
+        cs  -> parens (sep (punctuate comma $ map ppr cs)) <+> text "=>" <+> ppr t
+    ppr (PhAppTy t1 t2) = ppr t1 <+> ppr t2
+    ppr (PhFunTy t1 t2) =  ppr t1 <+> text "->" <+> ppr t2
+    ppr (PhListTy t) = brackets $ ppr t
+    ppr (PhTupleTy ts) = parens $ sep $ punctuate comma $ map ppr ts
+    ppr (PhParTy t) = parens $ ppr t
 
-data Scheme id = Forall [TVar id] (Qual id (Type id))
-
-data TyCon id
-     = UserTyCon { tyId :: id }
-     | PrimTyCon { tyId :: id }
-     deriving (Show, Eq, Ord)
-
-instance IsString id => IsString (TyCon id) where
-    fromString = UserTyCon . fromString
-
-data Pred id = IsIn id (Type id) deriving (Show, Eq, Ord)
-
-data Qual id t = [Pred id] :=> t
-
-------------------------------------------------------------------------------------
--- Alpha Equivalence
-------------------------------------------------------------------------------------
-
-class Alpha a where
-    aeq :: a -> a -> Bool
-
-instance Alpha (TVar id) where
-    aeq _ _ = True
-
-instance Eq id => Alpha (Type id) where
-    aeq (TVar _) (TVar _) = True
-    aeq (TApp a b) (TApp c d) = aeq a c && aeq b d
-    aeq (a :-> b) (c :-> d) = aeq a c && aeq b d
-    aeq (TCon a) (TCon b) = a == b
-    aeq _ _ = False
-
-typeInt, typeBool :: Type String
-typeInt  = TCon "Int"
-typeBool = TCon "Bool"
-
-instance Outputable id => Outputable (Type id) where
-    pprPrec _ (TVar v) = ppr v
-    pprPrec _ (TCon c) = ppr c
-    pprPrec p (t1 :-> t2) = parensIf (p > 0)
-                             $ pprPrec (p + 1) t1
-                             <+> text "->"
-                             <+> pprPrec p t2
-
-instance Outputable Kind where
-    pprPrec _ KStar = char '*'
-    pprPrec _ KConstraint = text "Constraint"
-    pprPrec p (KArr k1 k2) = parensIf (p > 0)
-                              $ pprPrec (p + 1) k1
-                              <+> text "->"
-                              <+> pprPrec p k2
-
-instance Outputable id => Outputable (TyCon id) where
-    ppr = ppr . tyId
+instance Outputable id => Outputable (Pred id) where
+    ppr (IsIn id t) = ppr id <+> ppr t

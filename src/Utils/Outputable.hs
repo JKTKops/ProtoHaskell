@@ -37,7 +37,7 @@ ppWhen True d  = d
 ppWhen False _ = mempty
 
 ppUnless :: Bool -> Doc -> Doc
-ppUnless b d = ppWhen (not b) d
+ppUnless b = ppWhen (not b)
 
 parensIf :: Bool -> Doc -> Doc
 parensIf True  = parens
@@ -137,7 +137,7 @@ instance ( Outputable a, Outputable b, Outputable c, Outputable d
                    ppr g])
 
 instance Outputable Text.Text where
-    ppr = text . show
+    ppr = text . Text.unpack
 
 instance Outputable Parsec.ParseError where
     ppr = text . show

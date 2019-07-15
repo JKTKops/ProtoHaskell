@@ -103,16 +103,19 @@ indented = indentCmp (>) <?> "Block (indented)"
 align :: Parser ()
 align = indentCmp (==) <?> "Block (same indentation)"
 
-explicitSemis :: Parser a -> Parser [a]
-explicitSemis p = many semicolon >> (:) <$> p <*> explicitSemis p
-
 block, block1 :: Parser a -> Parser [a]
-block  p = laidout (many  $ align >> p)
-block1 p = laidout (many1 $ align >> p)
+block  p = laidout (concat <$> many  (align >> sepEndBy  p (many semicolon)))
+block1 p = laidout (concat <$> many1 (align >> sepEndBy1 p (many semicolon)))
 
 maybeBraces, maybeBraces1 :: Parser a -> Parser [a]
 maybeBraces  p = braces (endBy  p semicolon) <|> block p
 maybeBraces1 p = braces (endBy1 p semicolon) <|> block p
+
+-----------------------------------------------------------------------------------------
+-- Main Parser
+-----------------------------------------------------------------------------------------
+
+-- modl :: Parser (PhModule ParsedName)
 
 -----------------------------------------------------------------------------------------
 -- Parsers for string literal, char literal, int literal, and float literal values

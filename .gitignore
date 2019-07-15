@@ -1,3 +1,5 @@
 .stack-work/
 ProtoHaskell.cabal
 *~
+.\#*
+.history

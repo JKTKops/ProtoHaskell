@@ -380,7 +380,7 @@ cmpLocated a b = unLoc a `compare` unLoc b
 -- But this would require recreating the entire Doc type from scratch
 -- to allow the internal build function to have access to a debug boolean
 instance Outputable a => Outputable (GenLocated l a) where
-    ppr (Located _ a) = ppr a
+    pprPrec p (Located _ a) = pprPrec p a
 
 -- So instead we provide this alternative:
 pprWithLoc :: (Outputable l, Outputable e) => GenLocated l e -> Doc
