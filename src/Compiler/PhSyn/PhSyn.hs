@@ -44,11 +44,15 @@ instance Outputable b => Outputable (PhModule b) where
 instance Outputable id => Outputable (PhDecl id) where
     ppr (FunDecl name mg) = ppr name <+> ppr mg
     ppr (Signature sig)   = ppr sig
-    ppr (DataDecl name tyvars constrs) = text "data"
+    ppr (DataDecl name tyvars (c:cs)) = text "data"
                                          <+> ppr name
-                                         <+> hcat (map ppr tyvars)
-                                         <+> text "="
-                                         <+> vcat (punctuate (text "|") (map ppr constrs))
+                                         <+> hsep (map ppr tyvars)
+                                         <+> vcat cons
+      where
+        cons :: [Doc]
+        cons = (text "=" <+> ppr c) : prepend (text "|") (map ppr cs)
+        prepend :: Doc -> [Doc] -> [Doc]
+        prepend d = map (d <+>)
 
 instance Outputable id => Outputable (ConDecl id) where
     ppr (ConDecl name argTypes) = ppr name <+> hcat (map ppr argTypes)

@@ -20,6 +20,7 @@ module Compiler.BasicTypes.OccName
 
       -- * OccName predicates
     , isVarOccName
+    , isValOccName
     , isTyVarOccName
     , isDataConOccName
     , isTcClsOccName
