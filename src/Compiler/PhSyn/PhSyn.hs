@@ -17,7 +17,7 @@ data PhModule a = Module
 
 type LPhDecl a = Located (PhDecl a)
 data PhDecl id
-     = FunDecl id (MatchGroup id)
+     = Binding (PhBind id)
      | Signature (Sig id)
      | DataDecl id [id] [ConDecl id]
      | ClassDecl [Pred id]          -- Superclasses
@@ -42,17 +42,20 @@ instance Outputable b => Outputable (PhModule b) where
         vcat $ (text "module" <+> ppr name <+> text "where") : map ppr decls
 
 instance Outputable id => Outputable (PhDecl id) where
-    ppr (FunDecl name mg) = ppr name <+> ppr mg
+    ppr (Binding binding) = ppr binding
     ppr (Signature sig)   = ppr sig
     ppr (DataDecl name tyvars (c:cs)) = text "data"
                                          <+> ppr name
                                          <+> hsep (map ppr tyvars)
-                                         <+> vcat cons
+                                         $$ nest 5 (vcat cons)
       where
         cons :: [Doc]
         cons = (text "=" <+> ppr c) : prepend (text "|") (map ppr cs)
         prepend :: Doc -> [Doc] -> [Doc]
         prepend d = map (d <+>)
+
+    ppr (ClassDecl scs name tyvar binds) = undefined
+    ppr (InstDecl prds name head binds) = undefined
 
 instance Outputable id => Outputable (ConDecl id) where
     ppr (ConDecl name argTypes) = ppr name <+> hcat (map ppr argTypes)

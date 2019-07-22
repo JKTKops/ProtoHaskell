@@ -95,6 +95,8 @@ data Pat id
      | PAs id (Pat id)
      | PLit PhLit
      | PWild
+     | PTuple [Pat id]
+     | PList  [Pat id]
      | ParPat (Pat id) -- Parenthesized pattern, see NOTE: [Par constructors in syn]
      deriving (Eq, Ord, Show)
 
@@ -107,6 +109,7 @@ data PhBind id
      = FunBind id (MatchGroup id)    -- ^ f x = e
                                      -- id = f, mg = ([PVar x], body = b)
      | PatBind (LPat id) (LRHS id)   -- ^ Just x = e
+                                     -- Pattern bindings include x = 5
      deriving (Eq, Ord, Show)
 
 type LStmt id = Located (Stmt id)
@@ -145,7 +148,7 @@ we simply ensure that we generate the correct PhPar wrappers.
 
 type LSig id = Located (Sig id)
 data Sig id
-     = TypeSig id (LPhType id)
+     = TypeSig [id] (LPhType id)
      | FixitySig Assoc Int [id]
      deriving (Eq, Ord, Show)
 

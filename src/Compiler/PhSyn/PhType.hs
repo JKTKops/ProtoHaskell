@@ -44,3 +44,13 @@ instance Outputable id => Outputable (PhType id) where
 
 instance Outputable id => Outputable (Pred id) where
     ppr (IsIn id t) = ppr id <+> ppr t
+
+mkLPhFunTy :: LPhType id -> LPhType id -> LPhType id
+mkLPhFunTy t1@(Located span1 _) t2@(Located span2 _) =
+    Located (combineSrcSpans span1 span2) (PhFunTy t1 t2)
+
+mkLPhAppTy :: LPhType id -> LPhType id -> LPhType id
+mkLPhAppTy t1@(Located span1 _) t2@(Located span2 _) =
+    Located (combineSrcSpans span1 span2) (PhAppTy t1 t2)
+
+

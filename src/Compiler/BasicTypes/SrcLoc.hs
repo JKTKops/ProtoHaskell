@@ -67,6 +67,9 @@ module Compiler.BasicTypes.SrcLoc
       -- * Combining and comparing Located
     , eqLocated, cmpLocated
     , combineLocs, addCombinedLoc
+
+      -- * HasSrcSpan
+    , HasSrcSpan(..)
     ) where
 
 import Utils.Outputable
@@ -331,12 +334,25 @@ pprUserRealSpan showPath span@(SrcSpan file sline scol eline ecol)
   where ecol' = if ecol == 0 then ecol else ecol - 1
 
 ------------------------------------------------------------------------------------
+-- Things which are located
+------------------------------------------------------------------------------------
+
+class HasSrcSpan a where
+    srcSpanOf :: a -> SrcSpan
+
+instance HasSrcSpan SrcSpan where
+    srcSpanOf = id
+
+------------------------------------------------------------------------------------
 -- Attaching SrcSpans to other things
 -- AKA "Locating" them
 ------------------------------------------------------------------------------------
 
 data GenLocated l e = Located l e
   deriving (Eq, Ord, Show, Functor, Foldable, Traversable)
+
+instance HasSrcSpan (Located e) where
+    srcSpanOf = getLoc
 
 type Located = GenLocated SrcSpan
 type RealLocated = GenLocated RealSrcSpan

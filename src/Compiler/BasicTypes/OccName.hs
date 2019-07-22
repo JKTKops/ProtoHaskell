@@ -4,6 +4,7 @@ module Compiler.BasicTypes.OccName
     , HasOccName(..)
 
       -- * Constructing OccNames
+    , mkOccName
     , mkVarOccName
     , mkDataOccName
     , mkTyVarOccName
@@ -13,6 +14,7 @@ module Compiler.BasicTypes.OccName
       -- * Deconstructing OccNames
     , nameSpace
     , nameText
+    , occNameSrcSpan
 
       -- * Constructing NameSpaces
     , tcName, clsName, tcClsName
@@ -43,6 +45,7 @@ import Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as T
 import Data.Char (isAlphaNum)
 
+import Compiler.BasicTypes.SrcLoc
 import Utils.Outputable
 
 {- NOTE: [Names in PHC]
@@ -58,33 +61,37 @@ It is a Text, with a namespace.
 -------------------------------------------------------------------------------------
 
 data OccName = OccName
-    { nameSpace :: !NameSpace
-    , nameText  :: !Text
+    { nameSpace      :: !NameSpace
+    , occNameSrcSpan :: !SrcSpan
+    , nameText       :: !Text
     }
-    deriving (Eq, Ord)
+    deriving (Eq, Ord, Show)
 
 instance HasOccName OccName where
     occNameOf = id
 
-instance Outputable OccName where
-    ppr (OccName _ nt) = ppr nt
+instance HasSrcSpan OccName where
+    srcSpanOf = occNameSrcSpan
 
-mkOccName :: NameSpace -> Text -> OccName
+instance Outputable OccName where
+    ppr (OccName _ _ nt) = ppr nt
+
+mkOccName :: NameSpace -> SrcSpan -> Text -> OccName
 mkOccName = OccName
 
-mkVarOccName :: Text -> OccName
+mkVarOccName :: SrcSpan -> Text -> OccName
 mkVarOccName = mkOccName varName
 
-mkDataOccName :: Text -> OccName
+mkDataOccName :: SrcSpan -> Text -> OccName
 mkDataOccName = mkOccName dataName
 
-mkTyVarOccName :: Text -> OccName
+mkTyVarOccName :: SrcSpan -> Text -> OccName
 mkTyVarOccName = mkOccName tvName
 
-mkTcOccName :: Text -> OccName
+mkTcOccName :: SrcSpan -> Text -> OccName
 mkTcOccName = mkOccName tcName
 
-mkClsOccName :: Text -> OccName
+mkClsOccName :: SrcSpan -> Text -> OccName
 mkClsOccName = mkOccName clsName
 
 data NameSpace
@@ -156,28 +163,28 @@ instance Outputable NameSpace where
 -------------------------------------------------------------------------------------
 
 isVarOccName :: OccName -> Bool
-isVarOccName (OccName ns _) = isVarNameSpace ns
+isVarOccName (OccName ns _ _) = isVarNameSpace ns
 
 isTyVarOccName :: OccName -> Bool
-isTyVarOccName (OccName ns _) = isTvNameSpace ns
+isTyVarOccName (OccName ns _ _) = isTvNameSpace ns
 
 isDataConOccName :: OccName -> Bool
-isDataConOccName (OccName ns _) = isDataConNameSpace ns
+isDataConOccName (OccName ns _ _) = isDataConNameSpace ns
 
 isValOccName :: OccName -> Bool
-isValOccName (OccName ns _) = isValNameSpace ns
+isValOccName (OccName ns _ _) = isValNameSpace ns
 
 isTcClsOccName :: OccName -> Bool
-isTcClsOccName (OccName ns _) = isTcClsNameSpace ns
+isTcClsOccName (OccName ns _ _) = isTcClsNameSpace ns
 
 isSymOccName :: OccName -> Bool
-isSymOccName (OccName _ t)
+isSymOccName (OccName _ _ t)
   | isAlphaNum c || c == '_' = False
   | otherwise                = True
   where c = T.head t
 
 isConSymOccName :: OccName -> Bool
-isConSymOccName (OccName _ t) = T.head t == ':'
+isConSymOccName (OccName _ _ t) = T.head t == ':'
 
 -------------------------------------------------------------------------------------
 -- HasOccName class

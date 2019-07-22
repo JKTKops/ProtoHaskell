@@ -6,6 +6,10 @@ module Compiler.Parser.Lexer
     ( Lexeme, Token(..), lex
     , reservedIdToTok
     , reservedOpToTok
+    , isVarIdToken
+    , isVarSymToken
+    , isConIdToken
+    , isConSymToken
     ) where
 
 import Prelude hiding (lex)
@@ -18128,7 +18132,7 @@ alex_actions = array (0 :: Int, 79)
   , (0,alex_action_17)
   ]
 
-{-# LINE 109 "Compiler/Parser/Lexer.x" #-}
+{-# LINE 113 "Compiler/Parser/Lexer.x" #-}
 
 type AlexUserState = String
 alexInitUserState = ""
@@ -18293,7 +18297,27 @@ data Token
      | TokConSym     Text
      | TokQualConSym Text Text
      | TokEOF
-     deriving Eq
+     deriving (Eq, Show)
+
+isVarIdToken :: Token -> Bool
+isVarIdToken (TokVarId _) = True
+isVarIdToken (TokQualVarId _ _) = True
+isVarIdToken _ = False
+
+isConIdToken :: Token -> Bool
+isConIdToken (TokConId _) = True
+isConIdToken (TokQualConId _ _) = True
+isConIdToken _ = False
+
+isVarSymToken :: Token -> Bool
+isVarSymToken (TokVarSym _) = True
+isVarSymToken (TokQualVarSym _ _) = True
+isVarSymToken _ = False
+
+isConSymToken :: Token -> Bool
+isConSymToken (TokConSym _) = True
+isConSymToken (TokQualConSym _ _) = True
+isConSymToken _ = False
 
 nested_comment :: AlexInput -> Int -> Alex Lexeme
 nested_comment _ _ = do
@@ -18349,10 +18373,7 @@ alexEOF = return $ Located undefined TokEOF
 showPosn (AlexPn _ line col) = show line ++ ':' : show col
 
 instance Outputable Token where
-    ppr = text . show
-
-instance Show Token where
-    show = \case
+    ppr tok = text $ case tok of
         TokLParen -> "("
         TokRParen -> ")"
         TokComma  -> ","
@@ -18398,14 +18419,14 @@ instance Show Token where
         TokAt       -> "@"
         TokTilde    -> "~"
         TokPredArrow -> "=>"
-        TokVarId id           -> show id
-        TokQualVarId qual id  -> show qual ++ "." ++ show id
-        TokConId id           -> show id
-        TokQualConId qual id  -> show qual ++ "." ++ show id
-        TokVarSym sym         -> show sym
-        TokQualVarSym qual id -> show qual ++ "." ++ show id
-        TokConSym sym         -> show sym
-        TokQualConSym qual id -> show qual ++ "." ++ show id
+        TokVarId id           -> T.unpack id
+        TokQualVarId qual id  -> T.unpack qual ++ "." ++ T.unpack id
+        TokConId id           -> T.unpack id
+        TokQualConId qual id  -> T.unpack qual ++ "." ++ T.unpack id
+        TokVarSym sym         -> T.unpack sym
+        TokQualVarSym qual id -> T.unpack qual ++ "." ++ T.unpack id
+        TokConSym sym         -> T.unpack sym
+        TokQualConSym qual id -> T.unpack qual ++ "." ++ T.unpack id
         TokEOF -> "<end of file>"
 
 alex_action_0 =  skip 

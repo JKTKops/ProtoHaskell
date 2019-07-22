@@ -5,6 +5,7 @@ module Utils.Outputable
     -- * Custom pretty-printing functions
     , ppWhen, ppUnless
     , parensIf
+    , prettyQuote
 
     -- * The actual showing function
     , output
@@ -42,6 +43,9 @@ ppUnless b = ppWhen (not b)
 parensIf :: Bool -> Doc -> Doc
 parensIf True  = parens
 parensIf False = id
+
+prettyQuote :: Doc -> Doc
+prettyQuote d = char '`' <> d <> char '\''
 
 output :: Outputable a => a -> String
 output = show . ppr
