@@ -31,6 +31,9 @@ class Outputable a where
 
     ppr = pprPrec 0
     pprPrec _ = ppr
+
+    pprList :: [a] -> Doc
+    pprList xs = brackets $ fsep $ punctuate comma $ map ppr xs
     {-# MINIMAL ppr | pprPrec #-}
 
 ppWhen :: Bool -> Doc -> Doc
@@ -52,6 +55,7 @@ output = show . ppr
 
 instance Outputable Char where
     ppr = char
+    pprList cs = doubleQuotes $ fcat $ map (text . pure) cs
 
 instance Outputable Bool where
     ppr = text . show
@@ -75,7 +79,7 @@ instance Outputable () where
     ppr _ = text "()"
 
 instance (Outputable a) => Outputable [a] where
-    ppr xs = brackets $ fsep $ punctuate comma $ map ppr xs
+    ppr = pprList
 
 instance (Outputable a) => Outputable (Set.Set a) where
     ppr s = braces $ fsep $ punctuate comma $ map ppr $ Set.toList s
