@@ -19,10 +19,11 @@ import qualified Utils.Outputable as Out
 import Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as T
 
-import Data.Maybe (maybe)
+import Data.Maybe (catMaybes, maybe)
 
 import Control.Arrow ((>>>))
 import Data.Function ((&))
+import Data.Functor  (($>))
 import Control.Monad
 import Control.Monad.Identity (Identity)
 import Control.Monad.Reader
@@ -35,6 +36,8 @@ import Text.Parsec.Token    (GenTokenParser)
 import qualified Text.Parsec.Token as PT
 import qualified Text.Parsec.Prim as Prim (token)
 import Text.Parsec.Pos (newPos)
+
+import Debug.Trace
 
 type Parser a = ParsecT
                   [Lexeme]           -- Token stream
@@ -56,8 +59,7 @@ instance HasCompFlags (ParsecT [Lexeme] SrcLoc (Reader ParseEnv)) where
 -----------------------------------------------------------------------------------------
 
 satisfy :: (Token -> Bool) -> Parser Lexeme
-satisfy p = do
-    pos <- getPosition
+satisfy p = try $ optional guardIndentation >> do
     lexeme@(Located pos _) <- Parsec.tokenPrim
                               (unLoc >>> Out.ppr >>> Out.prettyQuote >>> show)
                               posFromTok
@@ -66,6 +68,7 @@ satisfy p = do
     return lexeme
   where
     posFromTok old _ [] = old
+    posFromTok a b (Located _ TokIndent : ls) = posFromTok a b ls
     posFromTok old _ (Located pos _ : _)
       | isGoodSrcSpan pos = let start_pos = srcSpanStart pos
                                 file = sourceName old
@@ -76,8 +79,24 @@ satisfy p = do
       | otherwise = old
     testTok t = if (p . unLoc) t then Just t else Nothing
 
+guardIndentation :: Parser ()
+guardIndentation = do
+    i <- getInput
+    case i of
+        (Located _ TokIndent : ls) -> go
+        _ -> fail "" <?> "indentation"
+  where
+    go = do
+        r <- asks indents
+        c <- sourceColumn <$> getPosition
+        when (c > r)
+            (guard False <?> "indentation of " ++ show r ++
+                    " (got " ++ show c ++ ")")
+        i <- getInput
+        setInput $ tail i
+
 token :: Token -> Parser Lexeme
-token t = satisfy (== t)
+token t = satisfy (== t) <?> (Out.ppr t & Out.prettyQuote & show)
 
 oneOf :: [Token] -> Parser Lexeme
 oneOf ts = satisfy (`elem` ts)
@@ -191,9 +210,15 @@ indented = indentCmp (>) <?> "Block (indented)"
 align :: Parser ()
 align = indentCmp (==) <?> "Block (same indentation)"
 
-block, block1 :: Parser a -> Parser [a]
-block  p = laidout (concat <$> many  (align >> sepEndBy1 p (many1 semicolon)))
-block1 p = laidout (concat <$> many1 (align >> sepEndBy1 p (many1 semicolon)))
+-- block, block1 :: Parser a -> Parser [a]
+-- block  p = laidout (concat <$> many  (align >> sepEndBy1 p (many1 semicolon)))
+-- block1 p = laidout (concat <$> many1 (align >> sepEndBy1 p (many1 semicolon)))
+
+block :: Parser a -> Parser [a]
+block p = (catMaybes <$>) $ explicitBlock <|> implicitBlock
+  where
+    explicitBlock = braces $ optionMaybe p `sepBy` semicolon
+    implicitBlock = laidout $ many (Just <$> p)
 
 maybeBraces, maybeBraces1 :: Parser a -> Parser [a]
 maybeBraces  p = braces (sepEndBy  p (many semicolon)) <|> block p
@@ -249,6 +274,7 @@ parseTopDecls = maybeBraces parseTopDecl
 parseTopDecl :: Parser (LPhDecl ParsedName)
 parseTopDecl = parseDataDecl
            <|> parseSignature
+           <|> parseBinding
 
 parseDataDecl :: Parser (LPhDecl ParsedName)
 parseDataDecl = locate $ do
@@ -282,9 +308,34 @@ parseFixitySignature =
               <*> commaSep1 (varsym <|> backticks varid)
 
 parseFixityKeyword :: Parser Assoc
-parseFixityKeyword = (reserved "infix"  >> return Infix)
-                 <|> (reserved "infixl" >> return InfixL)
-                 <|> (reserved "infixr" >> return InfixR)
+parseFixityKeyword = (reserved "infix"  $> Infix)
+                 <|> (reserved "infixl" $> InfixL)
+                 <|> (reserved "infixr" $> InfixR)
+
+parseBinding :: Parser (LPhDecl ParsedName)
+parseBinding = locate . fmap Binding $ parseBind
+
+parseBind :: Parser (PhBind ParsedName)
+parseBind = try parseFunBinding <|> parsePatternBinding
+
+parseFunBinding :: Parser (PhBind ParsedName)
+parseFunBinding = do
+    funName <- varid
+    match   <- locate parseMatch
+    return $ FunBind funName $ MG { mgAlts = [match], mgCtxt = FunCtxt }
+
+parsePatternBinding :: Parser (PhBind ParsedName)
+parsePatternBinding = PatBind <$> locate parsePattern <*> locate parseRHS
+
+parseMatch :: Parser (Match ParsedName)
+parseMatch = do
+    pats <- many1 $ locate parsePattern
+    rhs  <- locate parseRHS
+    mLocalBinds <- optionMaybe $ token TokWhere
+    return Match {}
+
+parsePattern = undefined
+parseRHS = undefined
 
 -----------------------------------------------------------------------------------------
 -- Parsing Types

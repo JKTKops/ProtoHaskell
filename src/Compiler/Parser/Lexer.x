@@ -79,7 +79,7 @@ $charesc = [abfnrtv\\\"\'\&]
 haskell :-
 
 <0> $white+                   { skip }
-<0> "--"\-*[^$symchar].*       { skip }
+<0> "--"\-*[^$symchar].*      { skip }
 
 "{-"                          { nested_comment }
 
@@ -215,7 +215,7 @@ reservedIdToTok = \case
     "then"     -> TokThen
     "type"     -> TokType
     "where"    -> TokWhere
-    str        -> error "String `" ++ show str ++ "' is not a reserved word."
+    str        -> error $ "String `" ++ show str ++ "' is not a reserved word."
 
 mkReservedOpTok srcSpan src = Located srcSpan $ reservedOpToTok src
 
@@ -231,7 +231,7 @@ reservedOpToTok = \case
     "@"  -> TokAt
     "~"  -> TokTilde
     "=>" -> TokPredArrow
-    str  -> error "String `" ++ show str ++ "' is not a reserved operator."
+    str  -> error $ "String `" ++ show str ++ "' is not a reserved operator."
 
 mkTokEOF _ _ = Located undefined TokEOF
 
@@ -276,7 +276,9 @@ data Token
      | TokConSym     Text
      | TokQualConSym Text Text
      | TokEOF
-     deriving (Eq, Show)
+
+     | TokIndent
+     deriving (Eq, Ord, Show)
 
 isVarIdToken :: Token -> Bool
 isVarIdToken (TokVarId _) = True
@@ -339,7 +341,9 @@ alexGetPos :: Alex AlexPosn
 alexGetPos = Alex $ \s -> Right (s, alex_pos s)
 
 lex :: String -> String -> Either String [Lexeme]
-lex fname input = runAlex input $ alexInitFilename fname >> init <$> alexLex
+lex fname input = do
+    lexemes <- runAlex input $ alexInitFilename fname >> init <$> alexLex
+    return $ insertIndentationToks lexemes
 
 alexLex :: Alex [Lexeme]
 alexLex = do lexeme@(Located _ tok) <- alexMonadScan
@@ -348,6 +352,19 @@ alexLex = do lexeme@(Located _ tok) <- alexMonadScan
                else (lexeme:) <$> alexLex
 
 alexEOF = return $ Located undefined TokEOF
+
+insertIndentationToks :: [Lexeme] -> [Lexeme]
+insertIndentationToks [] = []
+insertIndentationToks (l@(Located srcSpan _) : ls) =
+    (noLoc TokIndent) : go (l : ls)
+  where go [] = []
+        go [l] = [l]
+        go (l1@(Located s1 _) : l2@(Located s2 _) : ls) =
+            -- Test if token l2 is the first on it's line, including the end of token l1
+            if (unsafeLocLine $ srcSpanEnd s1) < (unsafeLocLine $ srcSpanStart s2)
+            -- If it is, insert indent token
+            then l1 : noLoc TokIndent : go (l2 : ls)
+            else l1 : go (l2 : ls)
 
 showPosn (AlexPn _ line col) = show line ++ ':' : show col
 
@@ -407,4 +424,5 @@ instance Outputable Token where
         TokConSym sym         -> T.unpack sym
         TokQualConSym qual id -> T.unpack qual ++ "." ++ T.unpack id
         TokEOF -> "<end of file>"
+        TokIndent -> "<indentation>"
 }

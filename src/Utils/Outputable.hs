@@ -20,6 +20,7 @@ import qualified Data.Map as Map
 import qualified Data.Set as Set
 import qualified Data.Text.Lazy as Text
 import qualified Text.Parsec as Parsec
+import qualified Text.Megaparsec as MParsec
 
 --------------------------------------------------
 -- Class and instances
@@ -55,7 +56,7 @@ output = show . ppr
 
 instance Outputable Char where
     ppr = char
-    pprList cs = doubleQuotes $ fcat $ map (text . pure) cs
+    pprList cs = doubleQuotes $ hcat $ map (text . pure) cs
 
 instance Outputable Bool where
     ppr = text . show
@@ -149,3 +150,8 @@ instance Outputable Text.Text where
 
 instance Outputable Parsec.ParseError where
     ppr = text . show
+
+instance ( MParsec.Stream s
+         , MParsec.ShowErrorComponent e
+         ) => Outputable (MParsec.ParseErrorBundle s e) where
+    ppr = text . MParsec.errorBundlePretty
