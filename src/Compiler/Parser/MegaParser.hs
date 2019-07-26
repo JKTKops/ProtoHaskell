@@ -31,7 +31,7 @@ import qualified Data.List.NonEmpty as NE
 import qualified Data.Set as Set
 import Data.Text.Lazy (Text, unpack)
 import Data.Function ((&))
-import Data.Maybe (catMaybes)
+import Data.Maybe (catMaybes, isJust)
 
 import qualified Text.Megaparsec.Debug as D
 import Debug.Trace
@@ -104,14 +104,13 @@ instance ShowErrorComponent CustomError where
 
 
 data PState = PState { layout_ctx  :: [LayoutContext]
-                     , lineFoldRef :: Maybe Pos       -- The line on which a linefold began
-                     , onFreshLine :: Bool
+                     , indentOrd   :: Ordering
                      }
 
 data LayoutContext = Explicit | Implicit Pos deriving (Eq, Ord, Show)
 
 initPState :: PState
-initPState = PState [] Nothing True
+initPState = PState [] EQ
 
 currentLayoutContext :: Parser (Maybe LayoutContext)
 currentLayoutContext = (\case [] -> Nothing; (x:_) -> Just x) <$> gets layout_ctx
@@ -154,13 +153,17 @@ testParser p input = parse p "" input
 --         in s{ statePosState = newStatePosState })
 
 satisfy :: (Token -> Bool) -> Parser Lexeme
-satisfy p = try $ optional guardIndentation >> P.satisfy (p . unLoc)
+satisfy p = do
+    D.dbg "analyze" $ do
+        st <- getParserState
+        return (stateOffset st, statePosState st)
+    try $ guardIndentation >> P.satisfy (p . unLoc) <* setOrdGT
+  where setOrdGT = modify $ \s -> s { indentOrd = GT }
 
 guardIndentation :: Parser ()
 guardIndentation = D.dbg "guardIndentation" $ do
-    P.token
-         (\(unLoc -> t) -> if t == TokIndent then Just TokIndent else Nothing)
-         Set.empty
+    check <- optional $ P.satisfy (\t -> unLoc t == TokIndent)
+    when (isJust check) $ do
     mlc <- currentLayoutContext
     case mlc of
         Nothing -> return ()
@@ -169,17 +172,9 @@ guardIndentation = D.dbg "guardIndentation" $ do
   where
     implicit :: Pos -> Parser ()
     implicit indent = do
-        mlf <- D.dbg "gets lineFoldRef" $ gets lineFoldRef
-        case mlf of
-            Nothing -> void $ L.indentGuard (return ()) EQ indent
-            Just lfr -> lineFold lfr indent
-
-    lineFold :: Pos -> Pos -> Parser ()
-    lineFold lineFoldRef indent = do
-        currentLine <- sourceLine <$> getSourcePos
-        if currentLine == lineFoldRef
-        then void $ L.indentGuard (return ()) EQ indent
-        else void $ L.indentGuard (return ()) GT indent
+        ord <- D.dbg "gets indentOrd" $ gets indentOrd
+        D.dbg "current indent" $ L.indentLevel
+        void $ L.indentGuard (return ()) ord indent
 
 token :: Token -> Parser Lexeme
 token t = satisfy (== t) <?> ppr t & prettyQuote & show
@@ -286,7 +281,7 @@ block p = (catMaybes <$>) $
         optional p `sepBy` semicolon
 
     implicitBlock = between openImplicit closeImplicit $
-        P.many $ try (lineFold $ Just <$> p)
+        P.many $ align $ Just <$> p
 
 openExplicit = do
     token TokLBrace
@@ -302,14 +297,5 @@ openImplicit = do
 
 closeImplicit = popLayoutContext
 
-lineFold :: Parser a -> Parser a
-lineFold = between setLineFoldRef unsetLineFoldRef
-  where
-    setLineFoldRef = do
-        D.dbg "input" $ do
-            st <- getParserState
-            return (stateOffset st, statePosState st)
-        currentLine <- D.dbg "get reference for linefold" $ sourceLine <$> getSourcePos
-        modify $ \s -> s { lineFoldRef = Just currentLine }
-
-    unsetLineFoldRef = modify $ \s -> s { lineFoldRef = Nothing }
+align :: Parser a -> Parser a
+align = (>>) (modify $ \s -> s { indentOrd = EQ })
