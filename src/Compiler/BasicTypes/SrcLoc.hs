@@ -14,6 +14,10 @@ module Compiler.BasicTypes.SrcLoc
 
     , advanceSrcLoc
 
+      -- * Safe deconstruct RealSrcLoc
+    , realSrcLocLine
+    , realSrcLocCol
+
       -- * Unsafe deconstruct SrcLoc
     , unsafeLocFile
     , unsafeLocLine
@@ -38,6 +42,7 @@ module Compiler.BasicTypes.SrcLoc
     , srcSpanStart, srcSpanEnd
     , realSrcSpanStart, realSrcSpanEnd
     , srcSpanFileMaybe
+    , realSrcSpanLength
 
       -- * Unsafe deconstruct SrcSpan
     , unsafeSpanFile
@@ -95,6 +100,12 @@ mkSrcLoc name line col = RealSrcLoc $ SrcLoc name line col
 
 mkRealSrcLoc :: Text -> Int -> Int -> RealSrcLoc
 mkRealSrcLoc = SrcLoc
+
+realSrcLocLine :: RealSrcLoc -> Int
+realSrcLocLine = line
+
+realSrcLocCol :: RealSrcLoc -> Int
+realSrcLocCol = col
 
 noSrcLoc, generatedSrcLoc, interactiveSrcLoc :: SrcLoc
 noSrcLoc          = UnhelpfulLoc "<no location info>"
@@ -261,6 +272,14 @@ srcSpanStart (RealSrcSpan span) = RealSrcLoc $ realSrcSpanStart span
 srcSpanEnd :: SrcSpan -> SrcLoc
 srcSpanEnd (UnhelpfulSpan str) = UnhelpfulLoc str
 srcSpanEnd (RealSrcSpan span) = RealSrcLoc $ realSrcSpanEnd span
+
+-- | Returns the number of characters spanned by a 'RealSrcSpan' if it is a one-line span
+-- Otherwise returns Nothing
+realSrcSpanLength :: RealSrcSpan -> Maybe Int
+realSrcSpanLength span =
+    if isOneLineRealSpan span
+    then Just $ col (realSrcSpanEnd span) - col (realSrcSpanStart span)
+    else Nothing
 
 -- | Returns the location at the start of the 'RealSrcSpan'
 realSrcSpanStart :: RealSrcSpan -> RealSrcLoc

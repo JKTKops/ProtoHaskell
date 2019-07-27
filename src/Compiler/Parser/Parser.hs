@@ -5,6 +5,7 @@ module Compiler.Parser.Parser
 import Prelude hiding (lex)
 
 import Compiler.Parser.Lexer
+import Compiler.Parser.Errors
 import Compiler.BasicTypes.SrcLoc
 import Compiler.BasicTypes.ParsedName
 import Compiler.BasicTypes.OccName
@@ -303,10 +304,6 @@ openImplicit = do
 
 closeImplicit = popLayoutContext
 
-maybeBraces, maybeBraces1 :: Parser a -> Parser [a]
-maybeBraces  p = braces (sepEndBy  p (many semicolon)) <|> block p
-maybeBraces1 p = braces (sepEndBy1 p (many semicolon)) <|> block p
-
 locate :: Parser a -> Parser (Located a)
 locate p = do
     startPos <- getPosition
@@ -338,7 +335,7 @@ testParser p input = do
     lexemes <- lex "" input
     case runParser (initPos *> p <* eof) "" noFlags lexemes of
         Right v  -> Right v
-        Left err -> Left (show err)
+        Left err -> Left (show (pprParseError err input lexemes))
 
 initPos :: Parser ()
 initPos = do
@@ -363,7 +360,7 @@ modlHeader = do
     return name
 
 parseTopDecls :: Parser [LPhDecl ParsedName]
-parseTopDecls = maybeBraces parseTopDecl
+parseTopDecls = block parseTopDecl
 
 parseTopDecl :: Parser (LPhDecl ParsedName)
 parseTopDecl = parseDataDecl
