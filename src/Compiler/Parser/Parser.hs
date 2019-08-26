@@ -4,346 +4,34 @@ module Compiler.Parser.Parser
 
 import Prelude hiding (lex)
 
-import Compiler.Parser.Lexer
-import Compiler.Parser.Errors
-import Compiler.BasicTypes.SrcLoc
-import Compiler.BasicTypes.ParsedName
-import Compiler.BasicTypes.OccName
-import Compiler.BasicTypes.Flags
+import Compiler.Parser.Helpers
+import qualified Compiler.Parser.Pattern as Pattern
 
 import Compiler.PhSyn.PhSyn
 import Compiler.PhSyn.PhExpr
 import Compiler.PhSyn.PhType
 
-import qualified Utils.Outputable as Out
-
 import Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as T
 
-import Data.Maybe (catMaybes, fromJust, isJust, maybe)
-
-import Control.Arrow ((>>>))
 import Data.Function ((&))
-import Data.Functor  (($>))
-import Control.Monad
 import Control.Monad.Identity (Identity)
 
-import Text.Parsec hiding ( runParser, parse, anyToken, token, satisfy, oneOf, noneOf
-                          , label, (<?>))
 import qualified Text.Parsec as Parsec
 import qualified Text.Parsec.Error as Parsec
-import Text.Parsec.Language (GenLanguageDef(..))
-import Text.Parsec.Token    (GenTokenParser)
-import qualified Text.Parsec.Token as PT
-import qualified Text.Parsec.Prim as Prim (token)
-import Text.Parsec.Pos (newPos)
-
-import Debug.Trace
-
-type Parser a = Parsec
-                  [Lexeme]           -- Token stream
-                  ParseState
-                  a
-
-data ParseState = ParseState
-    { compFlags      :: Flags
-    , indentOrd      :: Ordering
-    , layoutContexts :: [LayoutContext]
-    , endOfPrevToken :: SrcLoc
-    }
-    deriving (Show)
-
-data LayoutContext
-     = Explicit
-     | Implicit Int
-     deriving (Eq, Ord, Show)
-
-initParseState flags = ParseState flags EQ [] noSrcLoc
-
-pushLayoutContext :: LayoutContext -> Parser ()
-pushLayoutContext ctx = modifyState $ \s@ParseState{ layoutContexts } ->
-    s { layoutContexts = ctx : layoutContexts }
-
-popLayoutContext :: Parser ()
-popLayoutContext = do
-    ctx <- gets layoutContexts
-    case ctx of
-        [] -> fail "Tried to pop a layout context, but there are no layout contexts"
-        (_:ctxs) -> modify $ \s -> s { layoutContexts = ctxs }
-
-get :: Parser ParseState
-get = getState
-
-gets :: (ParseState -> a) -> Parser a
-gets f = f <$> get
-
-put :: ParseState -> Parser ()
-put = putState
-
-modify :: (ParseState -> ParseState) -> Parser ()
-modify = modifyState
-
-currentLayoutContext :: Parser (Maybe LayoutContext)
-currentLayoutContext = do
-    ctxs <- gets layoutContexts
-    return $ case ctxs of
-        [] -> Nothing
-        (x:_) -> Just x
-
-label :: Parser a -> String -> Parser a
-label p exp = do
-    mctx <- currentLayoutContext
-    case mctx of
-        Nothing -> Parsec.label p exp
-        Just Explicit -> Parsec.label p exp
-        Just (Implicit n) -> labelWithIndentInfo p exp n
-  where
-    labelWithIndentInfo p exp n = do
-        ord <- gets indentOrd
-        let ordPiece = case ord of
-                EQ -> show n
-                GT -> "greater than " ++ show n
-                LT -> "less than" ++ show n -- Shouldn't happen
-            indentPiece = "at indentation"
-        Parsec.label p $ unwords [exp, indentPiece, ordPiece]
-
-(<?>) = label
-infixl 0 <?> -- I disagree with this fixity but it's what Parsec uses
-
-instance HasCompFlags (Parsec [Lexeme] ParseState) where
-    getCompFlags = compFlags <$> getState
-
-{- NOTE: [Overlapping Show instance for Lexeme]
-
-For some reason, some parsec combinators seem to enforce a Show instance on Lexeme
-which they then use inside `unexepctected` messages. This is catastrophic!
-Bonus points for switching to `Megaparsec` if version 8 can handle custom streams properly.
-
-To remedy this, we have to overlap the existing (informative) show instance for Lexeme
-in order to be able to guarantee that the user sees pretty-printed error messages.
-
--}
-instance {-# OVERLAPPING #-} Show (GenLocated SrcSpan Token) where
-    show (Located _ TokIndent) = "indentation"
-    show t = (Out.ppr >>> Out.prettyQuote >>> show) t
 
 -----------------------------------------------------------------------------------------
--- Primitive parsers for our Tokens
+-- Main parse driver
 -----------------------------------------------------------------------------------------
 
-satisfy :: (Token -> Bool) -> Parser Lexeme
-satisfy p = try $ guardIndentation *> satisfyNoIndentGuard p <* setIndentOrdGT
-  where setIndentOrdGT = modify $ \s -> s { indentOrd = GT }
-
-satisfyNoIndentGuard :: (Token -> Bool) -> Parser Lexeme
-satisfyNoIndentGuard p = do
-    lexeme@(Located pos _) <- Parsec.tokenPrim
-                              (unLoc >>> Out.ppr >>> Out.prettyQuote >>> show)
-                              posFromTok
-                              testTok
-    modifyState $ \s -> s { endOfPrevToken = srcSpanEnd pos }
-    return lexeme
-  where
-    testTok t = if (p . unLoc) t then Just t else Nothing
-
-posFromTok :: SourcePos -> t -> [Lexeme] -> SourcePos
-posFromTok old _ [] = old
-posFromTok a b (Located _ TokIndent : ls) = posFromTok a b ls
-posFromTok old _ (Located pos _ : _)
-  | isGoodSrcSpan pos = mkSrcPos $ srcSpanStart pos
-  | otherwise = old
-
-mkSrcPos :: SrcLoc -> SourcePos
-mkSrcPos loc = let file = unsafeLocFile loc
-                   line = unsafeLocLine loc
-                   col  = unsafeLocCol  loc
-                   new  = newPos (T.unpack file) line col
-               in new
-
-guardIndentation :: Parser ()
-guardIndentation = do
-    check <- optionMaybe $ satisfyNoIndentGuard (== TokIndent)
-    ord <- gets indentOrd
-    when (isJust check || ord == EQ) $ do
-        mr <- currentLayoutContext
-        case mr of
-            Nothing -> return ()
-            Just Explicit -> return ()
-            Just (Implicit r) -> do
-                c <- sourceColumn <$> getPosition
-                when (c `compare` r /= ord) (mzero
-                                 <?> "indentation of " ++ show r ++
-                                     " (got " ++ show c ++ ")")
-
-token :: Token -> Parser Lexeme
-token t = satisfy (== t) <?> (Out.ppr t & Out.prettyQuote & show)
-
-oneOf :: [Token] -> Parser Lexeme
-oneOf ts = satisfy (`elem` ts)
-
-noneOf :: [Token] -> Parser Lexeme
-noneOf ts = satisfy (not . (`elem` ts))
-
-anyToken :: Parser Lexeme
-anyToken = satisfy (const True)
-
-reserved :: String -> Parser Lexeme
-reserved word = satisfy (== reservedIdToTok word)
-
-reservedOp :: String -> Parser Lexeme
-reservedOp op = satisfy (== reservedOpToTok op)
-
-parens :: Parser a -> Parser a
-parens = between (token TokLParen) (token TokRParen)
-
-braces :: Parser a -> Parser a
-braces = between (token TokLBrace) (token TokRBrace)
-
-brackets :: Parser a -> Parser a
-brackets = between (token TokLBracket) (token TokRBracket)
-
-backticks :: Parser a -> Parser a
-backticks = between (token TokBackquote) (token TokBackquote)
-
-comma :: Parser ()
-comma = void $ token TokComma
-
-commaSep :: Parser a -> Parser [a]
-commaSep p = sepBy p comma
-
-commaSep1 :: Parser a -> Parser [a]
-commaSep1 p = sepBy1 p comma
-
-semicolon :: Parser ()
-semicolon = void $ token TokSemicolon
-
-varid :: Parser ParsedName
-varid = flip label "identifier" $ do
-    Located loc tok <- satisfy isVarIdToken
-    return $ case tok of
-        TokVarId name          -> mkUnQual varName loc name
-        TokQualVarId qual name -> mkQual varName loc (qual, name)
-
-varsym :: Parser ParsedName
-varsym = flip label "symbol" $ do
-    Located loc tok <- satisfy isVarSymToken
-    return $ case tok of
-        TokVarSym name          -> mkUnQual varName loc name
-        TokQualVarSym qual name -> mkQual varName loc (qual, name)
-
-tyconid :: Parser ParsedName
-tyconid = flip label "type constructor" $ do
-    Located loc tok <- satisfy isConIdToken
-    return $ case tok of
-        TokConId name          -> mkUnQual tcName loc name
-        TokQualConId qual name -> mkQual tcName loc (qual, name)
-
-tyclsid :: Parser ParsedName
-tyclsid = label tyconid "type class"
-
-dataconid :: Parser ParsedName
-dataconid = flip label "data constructor" $ do
-    Located loc tok <- satisfy isConIdToken
-    return $ case tok of
-        TokConId name          -> mkUnQual dataName loc name
-        TokQualConId qual name -> mkQual dataName loc (qual, name)
-
-dataconsym :: Parser ParsedName
-dataconsym = flip label "data constructor (symbol)" $ do
-    Located loc tok <- satisfy isConSymToken
-    return $ case tok of
-        TokConSym name          -> mkUnQual dataName loc name
-        TokQualConSym qual name -> mkQual dataName loc (qual, name)
-
-tyvarid :: Parser ParsedName
-tyvarid = flip label "type variable" $ do
-    Located loc tok <- satisfy isVarIdToken
-    return $ case tok of
-        TokVarId name -> mkUnQual tvName loc name
-
-modlName :: Parser (Located Text)
-modlName = do
-    Located loc tok <- satisfy isConIdToken
-    return . Located loc $ case tok of
-        TokConId name -> name
-        TokQualConId p1 p2 -> p1 <> "." <> p2
-
------------------------------------------------------------------------------------------
--- Implementing Layout Sensitivity
------------------------------------------------------------------------------------------
-
-align :: Parser ()
-align = modifyState $ \s -> s { indentOrd = EQ }
-
--- block, block1 :: Parser a -> Parser [a]
--- block  p = laidout (concat <$> many  (align >> sepEndBy1 p (many1 semicolon)))
--- block1 p = laidout (concat <$> many1 (align >> sepEndBy1 p (many1 semicolon)))
-
-block :: Parser a -> Parser [a]
-block p = (catMaybes <$>) $ explicitBlock <|> implicitBlock
-  where
-    explicitBlock = between
-        (token TokLBrace >> pushLayoutContext Explicit)
-        (token TokRBrace >> popLayoutContext)
-        $ optionMaybe p `sepBy` semicolon
-    implicitBlock = between openImplicit closeImplicit $ many (align >> Just <$> p)
-
-block1 :: Parser a -> Parser [a]
-block1 p = explicitBlock1 <|> implicitBlock1
-  where
-    explicitBlock1 = between
-        (token TokLBrace >> pushLayoutContext Explicit)
-        (token TokRBrace >> popLayoutContext)
-        $ many semicolon *> p `sepEndBy1` many1 semicolon
-
-    implicitBlock1 = between openImplicit closeImplicit $ many1 (align >> p)
-
-openImplicit = do
-    c <- sourceColumn <$> getPosition
-    pushLayoutContext $ Implicit c
-
-closeImplicit = popLayoutContext
-
-locate :: Parser a -> Parser (Located a)
-locate p = do
-    startPos <- getPosition
-    let srcName = sourceName startPos
-        startLine = sourceLine startPos
-        startCol  = sourceColumn startPos
-        startLoc  = mkSrcLoc (T.pack srcName) startLine startCol
-    res <- p
-    endPos <- endOfPrevToken <$> getState
-    return $ Located (mkSrcSpan startLoc endPos) res
-
------------------------------------------------------------------------------------------
--- Main Parser
------------------------------------------------------------------------------------------
-
+-- | Takes a filename, compiler flags, and input source.
+-- Outputs either an error (already pretty printed) or a PhModule.
 parse :: SourceName -> Flags -> String -> Either String (PhModule ParsedName)
 parse srcname flags input = do
     lexemes <- lex srcname input
     case runParser modl srcname flags lexemes of
         Right modl -> Right modl
         Left parseErr -> Left (show parseErr)
-
-runParser :: Parser a -> SourceName -> Flags -> [Lexeme] -> Either ParseError a
-runParser p srcname flags lexemes =
-    Parsec.runParser p (initParseState flags) srcname lexemes
-
-testParser :: Parser a -> String -> Either String a
-testParser p input = do
-    lexemes <- lex "" input
-    case runParser (initPos *> p <* eof) "" noFlags lexemes of
-        Right v  -> Right v
-        Left err -> Left (show (pprParseError err input lexemes))
-
-initPos :: Parser ()
-initPos = do
-    input <- getInput
-    startPos <- getPosition
-    case input of
-        [] -> return ()
-        ls -> setPosition $ posFromTok startPos undefined ls
 
 -----------------------------------------------------------------------------------------
 -- Component Parsers
@@ -409,28 +97,285 @@ parseBinding = locate . fmap Binding $ parseBind
 parseBind :: Parser (PhBind ParsedName)
 parseBind = try parseFunBinding <|> parsePatternBinding
 
+-- TODO: parse bindings for operators
 parseFunBinding :: Parser (PhBind ParsedName)
 parseFunBinding = do
     funName <- varid
-    match   <- locate parseMatch
+    match   <- locate $ parseMatch FunCtxt
     return $ FunBind funName $ MG { mgAlts = [match], mgCtxt = FunCtxt }
 
 parsePatternBinding :: Parser (PhBind ParsedName)
-parsePatternBinding = PatBind <$> locate parsePattern <*> locate parseRHS
+parsePatternBinding = PatBind <$> Pattern.parseLocated <*> locate (parseRHS LetCtxt)
 
-parseMatch :: Parser (Match ParsedName)
-parseMatch = do
-    pats <- many1 $ locate parsePattern
-    rhs  <- locate parseRHS
-    mLocalBinds <- optionMaybe $ token TokWhere
-    return Match {}
+-- | Parses a single match which will eventually be part of a match group.
+--
+-- Considers the context as follows:
+--
+-- Lam contexts are not allowed to contain local bindings.
+--
+-- See also: 'parseRHS'
+parseMatch :: MatchContext -> Parser (Match ParsedName)
+parseMatch ctx = do
+    pats <- many1 Pattern.parseLocated
+    rhs  <- locate $ parseRHS ctx
+    mLocalBinds <- if ctx /= LamCtxt
+        then optionMaybe $ token TokWhere >> parseLocalBinds
+        else return Nothing
+    return Match { matchPats = pats, rhs, localBinds = mLocalBinds }
 
-parsePattern = undefined
-parseRHS = undefined
+-- | Parses the right hand side of a binding. Considers the context as follows:
+--
+-- The left and right hand side are separated by '->' in Lam and Case contexts,
+-- but by '=' in Fun and Let contexts
+--
+-- Lam contexts are not allowed to contain guards.
+parseRHS :: MatchContext -> Parser (RHS ParsedName)
+parseRHS LamCtxt = reservedOp "->" >> Unguarded <$> parseLocExpr
+parseRHS ctxt = parseGuarded <|> parseUnguarded
+  where parseBinder :: Parser ()
+        parseBinder = matchCtx2Parser ctxt
+
+        parseGuarded :: Parser (RHS ParsedName)
+        parseGuarded = reservedOp "|" >> Guarded <$> parseGuard `sepBy1` reservedOp "|"
+
+        parseGuard :: Parser (LGuard ParsedName)
+        parseGuard = locate $ do
+            guard <- parseLocExpr
+            parseBinder
+            rhs <- parseLocExpr
+            return $ Guard guard rhs
+
+        parseUnguarded = parseBinder >> Unguarded <$> parseLocExpr
+
+type LocalDecls = ([LPhBind ParsedName], [LSig ParsedName])
+parseLocalBinds :: Parser (LPhLocalBinds ParsedName)
+parseLocalBinds = locate $ do
+    decls <- block parseLocalDecl
+    let (binds, sigs) = separate decls
+    return $ LocalBinds binds sigs
+
+  where
+    -- The use of foldr is absolutely critical, as the order of the bindings matters
+    -- folding from the right and prepending with (:) will maintain the order.
+    -- The renamer should check the order *anyway* if the compiler is in debug mode.
+    separate :: [LPhDecl ParsedName] -> LocalDecls
+    separate = foldr move ([], [])
+
+    move :: LPhDecl ParsedName -> LocalDecls -> LocalDecls
+    move (Located s new) (binds, sigs) = case new of
+        Binding bind  -> (Located s bind : binds, sigs)
+        Signature sig -> (binds, Located s sig : sigs)
+
+-- | Takes the pair of signatures and bindings already parsed
+--   and parses a new one, placing it appropriately
+parseLocalDecl :: Parser (LPhDecl ParsedName)
+parseLocalDecl = parseSignature
+             <|> parseBinding
+
+matchCtx2Parser :: MatchContext -> Parser ()
+matchCtx2Parser = void . \case
+    FunCtxt -> reservedOp "="
+    CaseCtxt -> reservedOp "->"
+    LamCtxt -> reservedOp "->"
+    LetCtxt -> reservedOp "="
+
+-----------------------------------------------------------------------------------------
+-- Parsing Expressions
+-----------------------------------------------------------------------------------------
+
+parseExpr :: Parser (PhExpr ParsedName)
+parseExpr = do
+    exp <- locate parseInfixExp
+    mCType <- optionMaybe $ reservedOp "::" >> parseContextType
+    return $ case mCType of
+        Nothing -> unLoc exp
+        Just ty -> Typed ty exp
+   <?> "expression"
+
+parseLocExpr :: Parser (LPhExpr ParsedName)
+parseLocExpr = locate parseExpr
+
+-- | Parses operator (infix) expressions.
+-- We parse all operators as left associative and highest
+-- precedence, then rebalance the tree later.
+parseInfixExp :: Parser (PhExpr ParsedName)
+parseInfixExp = parseSyntacticNegation
+            <|> unLoc <$> locate parseBExp `chainl1` parseQopFunc
+
+    where parseQopFunc = mkOpApp <$> parseQop
+          mkOpApp op x@(Located left _) y@(Located right _) =
+              Located (combineSrcSpans left right) (OpApp x op y)
+
+parseQop :: Parser (LPhExpr ParsedName)
+parseQop = locate (PhVar <$> (varsym <|> backticks varid) <?> "operator")
+
+parseSyntacticNegation :: Parser (PhExpr ParsedName)
+parseSyntacticNegation = do
+    satisfy isDashSym
+    e <- locate parseInfixExp
+    return $ NegApp e
+  where isDashSym :: Token -> Bool
+        isDashSym (TokVarSym "-") = True
+        isDashSym _ = False
+
+parseBExp :: Parser (PhExpr ParsedName)
+parseBExp = parseLamExp
+        <|> parseLetExp
+        <|> parseIfExp
+        <|> parseCaseExp
+        <|> parseDoExp
+        <|> parseFExp
+
+parseLamExp :: Parser (PhExpr ParsedName)
+parseLamExp = do
+    reservedOp "\\"
+    match <- locate $ parseMatch LamCtxt -- parseMatch parses RHS
+    return $ PhLam $ MG [match] LamCtxt
+
+parseLetExp :: Parser (PhExpr ParsedName)
+parseLetExp = do
+    reserved "let"
+    decls <- parseLocalBinds
+    reserved "in"
+    body <- parseLocExpr
+    return $ PhLet decls body
+
+parseIfExp :: Parser (PhExpr ParsedName)
+parseIfExp = do
+    reserved "if"
+    c <- parseLocExpr
+    optSemi
+    maybeAlign >> reserved "then"
+    t <- parseLocExpr
+    optSemi
+    maybeAlign >> reserved "else"
+    f <- parseLocExpr
+    return $ PhIf c t f
+
+parseCaseExp :: Parser (PhExpr ParsedName)
+parseCaseExp = do
+    reserved "case"
+    scrut <- parseLocExpr
+    reserved "of"
+    matchGroup <- parseCaseAlts
+    return $ PhCase scrut matchGroup
+
+parseDoExp :: Parser (PhExpr ParsedName)
+parseDoExp = do
+    reserved "do"
+    PhDo <$> parseDoStmts
+
+parseFExp :: Parser (PhExpr ParsedName)
+parseFExp = unLoc <$> parseAExp `chainl1` return mkLPhAppExpr
+
+parseAExp :: Parser (LPhExpr ParsedName)
+parseAExp = locate
+           (PhVar <$> varid
+        <|> parseGCon
+        <|> parseLiteral
+        <|> parens parseExprParen
+        <|> brackets parseExprBracket
+        <?> "term")
+
+parseGCon :: Parser (PhExpr ParsedName)
+parseGCon = PhVar <$> dataconid
+
+parseLiteral :: Parser (PhExpr ParsedName)
+parseLiteral = (PhLit <$>) $
+     LitInt <$> integer
+ <|> LitFloat <$> float
+ <|> LitChar <$> charLiteral
+ <|> LitString <$> stringLiteral
+
+parseExprParen :: Parser (PhExpr ParsedName)
+parseExprParen = do
+    exps <- commaSep1 parseLocExpr
+    return $ case exps of
+        -- () is a GCon
+        [exp] -> PhPar exp
+        exps  -> ExplicitTuple exps
+
+parseExprBracket :: Parser (PhExpr ParsedName)
+parseExprBracket = do
+    exps <- commaSep1 $ locate parseExpr
+    case exps of
+        [exp] -> parseArithSeqInfo exp
+        _     -> return $ ExplicitList exps
+
+-- | Given the first expression (the e1 in [e1 ..], [e1, e2 ..], or [e1, e2 .. e3])
+-- parse the rest of an arithmetic sequence description.
+-- Handles the case of an explicit list with one element.
+parseArithSeqInfo :: LPhExpr ParsedName -> Parser (PhExpr ParsedName)
+parseArithSeqInfo exp = parseCommaSeq <|> parseDotsSeq <|> return (ExplicitList [exp])
+  where parseCommaSeq = ArithSeq <$> do
+            comma
+            e2 <- parseLocExpr
+            reservedOp ".."
+            e3 <- optionMaybe parseLocExpr
+            return $ case e3 of
+                Nothing -> FromThen exp e2
+                Just e  -> FromThenTo exp e2 e
+
+        parseDotsSeq = ArithSeq <$> do
+            reservedOp ".."
+            e2 <- optionMaybe parseLocExpr
+            return $ case e2 of
+                Nothing -> From exp
+                Just e  -> FromTo exp e
+
+parseDoStmts :: Parser [LStmt ParsedName]
+parseDoStmts = block1 parseDoStmt
+
+parseDoStmt :: Parser (LStmt ParsedName)
+parseDoStmt = locate
+       (try (do pat <- Pattern.parseLocated
+                reservedOp "<-"
+                e <- parseLocExpr
+                return $ SGenerator pat e)
+    <|> try (reserved "let" *> (SLet <$> parseLocalBinds))
+    <|> SExpr <$> parseLocExpr
+    <?> "statement of a do block")
+
+parseCaseAlts :: Parser (MatchGroup ParsedName)
+parseCaseAlts = MG <$> (block1 . locate $ parseMatch CaseCtxt) <*> pure CaseCtxt
 
 -----------------------------------------------------------------------------------------
 -- Parsing Types
 -----------------------------------------------------------------------------------------
+
+-- | Parses a type with context, like Eq a => a -> a -> Bool
+parseContextType :: Parser (LPhType ParsedName)
+parseContextType = locate $ do
+    mctx <- optionMaybe $ try $ parseContext <* reservedOp "=>"
+    ty <- parseType
+    return $ case mctx of
+        Nothing -> unLoc ty
+        Just preds -> PhQualTy preds ty
+
+-- | Parses a context, but NOT the predicate arrow, =>
+parseContext :: Parser [Pred ParsedName]
+parseContext =
+    pure <$> parsePred <|> parens (commaSep parsePred)
+
+-- | Parses an individual predicate, like Eq a
+parsePred :: Parser (Pred ParsedName)
+parsePred = parseSimplePred
+        <|> do cls <- tyclsid
+               ty  <- parens $ do
+                   tyvar <- locate $ PhVarTy <$> tyvarid
+                   args <- many1 parseAType
+                   return $ foldl1 mkLPhAppTy (tyvar : args)
+               return $ IsIn cls (unLoc ty)
+
+-- | Parses a simple context, like those legal in an instance head.
+-- Unlike 'parseContext', rejects types like 'Eq (m a)'
+parseSimpleContext :: Parser [Pred ParsedName]
+parseSimpleContext =
+    pure <$> parseSimplePred <|> parens (commaSep parseSimplePred)
+
+-- | Parses a simple predicate, like 'Eq a'
+parseSimplePred :: Parser (Pred ParsedName)
+parseSimplePred = IsIn <$> tyclsid <*> (PhVarTy <$> tyvarid)
 
 parseType :: Parser (LPhType ParsedName)
 parseType = do
@@ -462,61 +407,3 @@ parseGTyCon = PhVarTy <$> tyconid
               -- wire them in. But we can express them (except ())
               -- via the sugar still.
 
------------------------------------------------------------------------------------------
--- Parsers for string literal, char literal, int literal, and float literal values
------------------------------------------------------------------------------------------
-
--- We 'cheat' here by using Text.Parsec.Token to generate Haskell Standard
--- compliant parsers for these objects
-
-type LanguageDef = GenLanguageDef Text () Identity
--- Copy of the Text.Parsec.Language.emptyDef, except works with Data.Text
-emptyDef :: LanguageDef
-emptyDef = PT.LanguageDef
-            { PT.commentStart    = ""
-            , PT.commentEnd      = ""
-            , PT.commentLine     = ""
-            , PT.nestedComments  = True
-            , PT.identStart      = letter <|> char '_'
-            , PT.identLetter     = alphaNum <|> Parsec.oneOf "_'"
-            , PT.opStart         = PT.opLetter emptyDef
-            , PT.opLetter        = Parsec.oneOf ":!#$%&*+./<=>?@\\^|-~"
-            , PT.reservedOpNames = []
-            , PT.reservedNames   = []
-            , PT.caseSensitive   = True
-            }
-
-literalParsers :: GenTokenParser Text () Identity
-literalParsers = PT.makeTokenParser emptyDef
-
--- We can guarantee that the 'parse' call succeeds, because our lexer would
--- not have created a 'TokLitChar' if it was not a syntactically valid char.
-charLiteral :: Parser Char
-charLiteral = do
-    Located _ (TokLitChar t) <- satisfy
-                                (\case TokLitChar _ -> True; _ -> False)
-    let Right c = Parsec.parse (PT.charLiteral literalParsers) "" t
-    return c
-
-stringLiteral :: Parser String
-stringLiteral = do
-    Located _ (TokLitString t) <- satisfy
-                                (\case TokLitString _ -> True; _ -> False)
-    let Right s = Parsec.parse (PT.stringLiteral literalParsers) "" t
-    return s
-
-
-integer :: Parser Integer
-integer = do
-    Located _ (TokLitInteger t) <- satisfy
-                                (\case TokLitInteger _ -> True; _ -> False)
-    let Right i = Parsec.parse (PT.integer literalParsers) "" t
-    return i
-
-
-float :: Parser Double
-float = do
-    Located _ (TokLitFloat t) <- satisfy
-                                (\case TokLitFloat _ -> True; _ -> False)
-    let Right f = Parsec.parse (PT.float literalParsers) "" t
-    return f

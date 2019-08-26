@@ -74,7 +74,7 @@ instance HasSrcSpan OccName where
     srcSpanOf = occNameSrcSpan
 
 instance Outputable OccName where
-    ppr (OccName _ _ nt) = ppr nt
+    ppr (OccName _ _ nt) = text $ T.unpack nt
 
 mkOccName :: NameSpace -> SrcSpan -> Text -> OccName
 mkOccName = OccName

@@ -56,7 +56,10 @@ output = show . ppr
 
 instance Outputable Char where
     ppr = char
-    pprList cs = doubleQuotes $ hcat $ map (text . pure) cs
+    pprList = doubleQuotes . pprString
+
+pprString :: String -> Doc
+pprString = vcat . map text . lines
 
 instance Outputable Bool where
     ppr = text . show
@@ -146,7 +149,7 @@ instance ( Outputable a, Outputable b, Outputable c, Outputable d
                    ppr g])
 
 instance Outputable Text.Text where
-    ppr = text . Text.unpack
+    ppr = ppr . Text.unpack
 
 instance Outputable Parsec.ParseError where
     ppr = text . show

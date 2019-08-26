@@ -2,7 +2,7 @@ module Compiler.PhSyn.PhExpr where
 
 import Data.Text.Lazy (Text)
 
-import Compiler.BasicTypes.SrcLoc (Located, unLoc)
+import Compiler.BasicTypes.SrcLoc
 import Compiler.PhSyn.PhType
 
 import Utils.Outputable
@@ -45,8 +45,12 @@ data PhExpr id
      | Typed (LPhType id) (LPhExpr id)
      deriving (Eq, Ord, Show)
 
+mkLPhAppExpr :: LPhExpr id -> LPhExpr id -> LPhExpr id
+mkLPhAppExpr e1@(Located s1 _) e2@(Located s2 _) =
+    Located (combineSrcSpans s1 s2) (PhApp e1 e2)
+
 data PhLit
-     = LitInt Int
+     = LitInt Integer
      | LitFloat Double
      | LitChar Char
      | LitString Text
@@ -62,7 +66,7 @@ type LMatch id = Located (Match id)
 data Match id
      = Match { matchPats :: [LPat id]
              , rhs :: LRHS id
-             , localBinds :: LPhLocalBinds id -- 'where' clause
+             , localBinds :: Maybe (LPhLocalBinds id) -- 'where' clause
              }
      deriving (Eq, Ord, Show)
 
@@ -181,7 +185,7 @@ instance Outputable id => Outputable (PhExpr id) where
     ppr (Typed t e)     = ppr e <+> text "::" <+> ppr t
 
 instance Outputable PhLit where
-    ppr (LitInt i) = int i
+    ppr (LitInt i) = integer i
     ppr (LitFloat d) = double d
     ppr (LitChar c) = char '\'' <> char c <> char '\''
     ppr (LitString s) = text $ show s
@@ -191,8 +195,12 @@ instance Outputable id => Outputable (MatchGroup id) where
 
 pprMatch :: Outputable id => MatchContext -> Match id -> Doc
 pprMatch ctxt (Match pats rhs locals) =
-  hcat (map ppr pats) $$ pprRhs (if isCaseOrLamCtxt ctxt then text "->" else text "=") rhs
-                      $$ nest 2 (text "where" $$ nest 2 (ppr locals))
+  hsep (map ppr pats) <+> pprRhs (if isCaseOrLamCtxt ctxt then text "->" else text "=") rhs
+                      $$ pprLocals locals
+
+pprLocals :: Outputable id => Maybe (LPhLocalBinds id) -> Doc
+pprLocals Nothing = mempty
+pprLocals (Just (unLoc -> ls)) = nest 2 $ text "where" $$ nest 2 (ppr ls)
 
 pprRhs :: Outputable id => Doc -> LRHS id -> Doc
 pprRhs ctxt (unLoc -> Unguarded body) = ctxt <+> ppr body
@@ -203,10 +211,12 @@ pprGuard ctxt (unLoc -> Guard guard body) = text "|" <+> ppr guard <+> ctxt <+> 
 
 instance Outputable id => Outputable (Pat id) where
     ppr (PVar id) = ppr id
-    ppr (PCon id args) = ppr id <+> hcat (map ppr args)
+    ppr (PCon id args) = ppr id <+> hsep (map ppr args)
     ppr (PAs id pat) = ppr id <> char '@' <> ppr pat
     ppr (PLit lit)   = ppr lit
     ppr PWild        = char '_'
+    ppr (PTuple ps)  = parens $ fsep $ punctuate comma $ map ppr ps
+    ppr (PList ps)   = brackets . fsep . punctuate comma $ map ppr ps
     ppr (ParPat pat) = parens $ ppr pat
 
 instance Outputable id => Outputable (PhLocalBinds id) where

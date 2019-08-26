@@ -54,7 +54,7 @@ $nl        = [\n\r]
               of|then|type|where
 
 @reservedop =
-            ".." | ":" | "::" | "=" | \\ | "|" | "<-" | "->" | "@" | "~" | "=>"
+            ".." | ":" | "::" | "=" | \\ | "|" | "<-" | "->" | "@" | "~" | "=>" | "_"
 
 @varid  = $small $idchar*
 @conid  = $large $idchar*
@@ -86,12 +86,13 @@ haskell :-
 <0> $special                  { mkL TokTypeSpecial }
 
 <0> @reservedid               { mkL TokTypeReservedId }
+<0> @reservedop               { mkL TokTypeReservedOp } -- here because '_' overlaps varid
+
 <0> (@conid \.)+ @varid       { mkL TokTypeQualVarId }
 <0> (@conid \.)+ @conid       { mkL TokTypeQualConId }
 <0> @varid                    { mkL TokTypeVarId }
 <0> @conid                    { mkL TokTypeConId }
 
-<0> @reservedop               { mkL TokTypeReservedOp }
 <0> (@conid \.)+ @varsym      { mkL TokTypeQualVarSym }
 <0> (@conid \.)+ @consym      { mkL TokTypeQualConSym }
 <0> @varsym                   { mkL TokTypeVarSym }
@@ -215,7 +216,8 @@ reservedIdToTok = \case
     "then"     -> TokThen
     "type"     -> TokType
     "where"    -> TokWhere
-    str        -> error $ "String `" ++ show str ++ "' is not a reserved word."
+    str        -> error $ "Compiler.Parser.Lexer.reservedIdToTok: " ++
+        "String `" ++ show str ++ "' is not a reserved word."
 
 mkReservedOpTok srcSpan src = Located srcSpan $ reservedOpToTok src
 
@@ -231,7 +233,9 @@ reservedOpToTok = \case
     "@"  -> TokAt
     "~"  -> TokTilde
     "=>" -> TokPredArrow
-    str  -> error $ "String `" ++ show str ++ "' is not a reserved operator."
+    "_"  -> TokUnderscore
+    str  -> error $ "Compiler.Parser.Lexer.reservedOpToTok: " ++
+        "String `" ++ show str ++ "' is not a reserved operator."
 
 mkTokEOF _ _ = Located undefined TokEOF
 
@@ -246,6 +250,7 @@ data Token
      | TokLBrace
      | TokRBrace
      | TokBackquote
+     | TokUnderscore -- Not truly special, as it's legal in identifiers
 
        -- ^ Literals
      | TokLitInteger Text
@@ -379,6 +384,7 @@ instance Outputable Token where
         TokLBrace    -> "{"
         TokRBrace    -> "}"
         TokBackquote -> "`"
+        TokUnderscore -> "_"
         TokLitInteger i -> show i
         TokLitFloat f   -> show f
         TokLitChar c    -> show c
