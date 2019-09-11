@@ -78,7 +78,7 @@ parseTypeSignature :: Parser (Sig ParsedName)
 parseTypeSignature = do
     names <- commaSep1 (varid <|> parens varsym)
     reservedOp "::"
-    TypeSig names <$> parseType
+    TypeSig names <$> parseContextType
 
 parseFixitySignature :: Parser (Sig ParsedName)
 parseFixitySignature =
@@ -155,19 +155,19 @@ parseLocalBinds = locate $ do
     return $ LocalBinds binds sigs
 
   where
-    -- The use of foldr is absolutely critical, as the order of the bindings matters
-    -- folding from the right and prepending with (:) will maintain the order.
+    -- The use of foldr is absolutely critical, as the order of the bindings matters.
+    -- Folding from the right and prepending with (:) will maintain the order.
     -- The renamer should check the order *anyway* if the compiler is in debug mode.
     separate :: [LPhDecl ParsedName] -> LocalDecls
     separate = foldr move ([], [])
 
+    -- | Takes the pair of signatures and bindings already parsed
+    --   and parses a new one, placing it appropriately
     move :: LPhDecl ParsedName -> LocalDecls -> LocalDecls
     move (Located s new) (binds, sigs) = case new of
         Binding bind  -> (Located s bind : binds, sigs)
         Signature sig -> (binds, Located s sig : sigs)
 
--- | Takes the pair of signatures and bindings already parsed
---   and parses a new one, placing it appropriately
 parseLocalDecl :: Parser (LPhDecl ParsedName)
 parseLocalDecl = parseSignature
              <|> parseBinding
@@ -190,7 +190,7 @@ parseExpr = do
     return $ case mCType of
         Nothing -> unLoc exp
         Just ty -> Typed ty exp
-   <?> "expression"
+    <?> "expression"
 
 parseLocExpr :: Parser (LPhExpr ParsedName)
 parseLocExpr = locate parseExpr
@@ -299,29 +299,27 @@ parseExprBracket :: Parser (PhExpr ParsedName)
 parseExprBracket = do
     exps <- commaSep1 $ locate parseExpr
     case exps of
-        [exp] -> parseArithSeqInfo exp
+        [exp] -> parseDotsSeq exp <|> return (ExplicitList [exp])
+        [e1, e2] -> parseCommaSeq e1 e2 <|> return (ExplicitList [e1, e2])
         _     -> return $ ExplicitList exps
 
--- | Given the first expression (the e1 in [e1 ..], [e1, e2 ..], or [e1, e2 .. e3])
--- parse the rest of an arithmetic sequence description.
--- Handles the case of an explicit list with one element.
-parseArithSeqInfo :: LPhExpr ParsedName -> Parser (PhExpr ParsedName)
-parseArithSeqInfo exp = parseCommaSeq <|> parseDotsSeq <|> return (ExplicitList [exp])
-  where parseCommaSeq = ArithSeq <$> do
-            comma
-            e2 <- parseLocExpr
-            reservedOp ".."
-            e3 <- optionMaybe parseLocExpr
-            return $ case e3 of
-                Nothing -> FromThen exp e2
-                Just e  -> FromThenTo exp e2 e
+-- | Given the first two elements of an arithmetic sequence [e1, e2 ..] or [e1, e2 .. e3]
+-- parse the rest.
+parseCommaSeq :: LPhExpr ParsedName -> LPhExpr ParsedName -> Parser (PhExpr ParsedName)
+parseCommaSeq e1 e2 = ArithSeq <$> do
+    reservedOp ".."
+    e3 <- optionMaybe parseLocExpr
+    return $ case e3 of
+         Nothing -> FromThen e1 e2
+         Just e  -> FromThenTo e1 e2 e
 
-        parseDotsSeq = ArithSeq <$> do
-            reservedOp ".."
-            e2 <- optionMaybe parseLocExpr
-            return $ case e2 of
-                Nothing -> From exp
-                Just e  -> FromTo exp e
+parseDotsSeq :: LPhExpr ParsedName -> Parser (PhExpr ParsedName)
+parseDotsSeq exp = ArithSeq <$> do
+    reservedOp ".."
+    e2 <- optionMaybe parseLocExpr
+    return $ case e2 of
+        Nothing -> From exp
+        Just e  -> FromTo exp e
 
 parseDoStmts :: Parser [LStmt ParsedName]
 parseDoStmts = block1 parseDoStmt
@@ -391,19 +389,22 @@ parseBType = do
 parseAType :: Parser (LPhType ParsedName)
 parseAType = locate $
              PhVarTy <$> tyvarid
-         <|> (do types <- parens $ commaSep1 parseType
-                 case types of
-                     -- () is a GTyCon
-                     [t] -> return $ PhParTy t
-                     ts  -> return $ PhTupleTy ts)
+         <|> try parseGTyCon
+         <|> do types <- parens $ commaSep1 parseType
+                case types of
+                    -- () is a GTyCon
+                    [t] -> return $ PhParTy t
+                    ts  -> return $ PhTupleTy ts
          <|> PhListTy <$> brackets parseType
-         <|> parseGTyCon
 
 parseGTyCon :: Parser (PhType ParsedName)
 parseGTyCon = PhVarTy <$> tyconid
+          <|>     (brackets (return ())     $> PhBuiltInTyCon ListTyCon)
+          <|> try (parens (reservedOp "->") $> PhBuiltInTyCon FunTyCon)
+          <|> do len <- length <$> parens (many comma)
+                 return $ case len of
+                     0 -> PhBuiltInTyCon UnitTyCon
+                     _ -> PhBuiltInTyCon (TupleTyCon $ len + 1)
               -- TODO
-              -- Other gtycons are (), [], (->), and (,) (,,) ...
-              -- We have to defer these for now until we have the architecture to
-              -- wire them in. But we can express them (except ())
-              -- via the sugar still.
-
+              -- Once we have built-in representations for these types,
+              -- the above should be replaced with those.

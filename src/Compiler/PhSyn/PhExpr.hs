@@ -180,7 +180,7 @@ instance Outputable id => Outputable (PhExpr id) where
                             $$ text "in" <+> ppr e
     ppr (PhDo stmts)      = text "do" <+> nest 3 (vcat $ map ppr stmts)
     ppr (ExplicitTuple tupArgs) = parens $ hcat $ punctuate comma $ map ppr tupArgs
-    ppr (ExplicitList elems) = brackets $ hcat $ punctuate comma $ map ppr elems
+    ppr (ExplicitList elems) = brackets $ hsep $ punctuate comma $ map ppr elems
     ppr (ArithSeq info) = brackets $ ppr info
     ppr (Typed t e)     = ppr e <+> text "::" <+> ppr t
 
@@ -224,7 +224,7 @@ instance Outputable id => Outputable (PhLocalBinds id) where
 
 instance Outputable id => Outputable (PhBind id) where
     ppr (FunBind id mg)   = ppr id <+> ppr mg
-    ppr (PatBind pat body) = ppr pat <+> char '=' <+> pprRhs (text "=") body
+    ppr (PatBind pat body) = ppr pat <+> pprRhs (text "=") body
 
 instance Outputable id => Outputable (Stmt id) where
     ppr (SExpr e) = ppr e
@@ -239,10 +239,10 @@ instance Outputable id => Outputable (ArithSeqInfo id) where
         (ppr e1 <> comma) <+> ppr e2 <+> text ".." <+> ppr e3
 
 instance Outputable id => Outputable (Sig id) where
-    ppr (TypeSig id t) = ppr id <+> text "::" <+> ppr t
+    ppr (TypeSig ids t) = hsep (punctuate comma $ map ppr ids) <+> text "::" <+> ppr t
     ppr (FixitySig assoc prec ids) = ppr assoc
                                      <+> int prec
-                                     <+> hcat (punctuate comma $ map ppr ids)
+                                     <+> hsep (punctuate comma $ map ppr ids)
 
 instance Outputable Assoc where
     ppr Infix  = text "infix"

@@ -10,6 +10,8 @@ data PhType id
        -- Type variable or type constructor
      = PhVarTy id
 
+     | PhBuiltInTyCon BuiltInTyCon -- Built in type constructors: (), [], (->), (,), (,,) ...
+
        -- Context => type
      | PhQualTy [Pred id]    -- context (C in C => A)
                 (LPhType id) -- payload (A in C => A)
@@ -27,11 +29,19 @@ data PhType id
 
      deriving (Show, Eq, Ord)
 
+data BuiltInTyCon
+     = UnitTyCon
+     | ListTyCon
+     | FunTyCon
+     | TupleTyCon Int -- Int is the number of fields; so it should be >= 2
+     deriving (Show, Eq, Ord)
+
 data Pred id = IsIn id (PhType id) -- Eq a, Eq [a] etc.
   deriving (Eq, Ord, Show)
 
 instance Outputable id => Outputable (PhType id) where
     ppr (PhVarTy id) = ppr id
+    ppr (PhBuiltInTyCon tycon) = ppr tycon
     ppr (PhQualTy ctxt t) = case ctxt of
         [] -> ppr t
         [c] -> ppr c <+> text "=>" <+> ppr t
@@ -41,6 +51,12 @@ instance Outputable id => Outputable (PhType id) where
     ppr (PhListTy t) = brackets $ ppr t
     ppr (PhTupleTy ts) = parens $ sep $ punctuate comma $ map ppr ts
     ppr (PhParTy t) = parens $ ppr t
+
+instance Outputable BuiltInTyCon where
+    ppr UnitTyCon = text "()"
+    ppr ListTyCon = text "[]"
+    ppr FunTyCon  = text "(->)"
+    ppr (TupleTyCon f) = parens $ hcat $ replicate (f - 1) comma
 
 instance Outputable id => Outputable (Pred id) where
     ppr (IsIn id t) = ppr id <+> ppr t
