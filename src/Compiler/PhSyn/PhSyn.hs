@@ -27,7 +27,7 @@ data PhDecl id
 
      | InstDecl [Pred id]          -- Context
                 id                 -- Class name
-                (PhType id)        -- the '[a]' in 'instance Eq [a] where'
+                (LPhType id)        -- the '[a]' in 'instance Eq [a] where'
                 (LPhLocalBinds id) -- The class function implementations
      deriving (Eq, Ord, Show)
 

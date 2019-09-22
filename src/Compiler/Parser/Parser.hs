@@ -107,6 +107,21 @@ parseFunBinding = do
 parsePatternBinding :: Parser (PhBind ParsedName)
 parsePatternBinding = PatBind <$> Pattern.parseLocated <*> locate (parseRHS LetCtxt)
 
+parseClassDecl :: Parser (LPhDecl ParsedName)
+parseClassDecl = locate $ do
+    reserved "class"
+    ctx <- (parseSimpleContext <* reservedOp "=>") <|> return []
+    ClassDecl ctx
+              <$> tyclsid -- renamer has to check that this is unqualified
+              <*> tyvarid
+              <*> (reserved "where" *> parseLocalBinds)
+
+parseInstanceDecl :: Parser (LPhDecl ParsedName)
+parseInstanceDecl = locate $ do
+    reserved "instance"
+    ctx <- (parseSimpleContext <* reservedOp "=>") <|> return []
+    InstDecl ctx <$> tyclsid <*> parseType <*> (reserved "where" *> parseLocalBinds)
+
 -- | Parses a single match which will eventually be part of a match group.
 --
 -- Considers the context as follows:
@@ -170,6 +185,8 @@ parseLocalBinds = locate $ do
 
 parseLocalDecl :: Parser (LPhDecl ParsedName)
 parseLocalDecl = parseSignature
+                 -- We'll delay rejecting pattern bindings in class
+                 -- or instance declarations for the renamer.
              <|> parseBinding
 
 matchCtx2Parser :: MatchContext -> Parser ()
@@ -357,7 +374,7 @@ parseContext =
 
 -- | Parses an individual predicate, like Eq a
 parsePred :: Parser (Pred ParsedName)
-parsePred = parseSimplePred
+parsePred = try parseSimplePred
         <|> do cls <- tyclsid
                ty  <- parens $ do
                    tyvar <- locate $ PhVarTy <$> tyvarid
