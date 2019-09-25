@@ -3,7 +3,7 @@ module Compiler.PhSyn.PhSyn where
 import Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as T
 
-import Compiler.BasicTypes.SrcLoc (Located)
+import Compiler.BasicTypes.SrcLoc (Located, unLoc)
 
 import Compiler.PhSyn.PhExpr
 import Compiler.PhSyn.PhType
@@ -39,7 +39,8 @@ data ConDecl id
 instance Outputable b => Outputable (PhModule b) where
     ppr (Module Nothing decls) = vcat (map ppr decls)
     ppr (Module (Just name) decls) =
-        vcat $ (text "module" <+> ppr name <+> text "where") : map ppr decls
+        vcat $ (text "module" <+> text (T.unpack $ unLoc name) <+> text "where") :
+        map ppr decls
 
 instance Outputable id => Outputable (PhDecl id) where
     ppr (Binding binding) = ppr binding
@@ -54,8 +55,21 @@ instance Outputable id => Outputable (PhDecl id) where
         prepend :: Doc -> [Doc] -> [Doc]
         prepend d = map (d <+>)
 
-    ppr (ClassDecl scs name tyvar binds) = undefined
-    ppr (InstDecl prds name head binds) = undefined
+    -- TODO fix the bindings part of the following two
+    ppr (ClassDecl scs name tyvar binds) =
+        let pscs = case scs of
+                [] -> mempty
+                [sc] -> ppr sc <+> text "=>"
+                scs  -> (parens . hsep . punctuate comma $ map ppr scs) <+> text "=>"
+        in text "class" <+> pscs <+> ppr name <+> ppr tyvar <+> text "where"
+                        $$ nest 4 (ppr binds)
+    ppr (InstDecl prds name head binds) =
+        let pprds = case prds of
+                [] -> mempty
+                [prd] -> ppr prd <+> text "=>"
+                prds  -> (parens . hsep . punctuate comma $ map ppr prds) <+> text "=>"
+        in text "instance" <+> pprds <+> ppr name <+> ppr head <+> text "where"
+                           $$ nest 4 (ppr binds)
 
 instance Outputable id => Outputable (ConDecl id) where
-    ppr (ConDecl name argTypes) = ppr name <+> hcat (map ppr argTypes)
+    ppr (ConDecl name argTypes) = ppr name <+> hsep (map ppr argTypes)

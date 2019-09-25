@@ -54,6 +54,8 @@ parseTopDecl :: Parser (LPhDecl ParsedName)
 parseTopDecl = parseDataDecl
            <|> parseSignature
            <|> parseBinding
+           <|> parseClassDecl
+           <|> parseInstanceDecl
 
 parseDataDecl :: Parser (LPhDecl ParsedName)
 parseDataDecl = locate $ do
@@ -107,20 +109,25 @@ parseFunBinding = do
 parsePatternBinding :: Parser (PhBind ParsedName)
 parsePatternBinding = PatBind <$> Pattern.parseLocated <*> locate (parseRHS LetCtxt)
 
+emptyLocalBinds :: PhLocalBinds ParsedName
+emptyLocalBinds = LocalBinds [] []
+
 parseClassDecl :: Parser (LPhDecl ParsedName)
 parseClassDecl = locate $ do
     reserved "class"
-    ctx <- (parseSimpleContext <* reservedOp "=>") <|> return []
+    ctx <- try (parseSimpleContext <* reservedOp "=>") <|> return []
     ClassDecl ctx
               <$> tyclsid -- renamer has to check that this is unqualified
               <*> tyvarid
-              <*> (reserved "where" *> parseLocalBinds)
+              <*> ((reserved "where" *> parseLocalBinds) <|> locate (return emptyLocalBinds))
 
 parseInstanceDecl :: Parser (LPhDecl ParsedName)
 parseInstanceDecl = locate $ do
     reserved "instance"
-    ctx <- (parseSimpleContext <* reservedOp "=>") <|> return []
-    InstDecl ctx <$> tyclsid <*> parseType <*> (reserved "where" *> parseLocalBinds)
+    ctx <- try (parseSimpleContext <* reservedOp "=>") <|> return []
+    InstDecl ctx <$> tyclsid
+                 <*> parseType
+                 <*> ((reserved "where" *> parseLocalBinds) <|> locate (return emptyLocalBinds))
 
 -- | Parses a single match which will eventually be part of a match group.
 --
