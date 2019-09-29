@@ -1,2 +1,9 @@
+import Control.Monad
+import Test.Tasty
+
+import qualified Compiler.Parser.LexerTest as Lexer
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = defaultMain $ testGroup "Tests"
+    [ Lexer.tests
+    ]

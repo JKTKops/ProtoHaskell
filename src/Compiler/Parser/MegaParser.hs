@@ -164,11 +164,11 @@ guardIndentation :: Parser ()
 guardIndentation = D.dbg "guardIndentation" $ do
     check <- optional $ P.satisfy (\t -> unLoc t == TokIndent)
     when (isJust check) $ do
-    mlc <- currentLayoutContext
-    case mlc of
-        Nothing -> return ()
-        Just Explicit -> return ()
-        Just (Implicit indent) -> implicit indent
+        mlc <- currentLayoutContext
+        case mlc of
+            Nothing -> return ()
+            Just Explicit -> return ()
+            Just (Implicit indent) -> implicit indent
   where
     implicit :: Pos -> Parser ()
     implicit indent = do

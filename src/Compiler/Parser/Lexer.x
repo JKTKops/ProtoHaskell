@@ -365,8 +365,8 @@ insertIndentationToks (l@(Located srcSpan _) : ls) =
   where go [] = []
         go [l] = [l]
         go (l1@(Located s1 _) : l2@(Located s2 _) : ls) =
-            -- Test if token l2 is the first on it's line, including the end of token l1
-            if (unsafeLocLine $ srcSpanEnd s1) < (unsafeLocLine $ srcSpanStart s2)
+            -- Test if token l2 is the first on its line, including the end of token l1
+            if (unsafeLocLine $ srcSpanStart s2) > (unsafeLocLine $ srcSpanEnd s1)
             -- If it is, insert indent token
             then l1 : noLoc TokIndent : go (l2 : ls)
             else l1 : go (l2 : ls)

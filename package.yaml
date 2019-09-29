@@ -9,7 +9,6 @@ copyright:           "2019 Max Kopinsky"
 extra-source-files:
 - README.md
 - ChangeLog.md
-- src/Compiler/Parser/Lexer.x
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
@@ -69,3 +68,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - ProtoHaskell
+    - tasty
+    - tasty-hunit
