@@ -1,9 +1,12 @@
 module Compiler.Parser.Parser
-    (
+    ( parse
     ) where
 
 import Prelude hiding (lex)
 
+import Utils.Outputable (render)
+
+import Compiler.Parser.Errors
 import Compiler.Parser.Helpers
 import qualified Compiler.Parser.Pattern as Pattern
 
@@ -29,9 +32,9 @@ import qualified Text.Parsec.Error as Parsec
 parse :: SourceName -> Flags -> String -> Either String (PhModule ParsedName)
 parse srcname flags input = do
     lexemes <- lex srcname input
-    case runParser modl srcname flags lexemes of
+    case runParser (modl <* eof) srcname flags lexemes of
         Right modl -> Right modl
-        Left parseErr -> Left (show parseErr)
+        Left parseErr -> Left (render $ pprParseError parseErr input lexemes)
 
 -----------------------------------------------------------------------------------------
 -- Component Parsers
