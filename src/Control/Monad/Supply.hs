@@ -37,7 +37,7 @@ withRemaining :: Monad m => SupplyT s m a -> SupplyT s m (a, [s])
 withRemaining m = do
     a <- m
     s <- getSupply
-    return $ (a, s)
+    return (a, s)
 
 instance Monad m => MonadSupply s (SupplyT s m) where
     supply = supplyST

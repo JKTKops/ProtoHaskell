@@ -4,14 +4,14 @@ data Unique = Unique !Pass !Int
   deriving (Eq, Show)
 
 data Pass
-     = Parse
-     | Rename
-     | TypeCheck
-     | Desugar
-     | Simplify
-     | TidyCore
-     | ToSTG
-     | PHCWiredIn
+     = ParsePass
+     | RenamePass
+     | TypeCheckPass
+     | DesugarPass
+     | SimplifyPass
+     | TidyCorePass
+     | ToSTGPass
+     | PHCWiredInPass
   deriving (Eq, Ord, Show, Enum, Bounded)
 
 mkUniqueSupply :: Pass -> [Unique]

@@ -37,6 +37,8 @@ dependencies:
 - array
 - base >= 4.7 && < 5
 - containers
+- directory
+- filepath
 - mtl
 - megaparsec
 - parsec
@@ -68,5 +70,9 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - ProtoHaskell
+    - bytestring # for testing with golden
+    - utf8-string # as above, utf8 is required bc it is the
+                  # standard encoding for haskell files
     - tasty
     - tasty-hunit
+    - tasty-golden
