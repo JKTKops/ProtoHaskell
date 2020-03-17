@@ -12,10 +12,12 @@ import Utils.Outputable (Outputable, output)
 (==>) :: (Eq a, Show a) => a -> a -> Assertion
 (==>) = (@?=)
 
+-- | Simple driver for golden tests. Each test will have the same name as the file
+-- that the input comes from.
 goldenSimple :: Outputable o
-             => TestName
-             -> FilePath
-             -> (FilePath -> String -> o)
+             => TestName -- ^ name of the test tree
+             -> FilePath -- ^ directory to search for tests in
+             -> (FilePath -> String -> o) -- ^ function to test
              -> IO TestTree
 goldenSimple name dir testee = do
     testFiles <- findByExtension [".hs"] dir
