@@ -355,6 +355,9 @@ varsym = flip label "symbol" $ do
         TokVarSym name          -> mkUnQual varName loc name
         TokQualVarSym qual name -> mkQual varName loc (qual, name)
 
+var :: Parser ParsedName
+var = varid <|> try (parens varsym)
+
 tyconid :: Parser ParsedName
 tyconid = flip label "type constructor" $ do
     Located loc tok <- satisfy isConIdToken

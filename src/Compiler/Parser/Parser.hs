@@ -320,7 +320,7 @@ parseFExp = unLoc <$> parseAExp `chainl1` return mkLPhAppExpr
 
 parseAExp :: Parser (LPhExpr ParsedName)
 parseAExp = locate
-           (PhVar <$> varid
+           (PhVar <$> var
         <|> parseGCon
         <|> parseLiteral
         <|> parens parseExprParen
