@@ -1,0 +1,1450 @@
+Right 
+  ( Module 
+    { modName = Just 
+      ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 1 8 16 ) "Geometry" )
+    , modDecls = 
+      [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 3 1 31 ) 
+        ( DataDecl 
+          ( UnQual 
+            ( OccName 
+              { nameSpace = TcClsName
+              , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 3 6 11
+              , nameText = "Point" 
+              } 
+            )
+          ) [] 
+          [ ConDecl 
+            ( UnQual 
+              ( OccName 
+                { nameSpace = DataName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 3 14 19
+                , nameText = "Point" 
+                } 
+              )
+            ) 
+            [ PhVarTy 
+              ( UnQual 
+                ( OccName 
+                  { nameSpace = TcClsName
+                  , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 3 20 25
+                  , nameText = "Float" 
+                  } 
+                )
+              )
+            , PhVarTy 
+              ( UnQual 
+                ( OccName 
+                  { nameSpace = TcClsName
+                  , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 3 26 31
+                  , nameText = "Float" 
+                  } 
+                )
+              )
+            ] 
+          ]
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 4 1 62 ) 
+        ( DataDecl 
+          ( UnQual 
+            ( OccName 
+              { nameSpace = TcClsName
+              , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 4 6 11
+              , nameText = "Shape" 
+              } 
+            )
+          ) [] 
+          [ ConDecl 
+            ( UnQual 
+              ( OccName 
+                { nameSpace = DataName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 4 14 20
+                , nameText = "Circle" 
+                } 
+              )
+            ) 
+            [ PhVarTy 
+              ( UnQual 
+                ( OccName 
+                  { nameSpace = TcClsName
+                  , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 4 21 26
+                  , nameText = "Point" 
+                  } 
+                )
+              )
+            , PhVarTy 
+              ( UnQual 
+                ( OccName 
+                  { nameSpace = TcClsName
+                  , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 4 27 32
+                  , nameText = "Float" 
+                  } 
+                )
+              )
+            ] 
+          , ConDecl 
+            ( UnQual 
+              ( OccName 
+                { nameSpace = DataName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 4 35 44
+                , nameText = "Rectangle" 
+                } 
+              )
+            ) 
+            [ PhVarTy 
+              ( UnQual 
+                ( OccName 
+                  { nameSpace = TcClsName
+                  , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 4 45 50
+                  , nameText = "Point" 
+                  } 
+                )
+              )
+            , PhVarTy 
+              ( UnQual 
+                ( OccName 
+                  { nameSpace = TcClsName
+                  , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 4 51 56
+                  , nameText = "Float" 
+                  } 
+                )
+              )
+            , PhVarTy 
+              ( UnQual 
+                ( OccName 
+                  { nameSpace = TcClsName
+                  , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 4 57 62
+                  , nameText = "Float" 
+                  } 
+                )
+              )
+            ] 
+          ] 
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 6 1 23 ) 
+        ( Signature 
+          ( TypeSig 
+            [ UnQual 
+              ( OccName 
+                { nameSpace = VarName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 6 1 5
+                , nameText = "area" 
+                } 
+              )
+            ] 
+            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 6 9 23 ) 
+              ( PhFunTy 
+                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 6 9 14 ) 
+                  ( PhVarTy 
+                    ( UnQual 
+                      ( OccName 
+                        { nameSpace = TcClsName
+                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 6 9 14
+                        , nameText = "Shape" 
+                        } 
+                      )
+                    )
+                  )
+                ) 
+                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 6 18 23 ) 
+                  ( PhVarTy 
+                    ( UnQual 
+                      ( OccName 
+                        { nameSpace = TcClsName
+                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 6 18 23
+                        , nameText = "Float" 
+                        } 
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 1 31 ) 
+        ( Binding 
+          ( FunBind 
+            ( UnQual 
+              ( OccName 
+                { nameSpace = VarName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 1 5
+                , nameText = "area" 
+                } 
+              )
+            ) 
+            ( MG 
+              { mgAlts = 
+                [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 6 31 ) 
+                  ( Match 
+                    { matchPats = 
+                      [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 6 18 ) 
+                        ( ParPat 
+                          ( PCon 
+                            ( UnQual 
+                              ( OccName 
+                                { nameSpace = DataName
+                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 7 13
+                                , nameText = "Circle" 
+                                } 
+                              )
+                            ) 
+                            [ PWild
+                            , PVar 
+                              ( UnQual 
+                                ( OccName 
+                                  { nameSpace = VarName
+                                  , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 16 17
+                                  , nameText = "r" 
+                                  } 
+                                )
+                              )
+                            ] 
+                          )
+                        )
+                      ]
+                    , rhs = Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 19 31 ) 
+                      ( RHS 
+                        { grhs = Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 19 31 ) 
+                          ( Unguarded 
+                            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 21 31 ) 
+                              ( OpApp 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 21 27 ) 
+                                  ( OpApp 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 21 23 ) 
+                                      ( PhVar 
+                                        ( UnQual 
+                                          ( OccName 
+                                            { nameSpace = VarName
+                                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 21 23
+                                            , nameText = "pi" 
+                                            } 
+                                          )
+                                        )
+                                      )
+                                    ) 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 24 25 ) 
+                                      ( PhVar 
+                                        ( UnQual 
+                                          ( OccName 
+                                            { nameSpace = VarName
+                                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 24 25
+                                            , nameText = "*" 
+                                            } 
+                                          )
+                                        )
+                                      )
+                                    ) 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 26 27 ) 
+                                      ( PhVar 
+                                        ( UnQual 
+                                          ( OccName 
+                                            { nameSpace = VarName
+                                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 26 27
+                                            , nameText = "r" 
+                                            } 
+                                          )
+                                        )
+                                      )
+                                    )
+                                  )
+                                ) 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 28 29 ) 
+                                  ( PhVar 
+                                    ( UnQual 
+                                      ( OccName 
+                                        { nameSpace = VarName
+                                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 28 29
+                                        , nameText = "^" 
+                                        } 
+                                      )
+                                    )
+                                  )
+                                ) 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 7 30 31 ) 
+                                  ( PhLit ( LitInt 2 ) )
+                                )
+                              )
+                            )
+                          )
+                        , localBinds = Located ( UnhelpfulSpan "<no location info>" ) ( LocalBinds [] [] )
+                        } 
+                      )
+                    } 
+                  )
+                ]
+              , mgCtxt = FunCtxt
+              } 
+            )
+          )
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 9 1 31 ) 
+        ( Signature 
+          ( TypeSig 
+            [ UnQual 
+              ( OccName 
+                { nameSpace = VarName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 9 1 13
+                , nameText = "sphereVolume" 
+                } 
+              )
+            ] 
+            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 9 17 31 ) 
+              ( PhFunTy 
+                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 9 17 22 ) 
+                  ( PhVarTy 
+                    ( UnQual 
+                      ( OccName 
+                        { nameSpace = TcClsName
+                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 9 17 22
+                        , nameText = "Float" 
+                        } 
+                      )
+                    )
+                  )
+                ) 
+                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 9 26 31 ) 
+                  ( PhVarTy 
+                    ( UnQual 
+                      ( OccName 
+                        { nameSpace = TcClsName
+                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 9 26 31
+                        , nameText = "Float" 
+                        } 
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 1 42 ) 
+        ( Binding 
+          ( FunBind 
+            ( UnQual 
+              ( OccName 
+                { nameSpace = VarName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 1 13
+                , nameText = "sphereVolume" 
+                } 
+              )
+            ) 
+            ( MG 
+              { mgAlts = 
+                [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 14 42 ) 
+                  ( Match 
+                    { matchPats = 
+                      [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 14 15 ) 
+                        ( PVar 
+                          ( UnQual 
+                            ( OccName 
+                              { nameSpace = VarName
+                              , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 14 15
+                              , nameText = "r" 
+                              } 
+                            )
+                          )
+                        )
+                      ]
+                    , rhs = Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 16 42 ) 
+                      ( RHS 
+                        { grhs = Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 16 42 ) 
+                          ( Unguarded 
+                            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 18 42 ) 
+                              ( OpApp 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 18 32 ) 
+                                  ( OpApp 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 18 27 ) 
+                                      ( PhPar 
+                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 19 26 ) 
+                                          ( OpApp 
+                                            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 19 22 ) 
+                                              ( PhLit ( LitFloat 4.0 ) )
+                                            ) 
+                                            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 22 23 ) 
+                                              ( PhVar 
+                                                ( UnQual 
+                                                  ( OccName 
+                                                    { nameSpace = VarName
+                                                    , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 22 23
+                                                    , nameText = "/" 
+                                                    } 
+                                                  )
+                                                )
+                                              )
+                                            ) 
+                                            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 23 26 ) 
+                                              ( PhLit ( LitFloat 3.0 ) )
+                                            )
+                                          )
+                                        )
+                                      )
+                                    ) 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 28 29 ) 
+                                      ( PhVar 
+                                        ( UnQual 
+                                          ( OccName 
+                                            { nameSpace = VarName
+                                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 28 29
+                                            , nameText = "*" 
+                                            } 
+                                          )
+                                        )
+                                      )
+                                    ) 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 30 32 ) 
+                                      ( PhVar 
+                                        ( UnQual 
+                                          ( OccName 
+                                            { nameSpace = VarName
+                                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 30 32
+                                            , nameText = "pi" 
+                                            } 
+                                          )
+                                        )
+                                      )
+                                    )
+                                  )
+                                ) 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 33 34 ) 
+                                  ( PhVar 
+                                    ( UnQual 
+                                      ( OccName 
+                                        { nameSpace = VarName
+                                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 33 34
+                                        , nameText = "*" 
+                                        } 
+                                      )
+                                    )
+                                  )
+                                ) 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 35 42 ) 
+                                  ( PhPar 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 36 41 ) 
+                                      ( OpApp 
+                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 36 37 ) 
+                                          ( PhVar 
+                                            ( UnQual 
+                                              ( OccName 
+                                                { nameSpace = VarName
+                                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 36 37
+                                                , nameText = "r" 
+                                                } 
+                                              )
+                                            )
+                                          )
+                                        ) 
+                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 38 39 ) 
+                                          ( PhVar 
+                                            ( UnQual 
+                                              ( OccName 
+                                                { nameSpace = VarName
+                                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 38 39
+                                                , nameText = "^" 
+                                                } 
+                                              )
+                                            )
+                                          )
+                                        ) 
+                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 10 40 41 ) 
+                                          ( PhLit ( LitInt 3 ) )
+                                        )
+                                      )
+                                    )
+                                  )
+                                )
+                              )
+                            )
+                          )
+                        , localBinds = Located ( UnhelpfulSpan "<no location info>" ) ( LocalBinds [] [] )
+                        } 
+                      )
+                    } 
+                  )
+                ]
+              , mgCtxt = FunCtxt
+              } 
+            )
+          )
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 12 1 29 ) 
+        ( Signature 
+          ( TypeSig 
+            [ UnQual 
+              ( OccName 
+                { nameSpace = VarName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 12 1 11
+                , nameText = "sphereArea" 
+                } 
+              )
+            ] 
+            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 12 15 29 ) 
+              ( PhFunTy 
+                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 12 15 20 ) 
+                  ( PhVarTy 
+                    ( UnQual 
+                      ( OccName 
+                        { nameSpace = TcClsName
+                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 12 15 20
+                        , nameText = "Float" 
+                        } 
+                      )
+                    )
+                  )
+                ) 
+                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 12 24 29 ) 
+                  ( PhVarTy 
+                    ( UnQual 
+                      ( OccName 
+                        { nameSpace = TcClsName
+                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 12 24 29
+                        , nameText = "Float" 
+                        } 
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 1 32 ) 
+        ( Binding 
+          ( FunBind 
+            ( UnQual 
+              ( OccName 
+                { nameSpace = VarName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 1 11
+                , nameText = "sphereArea" 
+                } 
+              )
+            ) 
+            ( MG 
+              { mgAlts = 
+                [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 12 32 ) 
+                  ( Match 
+                    { matchPats = 
+                      [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 12 13 ) 
+                        ( PVar 
+                          ( UnQual 
+                            ( OccName 
+                              { nameSpace = VarName
+                              , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 12 13
+                              , nameText = "r" 
+                              } 
+                            )
+                          )
+                        )
+                      ]
+                    , rhs = Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 14 32 ) 
+                      ( RHS 
+                        { grhs = Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 14 32 ) 
+                          ( Unguarded 
+                            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 16 32 ) 
+                              ( OpApp 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 16 22 ) 
+                                  ( OpApp 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 16 17 ) 
+                                      ( PhLit ( LitInt 4 ) )
+                                    ) 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 18 19 ) 
+                                      ( PhVar 
+                                        ( UnQual 
+                                          ( OccName 
+                                            { nameSpace = VarName
+                                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 18 19
+                                            , nameText = "*" 
+                                            } 
+                                          )
+                                        )
+                                      )
+                                    ) 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 20 22 ) 
+                                      ( PhVar 
+                                        ( UnQual 
+                                          ( OccName 
+                                            { nameSpace = VarName
+                                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 20 22
+                                            , nameText = "pi" 
+                                            } 
+                                          )
+                                        )
+                                      )
+                                    )
+                                  )
+                                ) 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 23 24 ) 
+                                  ( PhVar 
+                                    ( UnQual 
+                                      ( OccName 
+                                        { nameSpace = VarName
+                                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 23 24
+                                        , nameText = "*" 
+                                        } 
+                                      )
+                                    )
+                                  )
+                                ) 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 25 32 ) 
+                                  ( PhPar 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 26 31 ) 
+                                      ( OpApp 
+                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 26 27 ) 
+                                          ( PhVar 
+                                            ( UnQual 
+                                              ( OccName 
+                                                { nameSpace = VarName
+                                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 26 27
+                                                , nameText = "r" 
+                                                } 
+                                              )
+                                            )
+                                          )
+                                        ) 
+                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 28 29 ) 
+                                          ( PhVar 
+                                            ( UnQual 
+                                              ( OccName 
+                                                { nameSpace = VarName
+                                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 28 29
+                                                , nameText = "^" 
+                                                } 
+                                              )
+                                            )
+                                          )
+                                        ) 
+                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 13 30 31 ) 
+                                          ( PhLit ( LitInt 2 ) )
+                                        )
+                                      )
+                                    )
+                                  )
+                                )
+                              )
+                            )
+                          )
+                        , localBinds = Located ( UnhelpfulSpan "<no location info>" ) ( LocalBinds [] [] )
+                        } 
+                      )
+                    } 
+                  )
+                ]
+              , mgCtxt = FunCtxt
+              } 
+            )
+          )
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 15 1 29 ) 
+        ( Signature 
+          ( TypeSig 
+            [ UnQual 
+              ( OccName 
+                { nameSpace = VarName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 15 1 11
+                , nameText = "cubeVolume" 
+                } 
+              )
+            ] 
+            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 15 15 29 ) 
+              ( PhFunTy 
+                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 15 15 20 ) 
+                  ( PhVarTy 
+                    ( UnQual 
+                      ( OccName 
+                        { nameSpace = TcClsName
+                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 15 15 20
+                        , nameText = "Float" 
+                        } 
+                      )
+                    )
+                  )
+                ) 
+                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 15 24 29 ) 
+                  ( PhVarTy 
+                    ( UnQual 
+                      ( OccName 
+                        { nameSpace = TcClsName
+                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 15 24 29
+                        , nameText = "Float" 
+                        } 
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 1 34 ) 
+        ( Binding 
+          ( FunBind 
+            ( UnQual 
+              ( OccName 
+                { nameSpace = VarName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 1 11
+                , nameText = "cubeVolume" 
+                } 
+              )
+            ) 
+            ( MG 
+              { mgAlts = 
+                [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 12 34 ) 
+                  ( Match 
+                    { matchPats = 
+                      [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 12 13 ) 
+                        ( PVar 
+                          ( UnQual 
+                            ( OccName 
+                              { nameSpace = VarName
+                              , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 12 13
+                              , nameText = "s" 
+                              } 
+                            )
+                          )
+                        )
+                      ]
+                    , rhs = Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 14 34 ) 
+                      ( RHS 
+                        { grhs = Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 14 34 ) 
+                          ( Unguarded 
+                            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 16 34 ) 
+                              ( PhApp 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 16 32 ) 
+                                  ( PhApp 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 16 30 ) 
+                                      ( PhApp 
+                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 16 28 ) 
+                                          ( PhVar 
+                                            ( UnQual 
+                                              ( OccName 
+                                                { nameSpace = VarName
+                                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 16 28
+                                                , nameText = "cuboidVolume" 
+                                                } 
+                                              )
+                                            )
+                                          )
+                                        ) 
+                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 29 30 ) 
+                                          ( PhVar 
+                                            ( UnQual 
+                                              ( OccName 
+                                                { nameSpace = VarName
+                                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 29 30
+                                                , nameText = "s" 
+                                                } 
+                                              )
+                                            )
+                                          )
+                                        )
+                                      )
+                                    ) 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 31 32 ) 
+                                      ( PhVar 
+                                        ( UnQual 
+                                          ( OccName 
+                                            { nameSpace = VarName
+                                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 31 32
+                                            , nameText = "s" 
+                                            } 
+                                          )
+                                        )
+                                      )
+                                    )
+                                  )
+                                ) 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 33 34 ) 
+                                  ( PhVar 
+                                    ( UnQual 
+                                      ( OccName 
+                                        { nameSpace = VarName
+                                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 16 33 34
+                                        , nameText = "s" 
+                                        } 
+                                      )
+                                    )
+                                  )
+                                )
+                              )
+                            )
+                          )
+                        , localBinds = Located ( UnhelpfulSpan "<no location info>" ) ( LocalBinds [] [] )
+                        } 
+                      )
+                    } 
+                  )
+                ]
+              , mgCtxt = FunCtxt
+              } 
+            )
+          )
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 18 1 27 ) 
+        ( Signature 
+          ( TypeSig 
+            [ UnQual 
+              ( OccName 
+                { nameSpace = VarName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 18 1 9
+                , nameText = "cubeArea" 
+                } 
+              )
+            ] 
+            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 18 13 27 ) 
+              ( PhFunTy 
+                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 18 13 18 ) 
+                  ( PhVarTy 
+                    ( UnQual 
+                      ( OccName 
+                        { nameSpace = TcClsName
+                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 18 13 18
+                        , nameText = "Float" 
+                        } 
+                      )
+                    )
+                  )
+                ) 
+                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 18 22 27 ) 
+                  ( PhVarTy 
+                    ( UnQual 
+                      ( OccName 
+                        { nameSpace = TcClsName
+                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 18 22 27
+                        , nameText = "Float" 
+                        } 
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 1 30 ) 
+        ( Binding 
+          ( FunBind 
+            ( UnQual 
+              ( OccName 
+                { nameSpace = VarName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 1 9
+                , nameText = "cubeArea" 
+                } 
+              )
+            ) 
+            ( MG 
+              { mgAlts = 
+                [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 10 30 ) 
+                  ( Match 
+                    { matchPats = 
+                      [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 10 11 ) 
+                        ( PVar 
+                          ( UnQual 
+                            ( OccName 
+                              { nameSpace = VarName
+                              , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 10 11
+                              , nameText = "s" 
+                              } 
+                            )
+                          )
+                        )
+                      ]
+                    , rhs = Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 12 30 ) 
+                      ( RHS 
+                        { grhs = Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 12 30 ) 
+                          ( Unguarded 
+                            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 14 30 ) 
+                              ( PhApp 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 14 28 ) 
+                                  ( PhApp 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 14 26 ) 
+                                      ( PhApp 
+                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 14 24 ) 
+                                          ( PhVar 
+                                            ( UnQual 
+                                              ( OccName 
+                                                { nameSpace = VarName
+                                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 14 24
+                                                , nameText = "cuboidArea" 
+                                                } 
+                                              )
+                                            )
+                                          )
+                                        ) 
+                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 25 26 ) 
+                                          ( PhVar 
+                                            ( UnQual 
+                                              ( OccName 
+                                                { nameSpace = VarName
+                                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 25 26
+                                                , nameText = "s" 
+                                                } 
+                                              )
+                                            )
+                                          )
+                                        )
+                                      )
+                                    ) 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 27 28 ) 
+                                      ( PhVar 
+                                        ( UnQual 
+                                          ( OccName 
+                                            { nameSpace = VarName
+                                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 27 28
+                                            , nameText = "s" 
+                                            } 
+                                          )
+                                        )
+                                      )
+                                    )
+                                  )
+                                ) 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 29 30 ) 
+                                  ( PhVar 
+                                    ( UnQual 
+                                      ( OccName 
+                                        { nameSpace = VarName
+                                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 19 29 30
+                                        , nameText = "s" 
+                                        } 
+                                      )
+                                    )
+                                  )
+                                )
+                              )
+                            )
+                          )
+                        , localBinds = Located ( UnhelpfulSpan "<no location info>" ) ( LocalBinds [] [] )
+                        } 
+                      )
+                    } 
+                  )
+                ]
+              , mgCtxt = FunCtxt
+              } 
+            )
+          )
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 21 1 49 ) 
+        ( Signature 
+          ( TypeSig 
+            [ UnQual 
+              ( OccName 
+                { nameSpace = VarName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 21 1 13
+                , nameText = "cuboidVolume" 
+                } 
+              )
+            ] 
+            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 21 17 49 ) 
+              ( PhFunTy 
+                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 21 17 22 ) 
+                  ( PhVarTy 
+                    ( UnQual 
+                      ( OccName 
+                        { nameSpace = TcClsName
+                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 21 17 22
+                        , nameText = "Float" 
+                        } 
+                      )
+                    )
+                  )
+                ) 
+                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 21 26 49 ) 
+                  ( PhFunTy 
+                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 21 26 31 ) 
+                      ( PhVarTy 
+                        ( UnQual 
+                          ( OccName 
+                            { nameSpace = TcClsName
+                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 21 26 31
+                            , nameText = "Float" 
+                            } 
+                          )
+                        )
+                      )
+                    ) 
+                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 21 35 49 ) 
+                      ( PhFunTy 
+                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 21 35 40 ) 
+                          ( PhVarTy 
+                            ( UnQual 
+                              ( OccName 
+                                { nameSpace = TcClsName
+                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 21 35 40
+                                , nameText = "Float" 
+                                } 
+                              )
+                            )
+                          )
+                        ) 
+                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 21 44 49 ) 
+                          ( PhVarTy 
+                            ( UnQual 
+                              ( OccName 
+                                { nameSpace = TcClsName
+                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 21 44 49
+                                , nameText = "Float" 
+                                } 
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 1 31 ) 
+        ( Binding 
+          ( FunBind 
+            ( UnQual 
+              ( OccName 
+                { nameSpace = VarName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 1 13
+                , nameText = "cuboidVolume" 
+                } 
+              )
+            ) 
+            ( MG 
+              { mgAlts = 
+                [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 14 31 ) 
+                  ( Match 
+                    { matchPats = 
+                      [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 14 15 ) 
+                        ( PVar 
+                          ( UnQual 
+                            ( OccName 
+                              { nameSpace = VarName
+                              , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 14 15
+                              , nameText = "a" 
+                              } 
+                            )
+                          )
+                        )
+                      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 16 17 ) 
+                        ( PVar 
+                          ( UnQual 
+                            ( OccName 
+                              { nameSpace = VarName
+                              , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 16 17
+                              , nameText = "b" 
+                              } 
+                            )
+                          )
+                        )
+                      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 18 19 ) 
+                        ( PVar 
+                          ( UnQual 
+                            ( OccName 
+                              { nameSpace = VarName
+                              , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 18 19
+                              , nameText = "c" 
+                              } 
+                            )
+                          )
+                        )
+                      ] 
+                    , rhs = Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 20 31 ) 
+                      ( RHS 
+                        { grhs = Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 20 31 ) 
+                          ( Unguarded 
+                            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 22 31 ) 
+                              ( OpApp 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 22 27 ) 
+                                  ( OpApp 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 22 23 ) 
+                                      ( PhVar 
+                                        ( UnQual 
+                                          ( OccName 
+                                            { nameSpace = VarName
+                                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 22 23
+                                            , nameText = "a" 
+                                            } 
+                                          )
+                                        )
+                                      )
+                                    ) 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 24 25 ) 
+                                      ( PhVar 
+                                        ( UnQual 
+                                          ( OccName 
+                                            { nameSpace = VarName
+                                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 24 25
+                                            , nameText = "*" 
+                                            } 
+                                          )
+                                        )
+                                      )
+                                    ) 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 26 27 ) 
+                                      ( PhVar 
+                                        ( UnQual 
+                                          ( OccName 
+                                            { nameSpace = VarName
+                                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 26 27
+                                            , nameText = "b" 
+                                            } 
+                                          )
+                                        )
+                                      )
+                                    )
+                                  )
+                                ) 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 28 29 ) 
+                                  ( PhVar 
+                                    ( UnQual 
+                                      ( OccName 
+                                        { nameSpace = VarName
+                                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 28 29
+                                        , nameText = "*" 
+                                        } 
+                                      )
+                                    )
+                                  )
+                                ) 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 30 31 ) 
+                                  ( PhVar 
+                                    ( UnQual 
+                                      ( OccName 
+                                        { nameSpace = VarName
+                                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 22 30 31
+                                        , nameText = "c" 
+                                        } 
+                                      )
+                                    )
+                                  )
+                                )
+                              )
+                            )
+                          )
+                        , localBinds = Located ( UnhelpfulSpan "<no location info>" ) ( LocalBinds [] [] )
+                        } 
+                      )
+                    } 
+                  )
+                ]
+              , mgCtxt = FunCtxt
+              } 
+            )
+          )
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 24 1 47 ) 
+        ( Signature 
+          ( TypeSig 
+            [ UnQual 
+              ( OccName 
+                { nameSpace = VarName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 24 1 11
+                , nameText = "cuboidArea" 
+                } 
+              )
+            ] 
+            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 24 15 47 ) 
+              ( PhFunTy 
+                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 24 15 20 ) 
+                  ( PhVarTy 
+                    ( UnQual 
+                      ( OccName 
+                        { nameSpace = TcClsName
+                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 24 15 20
+                        , nameText = "Float" 
+                        } 
+                      )
+                    )
+                  )
+                ) 
+                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 24 24 47 ) 
+                  ( PhFunTy 
+                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 24 24 29 ) 
+                      ( PhVarTy 
+                        ( UnQual 
+                          ( OccName 
+                            { nameSpace = TcClsName
+                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 24 24 29
+                            , nameText = "Float" 
+                            } 
+                          )
+                        )
+                      )
+                    ) 
+                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 24 33 47 ) 
+                      ( PhFunTy 
+                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 24 33 38 ) 
+                          ( PhVarTy 
+                            ( UnQual 
+                              ( OccName 
+                                { nameSpace = TcClsName
+                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 24 33 38
+                                , nameText = "Float" 
+                                } 
+                              )
+                            )
+                          )
+                        ) 
+                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 24 42 47 ) 
+                          ( PhVarTy 
+                            ( UnQual 
+                              ( OccName 
+                                { nameSpace = TcClsName
+                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 24 42 47
+                                , nameText = "Float" 
+                                } 
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 1 47 ) 
+        ( Binding 
+          ( FunBind 
+            ( UnQual 
+              ( OccName 
+                { nameSpace = VarName
+                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 1 11
+                , nameText = "cuboidArea" 
+                } 
+              )
+            ) 
+            ( MG 
+              { mgAlts = 
+                [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 12 47 ) 
+                  ( Match 
+                    { matchPats = 
+                      [ Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 12 13 ) 
+                        ( PVar 
+                          ( UnQual 
+                            ( OccName 
+                              { nameSpace = VarName
+                              , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 12 13
+                              , nameText = "a" 
+                              } 
+                            )
+                          )
+                        )
+                      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 14 15 ) 
+                        ( PVar 
+                          ( UnQual 
+                            ( OccName 
+                              { nameSpace = VarName
+                              , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 14 15
+                              , nameText = "b" 
+                              } 
+                            )
+                          )
+                        )
+                      , Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 16 17 ) 
+                        ( PVar 
+                          ( UnQual 
+                            ( OccName 
+                              { nameSpace = VarName
+                              , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 16 17
+                              , nameText = "c" 
+                              } 
+                            )
+                          )
+                        )
+                      ] 
+                    , rhs = Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 18 47 ) 
+                      ( RHS 
+                        { grhs = Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 18 47 ) 
+                          ( Unguarded 
+                            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 20 47 ) 
+                              ( OpApp 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 20 21 ) 
+                                  ( PhLit ( LitInt 2 ) )
+                                ) 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 22 23 ) 
+                                  ( PhVar 
+                                    ( UnQual 
+                                      ( OccName 
+                                        { nameSpace = VarName
+                                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 22 23
+                                        , nameText = "*" 
+                                        } 
+                                      )
+                                    )
+                                  )
+                                ) 
+                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 24 47 ) 
+                                  ( PhPar 
+                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 25 46 ) 
+                                      ( OpApp 
+                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 25 42 ) 
+                                          ( OpApp 
+                                            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 25 38 ) 
+                                              ( OpApp 
+                                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 25 34 ) 
+                                                  ( OpApp 
+                                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 25 30 ) 
+                                                      ( OpApp 
+                                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 25 26 ) 
+                                                          ( PhVar 
+                                                            ( UnQual 
+                                                              ( OccName 
+                                                                { nameSpace = VarName
+                                                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 25 26
+                                                                , nameText = "a" 
+                                                                } 
+                                                              )
+                                                            )
+                                                          )
+                                                        ) 
+                                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 27 28 ) 
+                                                          ( PhVar 
+                                                            ( UnQual 
+                                                              ( OccName 
+                                                                { nameSpace = VarName
+                                                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 27 28
+                                                                , nameText = "*" 
+                                                                } 
+                                                              )
+                                                            )
+                                                          )
+                                                        ) 
+                                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 29 30 ) 
+                                                          ( PhVar 
+                                                            ( UnQual 
+                                                              ( OccName 
+                                                                { nameSpace = VarName
+                                                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 29 30
+                                                                , nameText = "b" 
+                                                                } 
+                                                              )
+                                                            )
+                                                          )
+                                                        )
+                                                      )
+                                                    ) 
+                                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 31 32 ) 
+                                                      ( PhVar 
+                                                        ( UnQual 
+                                                          ( OccName 
+                                                            { nameSpace = VarName
+                                                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 31 32
+                                                            , nameText = "+" 
+                                                            } 
+                                                          )
+                                                        )
+                                                      )
+                                                    ) 
+                                                    ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 33 34 ) 
+                                                      ( PhVar 
+                                                        ( UnQual 
+                                                          ( OccName 
+                                                            { nameSpace = VarName
+                                                            , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 33 34
+                                                            , nameText = "b" 
+                                                            } 
+                                                          )
+                                                        )
+                                                      )
+                                                    )
+                                                  )
+                                                ) 
+                                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 35 36 ) 
+                                                  ( PhVar 
+                                                    ( UnQual 
+                                                      ( OccName 
+                                                        { nameSpace = VarName
+                                                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 35 36
+                                                        , nameText = "*" 
+                                                        } 
+                                                      )
+                                                    )
+                                                  )
+                                                ) 
+                                                ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 37 38 ) 
+                                                  ( PhVar 
+                                                    ( UnQual 
+                                                      ( OccName 
+                                                        { nameSpace = VarName
+                                                        , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 37 38
+                                                        , nameText = "c" 
+                                                        } 
+                                                      )
+                                                    )
+                                                  )
+                                                )
+                                              )
+                                            ) 
+                                            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 39 40 ) 
+                                              ( PhVar 
+                                                ( UnQual 
+                                                  ( OccName 
+                                                    { nameSpace = VarName
+                                                    , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 39 40
+                                                    , nameText = "+" 
+                                                    } 
+                                                  )
+                                                )
+                                              )
+                                            ) 
+                                            ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 41 42 ) 
+                                              ( PhVar 
+                                                ( UnQual 
+                                                  ( OccName 
+                                                    { nameSpace = VarName
+                                                    , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 41 42
+                                                    , nameText = "a" 
+                                                    } 
+                                                  )
+                                                )
+                                              )
+                                            )
+                                          )
+                                        ) 
+                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 43 44 ) 
+                                          ( PhVar 
+                                            ( UnQual 
+                                              ( OccName 
+                                                { nameSpace = VarName
+                                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 43 44
+                                                , nameText = "*" 
+                                                } 
+                                              )
+                                            )
+                                          )
+                                        ) 
+                                        ( Located ( RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 45 46 ) 
+                                          ( PhVar 
+                                            ( UnQual 
+                                              ( OccName 
+                                                { nameSpace = VarName
+                                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine "test/Compiler/Parser/testcases/shouldsucceed/geometry.hs" 25 45 46
+                                                , nameText = "c" 
+                                                } 
+                                              )
+                                            )
+                                          )
+                                        )
+                                      )
+                                    )
+                                  )
+                                )
+                              )
+                            )
+                          )
+                        , localBinds = Located ( UnhelpfulSpan "<no location info>" ) ( LocalBinds [] [] )
+                        } 
+                      )
+                    } 
+                  )
+                ]
+              , mgCtxt = FunCtxt
+              } 
+            )
+          )
+        )
+      ] 
+    } 
+  )

@@ -117,6 +117,16 @@ label p exp = do
 (<?>) = label
 infixl 0 <?> -- I disagree with this fixity but it's what Parsec uses
 
+-- | Anticipate a user error, producing an error like:
+-- "unexpected <token>, perhaps you meant <msg>"
+anticipate :: Token -> String -> Parser a
+anticipate t msg = do
+    lookAhead $ token t
+    unexpected $ showTokenPretty t ++ ", perhaps you meant " ++ msg ++ "?"
+
+anticipateOp :: String -> String -> Parser a
+anticipateOp op msg = anticipate (reservedOpToTok op) msg
+
 instance HasCompFlags (Parsec [Lexeme] ParseState) where
     getCompFlags = compFlags <$> getState
 
@@ -132,7 +142,7 @@ in order to be able to guarantee that the user sees pretty-printed error message
 -}
 instance {-# OVERLAPPING #-} Show (GenLocated SrcSpan Token) where
     show (Located _ TokIndent) = "indentation"
-    show t = (Out.ppr >>> Out.prettyQuote >>> show) t
+    show (Located _ t)         = showTokenPretty t
 
 -----------------------------------------------------------------------------------------
 -- Primitive parsers for our Tokens
@@ -193,7 +203,7 @@ guardIndentation = do
                     else unexpected "indentation")
 
 token :: Token -> Parser Lexeme
-token t = satisfy (== t) <?> (Out.ppr t & Out.prettyQuote & show)
+token t = satisfy (== t) <?> showTokenPretty t
 
 oneOf :: [Token] -> Parser Lexeme
 oneOf ts = satisfy (`elem` ts)
@@ -252,9 +262,12 @@ stmtSep1 p = many semicolon >> p `sepEndBy1` many1 semicolon
 align :: Parser ()
 align = modify $ \s -> s { indentOrd = Eq }
 
+
 -- | Allows the next token to be either aligned with the reference column or further indented.
 maybeAlign :: Parser ()
 maybeAlign = modify $ \s -> s { indentOrd = Geq }
+
+
 
 -- | Parses a block of parser 'p'. A "block" can be either explicit or implicit.
 -- An explicit block is surrounded by '{' and '}' and 'p' must be separated by semicolons.

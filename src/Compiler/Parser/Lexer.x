@@ -13,6 +13,7 @@ module Compiler.Parser.Lexer
     , isVarSymToken
     , isConIdToken
     , isConSymToken
+    , showTokenPretty
     ) where
 
 import Prelude hiding (lex)
@@ -431,4 +432,7 @@ instance Outputable Token where
         TokQualConSym qual id -> T.unpack qual ++ "." ++ T.unpack id
         TokEOF -> "<end of file>"
         TokIndent -> "<indentation>"
+
+showTokenPretty :: Token -> String
+showTokenPretty = show . prettyQuote . ppr
 }

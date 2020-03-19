@@ -14,6 +14,7 @@ data PhModule a = Module
   { modName :: Maybe (Located Text)
   , modDecls :: [LPhDecl a]
   }
+  deriving (Eq, Ord, Show)
 
 type LPhDecl a = Located (PhDecl a)
 data PhDecl id

@@ -59,6 +59,7 @@ parseTopDecl = parseDataDecl
            <|> parseBinding
            <|> parseClassDecl
            <|> parseInstanceDecl
+           <?> "top-level declaration"
 
 parseDataDecl :: Parser (LPhDecl ParsedName)
 parseDataDecl = locate $ do
@@ -72,7 +73,8 @@ parseDataDecl = locate $ do
 parseConDecl :: Parser (ConDecl ParsedName)
 parseConDecl = do
     name <- dataconid
-    fields <- map unLoc <$> many parseType
+    fields <- map unLoc <$> many parseAType -- don't want to use parseType, it will just see
+                                            -- AppTy before many can turn it into a list
     return $ ConDecl name fields
 
 parseSignature :: Parser (LPhDecl ParsedName)
@@ -144,23 +146,38 @@ parseMatch ctx = do
     pats <- many1 Pattern.parseLocated
     rhs  <- locate $ parseRHS ctx
     mLocalBinds <- if ctx /= LamCtxt
-        then optionMaybe $ token TokWhere >> parseLocalBinds
+        then optionMaybe (token TokWhere >> parseLocalBinds) <?> "where clause"
         else return Nothing
-    return Match { matchPats = pats, rhs, localBinds = mLocalBinds }
+    return Match { matchPats = pats, rhs }
 
--- | Parses the right hand side of a binding. Considers the context as follows:
+-- | Parses the right hand side of a binding.
+-- Lam contexts are not allowed to contain local bindings. Case contexts /are/, though
+-- hardly anyone ever uses that feature.
+parseRHS :: MatchContext -> Parser (RHS ParsedName)
+parseRHS ctx = do
+    grhs <- locate $ parseGRHS ctx
+    mLocalBinds <- if ctx /= LamCtxt
+        then optionMaybe (token TokWhere >> parseLocalBinds) <?> "where clause"
+        else return Nothing
+    return RHS { grhs, localBinds = flatten mLocalBinds }
+  where flatten (Just binds) = binds
+        flatten Nothing      = Located noSrcSpan $ LocalBinds [] []
+
+-- | Parses the "guarded right hand sides" of a binding. See NOTE: [GRHS] in PhExpr.
 --
 -- The left and right hand side are separated by '->' in Lam and Case contexts,
 -- but by '=' in Fun and Let contexts
 --
 -- Lam contexts are not allowed to contain guards.
-parseRHS :: MatchContext -> Parser (RHS ParsedName)
-parseRHS LamCtxt = reservedOp "->" >> Unguarded <$> parseLocExpr
-parseRHS ctxt = parseGuarded <|> parseUnguarded
+parseGRHS :: MatchContext -> Parser (GuardedRHS ParsedName)
+parseGRHS LamCtxt = do
+    matchCtx2Parser LamCtxt
+    Unguarded <$> parseLocExpr
+parseGRHS ctxt = parseGuarded <|> parseUnguarded
   where parseBinder :: Parser ()
         parseBinder = matchCtx2Parser ctxt
 
-        parseGuarded :: Parser (RHS ParsedName)
+        parseGuarded :: Parser (GuardedRHS ParsedName)
         parseGuarded = reservedOp "|" >> Guarded <$> parseGuard `sepBy1` reservedOp "|"
 
         parseGuard :: Parser (LGuard ParsedName)
@@ -198,13 +215,19 @@ parseLocalDecl = parseSignature
                  -- We'll delay rejecting pattern bindings in class
                  -- or instance declarations for the renamer.
              <|> parseBinding
+             <?> "local declaration"
 
 matchCtx2Parser :: MatchContext -> Parser ()
 matchCtx2Parser = void . \case
-    FunCtxt -> reservedOp "="
-    CaseCtxt -> reservedOp "->"
-    LamCtxt -> reservedOp "->"
-    LetCtxt -> reservedOp "="
+    FunCtxt  -> reservedOp "="  <|> failArrowSign <?> eqpretty
+    CaseCtxt -> reservedOp "->" <|> failEqualSign <?> arpretty
+    LamCtxt  -> reservedOp "->" <|> failEqualSign <?> arpretty
+    LetCtxt  -> reservedOp "="  <|> failArrowSign <?> eqpretty
+  where failEqualSign = anticipateOp "=" arpretty
+        failArrowSign = anticipateOp "->" eqpretty
+
+        eqpretty = showTokenPretty TokEqual
+        arpretty = showTokenPretty TokRArrow
 
 -----------------------------------------------------------------------------------------
 -- Parsing Expressions

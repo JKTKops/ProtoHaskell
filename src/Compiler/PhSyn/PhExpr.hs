@@ -66,12 +66,28 @@ type LMatch id = Located (Match id)
 data Match id
      = Match { matchPats :: [LPat id]
              , rhs :: LRHS id
-             , localBinds :: Maybe (LPhLocalBinds id) -- 'where' clause
              }
      deriving (Eq, Ord, Show)
 
 type LRHS id = Located (RHS id)
 data RHS id
+     = RHS { grhs       :: LGRHS id
+           , localBinds :: LPhLocalBinds id -- where clause
+           -- There is technically a distinction between "no local bindings" and
+           -- "empty local bindings", syntactically, but semantically they are the same.
+           -- So the pretty-printer won't print them. Messages printed from source would
+           -- still (obviously) see the empty local bindings.
+           }
+     deriving (Eq, Ord, Show)
+
+-- NOTE: [GRHS]
+-- Called "guarded right hand sides" even if there are actually no guards
+-- General plan for PatternGuards in the future: instead of unguarded/guarded distinction,
+-- have one GRHS per guard, which is shaped like GRHS [LGuardStmt] LPhExpr
+-- where LGuardStmt is just an LStmt (same as statements in a do-block, meaning distinguished
+-- by the context). Then RHS contains a [LGRHS] instead of just an LGRHS.
+type LGRHS id = Located (GuardedRHS id)
+data GuardedRHS id
      = Unguarded (LPhExpr id)
      | Guarded [LGuard id]
      deriving (Eq, Ord, Show)
@@ -194,17 +210,19 @@ instance Outputable id => Outputable (MatchGroup id) where
     ppr (MG (map unLoc -> alts) ctxt) = vcat $ map (pprMatch ctxt) alts
 
 pprMatch :: Outputable id => MatchContext -> Match id -> Doc
-pprMatch ctxt (Match pats rhs locals) =
+pprMatch ctxt (Match pats rhs) =
   hsep (map ppr pats) <+> pprRhs (if isCaseOrLamCtxt ctxt then text "->" else text "=") rhs
-                      $$ pprLocals locals
 
-pprLocals :: Outputable id => Maybe (LPhLocalBinds id) -> Doc
-pprLocals Nothing = mempty
-pprLocals (Just (unLoc -> ls)) = nest 2 $ text "where" $$ nest 2 (ppr ls)
+pprLocals :: Outputable id => LPhLocalBinds id -> Doc
+pprLocals (unLoc -> LocalBinds [] []) = mempty
+pprLocals (unLoc -> ls) = nest 2 $ text "where" $$ nest 2 (ppr ls)
 
 pprRhs :: Outputable id => Doc -> LRHS id -> Doc
-pprRhs ctxt (unLoc -> Unguarded body) = ctxt <+> ppr body
-pprRhs ctxt (unLoc -> Guarded guards) = nest 2 $ vcat $ map (pprGuard ctxt) guards
+pprRhs ctxt (unLoc -> RHS grhs locals) = pprGrhs ctxt grhs $$ pprLocals locals
+
+pprGrhs :: Outputable id => Doc -> LGRHS id -> Doc
+pprGrhs ctxt (unLoc -> Unguarded body) = ctxt <+> ppr body
+pprGrhs ctxt (unLoc -> Guarded guards) = nest 2 $ vcat $ map (pprGuard ctxt) guards
 
 pprGuard :: Outputable id => Doc -> LGuard id -> Doc
 pprGuard ctxt (unLoc -> Guard guard body) = text "|" <+> ppr guard <+> ctxt <+> ppr body

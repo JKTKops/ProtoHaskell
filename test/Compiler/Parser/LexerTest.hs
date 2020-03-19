@@ -1,4 +1,6 @@
 module Compiler.Parser.LexerTest (tests) where
+-- test tree matches source tree, which awkwardly puts these outside of the lexer/testcases
+-- folder. Consider moving it to test/Compiler/Parser/testcases/lexer/
 
 import Prelude hiding (lex)
 
@@ -13,10 +15,10 @@ import Test
 import Test.Tasty
 import Test.Tasty.HUnit
 
-tests :: IO TestTree
+tests :: IO [TestTree]
 tests = do
     goldens <- goldenLexerTests
-    return $ testGroup "" [pureTests, goldens]
+    return [pureTests, goldens]
 
 pureTests :: TestTree
 pureTests = testGroup "Lexer Normal Tests"
@@ -42,9 +44,10 @@ testIndentationToks = testGroup "Indentation Token Insertion" $ map mkLexTest
     ]
 
 goldenLexerTests :: IO TestTree
-goldenLexerTests = goldenSimple "Lexer Golden Tests"
+goldenLexerTests = goldenOutput "Lexer Golden Tests"
                                 "test/Compiler/Lexer/testcases"
                                 lex
+                                (const OK)
 
 data LexTest = LexTest
     { testDesc     :: String
