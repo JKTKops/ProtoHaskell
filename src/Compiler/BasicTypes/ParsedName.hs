@@ -23,8 +23,8 @@ data ParsedName
 
      | Qual Text OccName
        -- ^ A qualified name directly from the source.
-       -- the module name is the name of the module from which it is imported
-       -- not necessarily the module in which it is defined.
+       -- the module name is the (possibly qualified) name of the module from which
+       -- it is imported; not necessarily the module in which it is defined.
 
      | Orig Text OccName
        -- ^ 'Original' name. Module name is the defining module.

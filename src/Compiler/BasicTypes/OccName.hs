@@ -116,26 +116,19 @@ dataName = DataName
 tvName   = TvName
 
 isVarNameSpace :: NameSpace -> Bool
-isVarNameSpace VarName = True
-isVarNameSpace TvName  = True
-isVarNameSpace _       = False
+isVarNameSpace ns = ns `elem` [VarName, TvName]
 
 isTvNameSpace :: NameSpace -> Bool
-isTvNameSpace TvName = True
-isTvNameSpace _      = False
+isTvNameSpace = (== TvName)
 
 isDataConNameSpace :: NameSpace -> Bool
-isDataConNameSpace DataName = True
-isDataConNameSpace _        = False
+isDataConNameSpace = (== DataName)
 
 isValNameSpace :: NameSpace -> Bool
-isValNameSpace VarName  = True
-isValNameSpace DataName = True
-isValNameSpace _        = False
+isValNameSpace ns = ns `elem` [VarName, DataName]
 
 isTcClsNameSpace :: NameSpace -> Bool
-isTcClsNameSpace TcClsName = True
-isTcClsNameSpace _         = False
+isTcClsNameSpace = (== TcClsName)
 
 pprNameSpace :: NameSpace -> Doc
 pprNameSpace VarName   = "variable"

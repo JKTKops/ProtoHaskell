@@ -1,3 +1,9 @@
+{-
+Compilation flags. Expect the internals of this module to change somewhat often
+as the compiler is developed. It is important that the 'Flags' type remain an
+abstract export to facilitate this as its shape will change to include /tons/
+of extra information.
+-}
 module Compiler.BasicTypes.Flags
     ( Flag(..)
     , Flags    -- abstract
@@ -13,8 +19,9 @@ module Compiler.BasicTypes.Flags
     , dDumpCoreOn, dDumpSimpleOn
     , dDumpTidyOn, dDumpSTGOn
 
-      -- * Obtaining flags inside a Monad
+      -- * Obtaining flags from structures
     , HasCompFlags(..)
+    , ContainsCompFlags(..)
     ) where
 
 
@@ -50,6 +57,7 @@ fromList fs = Flags $ Set.fromList fs
 member :: Flag -> Flags -> Bool
 member e flags = e `Set.member` unFlags flags
 
+-- could generate these with TH but I don't want to bring TH into this project
 wAllOn, wIncompletePatternsOn                   :: Flags -> Bool
 xMagicHashOn, xTupleSectionsOn                  :: Flags -> Bool
 dDumpParsedOn, dDumpRenamedOn, dDumpTypeCheckOn :: Flags -> Bool
@@ -72,3 +80,7 @@ dDumpSTGOn            = member DDumpSTG
 -- We intend to make monads instances of this class
 class HasCompFlags m where
     getCompFlags :: m Flags
+
+-- And non-monads instances of this class.
+class ContainsCompFlags a where
+    extractCompFlags :: a -> Flags
