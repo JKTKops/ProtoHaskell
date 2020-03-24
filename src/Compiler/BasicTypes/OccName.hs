@@ -13,6 +13,7 @@ module Compiler.BasicTypes.OccName
 
       -- * Deconstructing OccNames
     , nameSpace
+    , nameFS
     , nameText
     , occNameSrcSpan
 
@@ -46,13 +47,15 @@ import qualified Data.Text.Lazy as T
 import Data.Char (isAlphaNum)
 
 import Compiler.BasicTypes.SrcLoc
+import Compiler.BasicTypes.Unique
+import Compiler.BasicTypes.FastString
 import Utils.Outputable
 
 {- NOTE: [Names in PHC]
 
 We will have several types of names moving around during compilation.
 The 'OccName' type is the most basic.
-It is a Text, with a namespace.
+It is a FastString, with a namespace and a source location.
 
 -}
 
@@ -63,9 +66,12 @@ It is a Text, with a namespace.
 data OccName = OccName
     { nameSpace      :: !NameSpace
     , occNameSrcSpan :: !SrcSpan
-    , nameText       :: !Text
+    , nameFS         :: !FastString
     }
     deriving (Eq, Ord, Show)
+
+nameText :: OccName -> Text
+nameText = fs_text . nameFS
 
 instance HasOccName OccName where
     occNameOf = id
@@ -73,11 +79,19 @@ instance HasOccName OccName where
 instance HasSrcSpan OccName where
     srcSpanOf = occNameSrcSpan
 
+instance HasUnique OccName where
+    getUnique = getUnique . nameFS
+
+-- N.B. while it is possible to define HasOccName a => HasUnique a, we should NOT do this.
+-- occname uniques are from the fast string, and don't actually uniquely identify whatever
+-- entity might /contain/ the OccName. Entities with OccNames typically have a Name, and the
+-- unique of the Name typically uniquely identifies the entity as well.
+
 instance Outputable OccName where
-    ppr (OccName _ _ nt) = text $ T.unpack nt
+    ppr (OccName _ _ fs) = text $ show fs
 
 mkOccName :: NameSpace -> SrcSpan -> Text -> OccName
-mkOccName = OccName
+mkOccName ns span txt = OccName ns span (mkFastStringText txt)
 
 mkVarOccName :: SrcSpan -> Text -> OccName
 mkVarOccName = mkOccName varName
@@ -171,13 +185,13 @@ isTcClsOccName :: OccName -> Bool
 isTcClsOccName (OccName ns _ _) = isTcClsNameSpace ns
 
 isSymOccName :: OccName -> Bool
-isSymOccName (OccName _ _ t)
+isSymOccName (OccName _ _ fs)
   | isAlphaNum c || c == '_' = False
   | otherwise                = True
-  where c = T.head t
+  where c = headFS fs
 
 isConSymOccName :: OccName -> Bool
-isConSymOccName (OccName _ _ t) = T.head t == ':'
+isConSymOccName (OccName _ _ fs) = headFS fs == ':'
 
 -------------------------------------------------------------------------------------
 -- HasOccName class

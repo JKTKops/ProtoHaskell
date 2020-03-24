@@ -20,12 +20,14 @@ import Utils.Outputable
 data Name = Name
     { n_sort :: NameSort
     , n_occ  :: !OccName
-    , n_uniq :: !Unique
+    , n_uniq :: !Unique -- N.B. this unique disambiguates OccName's with the same unique
+                        -- because all OccNames with the same text share a unique.
     }
   deriving Show
 
 data NameSort
-     = UserDefined
+     = UserDefined -- internal to module being compiled
+                   -- will add External in the future
      | WiredIn
      | System
   deriving (Eq, Ord, Show, Enum, Bounded)
@@ -40,6 +42,9 @@ instance HasSrcSpan Name where
 
 instance HasOccName Name where
     occNameOf = nameOccName
+
+instance ContainsUnique Name where
+    getUnique = n_uniq
 
 nameUnique  :: Name -> Unique
 nameOccName :: Name -> OccName

@@ -3,9 +3,10 @@ module Utils.Outputable
     , module Text.PrettyPrint
 
     -- * Custom pretty-printing functions
-    , ppWhen, ppUnless
+    , pprWhen, pprUnless
     , parensIf
     , prettyQuote
+    , pprWithCommas
 
     -- * The actual showing function
     , output
@@ -22,6 +23,29 @@ import qualified Data.Text.Lazy as Text
 import qualified Text.Parsec as Parsec
 import qualified Text.Megaparsec as MParsec
 
+pprString :: String -> Doc
+pprString = vcat . map text . lines
+
+pprWhen :: Bool -> Doc -> Doc
+pprWhen True d  = d
+pprWhen False _ = mempty
+
+pprUnless :: Bool -> Doc -> Doc
+pprUnless b = pprWhen (not b)
+
+parensIf :: Bool -> Doc -> Doc
+parensIf True  = parens
+parensIf False = id
+
+prettyQuote :: Doc -> Doc
+prettyQuote d = char '`' <> d <> char '\''
+
+pprWithCommas :: Outputable a => [a] -> Doc
+pprWithCommas = fsep . punctuate comma . map ppr
+
+output :: Outputable a => a -> String
+output = show . ppr
+
 --------------------------------------------------
 -- Class and instances
 --------------------------------------------------
@@ -37,29 +61,9 @@ class Outputable a where
     pprList xs = brackets $ fsep $ punctuate comma $ map ppr xs
     {-# MINIMAL ppr | pprPrec #-}
 
-ppWhen :: Bool -> Doc -> Doc
-ppWhen True d  = d
-ppWhen False _ = mempty
-
-ppUnless :: Bool -> Doc -> Doc
-ppUnless b = ppWhen (not b)
-
-parensIf :: Bool -> Doc -> Doc
-parensIf True  = parens
-parensIf False = id
-
-prettyQuote :: Doc -> Doc
-prettyQuote d = char '`' <> d <> char '\''
-
-output :: Outputable a => a -> String
-output = show . ppr
-
 instance Outputable Char where
     ppr = char
     pprList = doubleQuotes . pprString
-
-pprString :: String -> Doc
-pprString = vcat . map text . lines
 
 instance Outputable Bool where
     ppr = text . show

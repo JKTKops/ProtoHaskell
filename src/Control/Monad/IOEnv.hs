@@ -1,3 +1,8 @@
+{-
+A monad that will be used frequently. Effectively ReaderT env IO.
+
+Adapated from GHC.
+-}
 module Control.Monad.IOEnv where
 
 import Compiler.BasicTypes.Flags
@@ -95,7 +100,7 @@ writeMutVar var val = liftIO (writeIORef var val)
 readMutVar :: MutVar a -> IOEnv env a
 readMutVar = liftIO . readIORef
 
-updMutVar :: IORef a -> (a -> a) -> IOEnv env ()
+updMutVar :: MutVar a -> (a -> a) -> IOEnv env ()
 updMutVar var upd = liftIO $ modifyIORef var upd
 
 -- | Non-strict atomic update.
