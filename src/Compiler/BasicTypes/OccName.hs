@@ -144,11 +144,11 @@ isValNameSpace ns = ns `elem` [VarName, DataName]
 isTcClsNameSpace :: NameSpace -> Bool
 isTcClsNameSpace = (== TcClsName)
 
-pprNameSpace :: NameSpace -> Doc
-pprNameSpace VarName   = "variable"
-pprNameSpace DataName  = "data constructor"
-pprNameSpace TvName    = "type variable"
-pprNameSpace TcClsName = "type constructor or class"
+pprNameSpace :: NameSpace -> CDoc
+pprNameSpace VarName   = text "variable"
+pprNameSpace DataName  = text "data constructor"
+pprNameSpace TvName    = text "type variable"
+pprNameSpace TcClsName = text "type constructor or class"
 
 -- | Namespaces are related if they can occur in the same contexts
 --   This will be useful later for guessing what a user meant

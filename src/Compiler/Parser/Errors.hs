@@ -9,7 +9,7 @@ import Compiler.Parser.Lexer
 
 import Data.Char
 
-pprParseError :: ParseError -> String -> [Lexeme] -> Doc
+pprParseError :: ParseError -> String -> [Lexeme] -> CDoc
 pprParseError pe "" [] = text $ show pe -- Use text . show instead of ppr in case
                                         -- definition of ppr changes to use this function
 pprParseError pe "" _  = text $ show pe
@@ -62,7 +62,7 @@ mkErrorMessage :: InfoAmount                   -- How detailed can our source/ar
                -> [Message]                    -- Parsec error messages
                -> (String -> String -> String) -- Callback to template
                                                  -- source/arrows into msg
-               -> Doc
+               -> CDoc
 mkErrorMessage infoAmt info pos msgs template =
     let prettySource = case infoAmt of
             NoInfo -> mempty
@@ -83,7 +83,7 @@ mkErrorMessage infoAmt info pos msgs template =
         let (Just src, _) = info
             (body, arrowWs) = getBodyAndArrowWs src
             arrows = "^"
-        in text (template body (arrowWs ++ arrows))
+        in pprString (template body (arrowWs ++ arrows))
 
     templateSourceAndLexeme =
         let (Just src, Just (Located (RealSrcSpan span) _)) = info
@@ -91,20 +91,20 @@ mkErrorMessage infoAmt info pos msgs template =
             mNumArrows = realSrcSpanLength span
             --arrows = replicate (realSrcSpanLength span) '^'
         in case mNumArrows of
-            Nothing -> "<Can't display source>"
-            Just num -> text (template body (arrowWs ++ replicate num '^'))
+            Nothing -> text "<Can't display source>"
+            Just num -> pprString (template body (arrowWs ++ replicate num '^'))
 
     templateLexeme =
         let (_, Just (Located _ token)) = info
             body = output token
             arrows = replicate (length body) '^'
         in case length (lines body) of
-            1 -> text $ template body arrows
-            _ -> "<Can't display source>"
+            1 -> pprString $ template body arrows
+            _ -> text "<Can't display source>"
 
-header :: SourcePos -> Doc
+header :: SourcePos -> CDoc
 header pos = text $ "Parse error at " ++ showPos pos ++ ":"
 
-errMsgBody :: [Message] -> Doc
+errMsgBody :: [Message] -> CDoc
 errMsgBody = text . showErrorMessages "or" "unknown parse error"
                                       "expecting" "unexpected" "end of input"

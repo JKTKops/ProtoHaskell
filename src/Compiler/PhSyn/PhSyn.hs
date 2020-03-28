@@ -51,24 +51,24 @@ instance Outputable id => Outputable (PhDecl id) where
                                          <+> hsep (map ppr tyvars)
                                          $$ nest 5 (vcat cons)
       where
-        cons :: [Doc]
-        cons = (text "=" <+> ppr c) : prepend (text "|") (map ppr cs)
-        prepend :: Doc -> [Doc] -> [Doc]
+        cons :: [CDoc]
+        cons = (equals <+> ppr c) : prepend vbar (map ppr cs)
+        prepend :: CDoc -> [CDoc] -> [CDoc]
         prepend d = map (d <+>)
 
     -- TODO fix the bindings part of the following two
     ppr (ClassDecl scs name tyvar binds) =
         let pscs = case scs of
                 [] -> mempty
-                [sc] -> ppr sc <+> text "=>"
-                scs  -> (parens . hsep . punctuate comma $ map ppr scs) <+> text "=>"
+                [sc] -> ppr sc <+> darrow
+                scs  -> (parens . hsep . punctuate comma $ map ppr scs) <+> darrow
         in text "class" <+> pscs <+> ppr name <+> ppr tyvar <+> text "where"
                         $$ nest 4 (ppr binds)
     ppr (InstDecl prds name head binds) =
         let pprds = case prds of
                 [] -> mempty
-                [prd] -> ppr prd <+> text "=>"
-                prds  -> (parens . hsep . punctuate comma $ map ppr prds) <+> text "=>"
+                [prd] -> ppr prd <+> darrow
+                prds  -> (parens . hsep . punctuate comma $ map ppr prds) <+> darrow
         in text "instance" <+> pprds <+> ppr name <+> ppr head <+> text "where"
                            $$ nest 4 (ppr binds)
 

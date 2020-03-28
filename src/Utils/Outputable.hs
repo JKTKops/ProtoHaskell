@@ -23,11 +23,12 @@ module Utils.Outputable
 
     -- * Common small 'CDoc's
     , semi, comma, colon, dcolon, equals, space, underscore
-    , dot, vbar, arrow, lparen, rparen, lbrack, rbrack
-    , lbrace, rbrace, blankLine
+    , dot, vbar, arrow, darrow, larrow, lparen, rparen, lbrack
+    , rbrack, lbrace, rbrace, backslash, blankLine
 
     -- * Basic 'CDoc' construction
     , empty, char, text, int, integer, float, double, rational
+    , pprString
 
     -- * Common 'CDoc' combinators
     , parens, braces, brackets, quotes, doubleQuotes, angles
@@ -228,34 +229,37 @@ quotes d = CDoc $ \sty ->
     let doc = runCDoc d sty
         str = show doc
     in case str of
-        ""     -> prettyQuote doc
+        ""     -> prettyQuoteDoc doc
         '\'':_ -> doc
         _ -> case last str of
             '\'' -> doc
-            _    -> prettyQuote doc
+            _    -> prettyQuoteDoc doc
 
 --------------------------------------------------
 --     Common small docs
 --------------------------------------------------
 
-semi, comma, colon, dcolon, equals, space, underscore, dot, vbar :: CDoc
-arrow, lparen, rparen, lbrack, rbrack, lbrace, rbrace, blankLine :: CDoc
+semi, comma, colon, dcolon, equals, space, underscore, dot, vbar, arrow              :: CDoc
+larrow, darrow, lparen, rparen, lbrack, rbrack, lbrace, rbrace, backslash, blankLine :: CDoc
 semi       = char ';'
 comma      = char ','
 colon      = char ':'
-equals     = char '='
 dcolon     = text "::"
+equals     = char '='
 space      = char ' '
 underscore = char '_'
 dot        = char '.'
 vbar       = char '|'
 arrow      = text "->"
+darrow     = text "=>"
+larrow     = text "<-"
 lparen     = char '('
 rparen     = char ')'
 lbrack     = char '['
 rbrack     = char ']'
 lbrace     = char '{'
 rbrace     = char '}'
+backslash  = char '\\'
 blankLine  = text ""
 
 -- | Indent a 'CDoc' by some amount
@@ -313,8 +317,11 @@ parensIf :: Bool -> CDoc -> CDoc
 parensIf True  = parens
 parensIf False = id
 
-prettyQuote :: Pretty.Doc -> Pretty.Doc
-prettyQuote d = Pretty.char '`' <> d <> Pretty.char '\''
+prettyQuoteDoc :: Pretty.Doc -> Pretty.Doc
+prettyQuoteDoc d = Pretty.char '`' <> d <> Pretty.char '\''
+
+prettyQuote :: CDoc -> CDoc
+prettyQuote = wrapper prettyQuoteDoc
 
 pprWithCommas :: Outputable a => [a] -> CDoc
 pprWithCommas = fsep . punctuate comma . map ppr

@@ -105,7 +105,7 @@ mkFastStringWith mk_fs txt = do
             new_fs <- mk_fs u
             insert new_fs
   where !(FastStringTable uc tab) = stringTable
-        getUnique = atomicModifyIORef' uc $ \n -> (n + 1, Unique PHCFastString n)
+        getUnique = atomicModifyIORef' uc $ \n -> (n + 1, Unique FastStringSection n)
         insert fs = modifyIORef tab (M.insert (fs_text fs) fs) $> fs
 
 mkFastString :: String -> FastString

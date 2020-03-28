@@ -43,7 +43,7 @@ instance HasSrcSpan Name where
 instance HasOccName Name where
     occNameOf = nameOccName
 
-instance ContainsUnique Name where
+instance HasUnique Name where
     getUnique = n_uniq
 
 nameUnique  :: Name -> Unique

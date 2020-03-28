@@ -70,6 +70,6 @@ isSrcParsedName _ = False
 
 instance Outputable ParsedName where
     ppr (UnQual n) = ppr n
-    ppr (Qual qual n) = ppr qual <> char '.' <> ppr n
-    ppr (Orig qual n) = ppr qual <> char '.' <> ppr n
+    ppr (Qual qual n) = ppr qual <> dot <> ppr n
+    ppr (Orig qual n) = ppr qual <> dot <> ppr n
     ppr (Exact name)  = ppr name

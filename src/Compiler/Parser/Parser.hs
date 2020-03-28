@@ -4,7 +4,7 @@ module Compiler.Parser.Parser
 
 import Prelude hiding (lex)
 
-import Utils.Outputable (render)
+import Utils.Outputable (CDoc, text)
 
 import Compiler.Parser.Errors
 import Compiler.Parser.Helpers
@@ -29,12 +29,17 @@ import qualified Text.Parsec.Error as Parsec
 
 -- | Takes a filename, compiler flags, and input source.
 -- Outputs either an error (already pretty printed) or a PhModule.
-parse :: SourceName -> Flags -> String -> Either String (PhModule ParsedName)
+
+-- TODO: fail with ErrMsg instead of CDoc
+parse :: SourceName -> Flags -> String -> Either CDoc (PhModule ParsedName)
 parse srcname flags input = do
-    lexemes <- lex srcname input
+    lexemes <- mapLeft text $ lex srcname input
     case runParser (modl <* eof) srcname flags lexemes of
         Right modl -> Right modl
-        Left parseErr -> Left (render $ pprParseError parseErr input lexemes)
+        Left parseErr -> Left $ pprParseError parseErr input lexemes
+  where mapLeft :: (e -> e') -> Either e a -> Either e' a
+        mapLeft f (Left e)  = Left (f e)
+        mapLeft _ (Right a) = Right a
 
 -----------------------------------------------------------------------------------------
 -- Component Parsers

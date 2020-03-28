@@ -26,7 +26,7 @@ instance Monoid (UniqueMap e) where
 instance Outputable e => Outputable (UniqueMap e) where
     ppr = pprUniqueMap ppr
 
-pprUniqueMap :: (e -> Doc) -> UniqueMap e -> Doc
+pprUniqueMap :: (e -> CDoc) -> UniqueMap e -> CDoc
 pprUniqueMap pprE um =
     brackets $ fsep $ punctuate comma
         [ ppr uniq <+> text ":->" <+> pprE e

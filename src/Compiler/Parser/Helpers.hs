@@ -158,7 +158,7 @@ satisfy p = try $ guardIndentation *> satisfyNoIndentGuard p <* setIndentOrdGT
 satisfyNoIndentGuard :: (Token -> Bool) -> Parser Lexeme
 satisfyNoIndentGuard p = do
     lexeme@(Located pos _) <- Parsec.tokenPrim
-                              (unLoc >>> Out.ppr >>> Out.prettyQuote >>> show)
+                              (unLoc >>> showTokenPretty)
                               posFromTok
                               testTok
     modifyState $ \s -> s { endOfPrevToken = srcSpanEnd pos }
@@ -322,12 +322,16 @@ runParser :: Parser a -> SourceName -> Flags -> [Lexeme] -> Either ParseError a
 runParser p srcname flags lexemes =
     Parsec.runParser p (initParseState flags) srcname lexemes
 
-testParser :: Parser a -> String -> Either String a
+-- TODO: don't fail with a CDoc, fail with an ErrMsg
+testParser :: Parser a -> String -> Either Out.CDoc a
 testParser p input = do
-    lexemes <- lex "" input
+    lexemes <- mapLeft Out.text $ lex "" input
     case runParser (initPos *> p <* eof) "" noFlags lexemes of
         Right v  -> Right v
-        Left err -> Left (show (pprParseError err input lexemes))
+        Left err -> Left $ pprParseError err input lexemes
+  where mapLeft :: (e -> e') -> Either e a -> Either e' a
+        mapLeft f (Left e)  = Left (f e)
+        mapLeft f (Right a) = Right a
 
 initPos :: Parser ()
 initPos = do

@@ -109,6 +109,8 @@ isCaseOrLamCtxt LamCtxt  = True
 isCaseOrLamCtxt _        = False
 
 type LPat id = Located (Pat id)
+-- TODO: constructor for infix pattern, like x:xs or gexpr `Guard` body
+-- Alternatively we could just let that fall under PCon.
 data Pat id
      = PVar id
      | PCon id [Pat id]
@@ -211,7 +213,7 @@ instance Outputable id => Outputable (MatchGroup id) where
     ppr (MG (map unLoc -> alts) ctxt) = vcat $ map (pprMatch ctxt) alts
 
 pprMatch :: Outputable id => MatchContext -> Match id -> CDoc
-pprMatch ctxt (Match pats rhs) =
+pprMatch ctxt (Match pats rhs) = pprWhen (ctxt == LamCtxt) backslash <>
   hsep (map ppr pats) <+> pprRhs (if isCaseOrLamCtxt ctxt then arrow else equals) rhs
 
 pprLocals :: Outputable id => LPhLocalBinds id -> CDoc
@@ -229,9 +231,9 @@ pprGuard :: Outputable id => CDoc -> LGuard id -> CDoc
 pprGuard ctxt (unLoc -> Guard guard body) = vbar <+> ppr guard <+> ctxt <+> ppr body
 
 instance Outputable id => Outputable (Pat id) where
-    ppr (PVar id)      = ppr id
-    ppr (PCon id args) = ppr id <+> hsep (map ppr args)
-    ppr (PAs id pat)   = ppr id <> char '@' <> ppr pat
+    ppr (PVar id)      = asPrefixVar (ppr id)
+    ppr (PCon id args) = asPrefixVar (ppr id) <+> hsep (map ppr args)
+    ppr (PAs id pat)   = asPrefixVar (ppr id) <> char '@' <> ppr pat
     ppr (PLit lit)     = ppr lit
     ppr PWild          = char '_'
     ppr (PTuple ps)    = parens $ fsep $ punctuate comma $ map ppr ps
@@ -247,7 +249,7 @@ instance Outputable id => Outputable (PhBind id) where
 
 instance Outputable id => Outputable (Stmt id) where
     ppr (SExpr e) = ppr e
-    ppr (SGenerator pat e) = ppr pat <+> text "<-" <+> ppr e
+    ppr (SGenerator pat e) = ppr pat <+> larrow <+> ppr e
     ppr (SLet binds) = text "let" <+> nest 4 (ppr binds)
 
 instance Outputable id => Outputable (ArithSeqInfo id) where
