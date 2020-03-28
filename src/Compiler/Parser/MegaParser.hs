@@ -1,6 +1,6 @@
 {-# LANGUAGE TypeFamilies, RecordWildCards #-}
 module Compiler.Parser.MegaParser where
-
+{-
 import Prelude hiding (lex)
 
 import Compiler.Parser.Lexer
@@ -299,3 +299,4 @@ closeImplicit = popLayoutContext
 
 align :: Parser a -> Parser a
 align = (>>) (modify $ \s -> s { indentOrd = EQ })
+-}
