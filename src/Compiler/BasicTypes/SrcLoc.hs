@@ -327,25 +327,25 @@ instance Outputable RealSrcSpan where
 instance Outputable SrcSpan where
     ppr = pprUserSpan True
 
-pprUserSpan :: Bool -> SrcSpan -> Doc
+pprUserSpan :: Bool -> SrcSpan -> CDoc
 pprUserSpan _ (UnhelpfulSpan s) = ppr s
 pprUserSpan showPath (RealSrcSpan s) = pprUserRealSpan showPath s
 
-pprUserRealSpan :: Bool -> RealSrcSpan -> Doc
+pprUserRealSpan :: Bool -> RealSrcSpan -> CDoc
 pprUserRealSpan showPath span@(SrcSpan file sline scol eline ecol)
   | isPointRealSpan span
-  = hcat [ ppWhen showPath (ppr file <> colon)
+  = hcat [ pprWhen showPath (ppr file <> colon)
          , int sline <> colon
          , int scol
          ]
   | isOneLineRealSpan span
-  = hcat [ ppWhen showPath (ppr file <> colon)
+  = hcat [ pprWhen showPath (ppr file <> colon)
          , int sline <> colon
          , int scol
-         , ppUnless (ecol - scol <= 1) (char '-' <> int (ecol - 1))
+         , pprUnless (ecol - scol <= 1) (char '-' <> int (ecol - 1))
          ]
   | otherwise
-  = hcat [ ppWhen showPath (ppr file <> colon)
+  = hcat [ pprWhen showPath (ppr file <> colon)
          , parens (int sline <> comma <> int scol)
          , char '-'
          , parens (int eline <> comma <> int ecol')
@@ -410,13 +410,6 @@ eqLocated a b = unLoc a == unLoc b
 cmpLocated :: Ord a => Located a -> Located a -> Ordering
 cmpLocated a b = unLoc a `compare` unLoc b
 
--- Ideally we'd like to have some sort of "debug" mode here
--- that prints the location information
--- But this would require recreating the entire Doc type from scratch
--- to allow the internal build function to have access to a debug boolean
-instance Outputable a => Outputable (GenLocated l a) where
-    pprPrec p (Located _ a) = pprPrec p a
-
--- So instead we provide this alternative:
-pprWithLoc :: (Outputable l, Outputable e) => GenLocated l e -> Doc
-pprWithLoc (Located l e) = braces (ppr l) $$ ppr e
+instance (Outputable l, Outputable a) => Outputable (GenLocated l a) where
+    pprPrec p (Located l a) = ifDebugStyle {-then-}(braces (pprPrec p l) <> pprPrec p a)
+                                           {-else-}(pprPrec p a)

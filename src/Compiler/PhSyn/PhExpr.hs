@@ -183,8 +183,9 @@ instance Outputable id => Outputable (PhExpr id) where
     ppr (PhVar id)        = ppr id
     ppr (PhLit lit)       = ppr lit
     ppr (PhLam mg)        = ppr mg
-    ppr (PhApp e1 e2)     = ppr e1 <+> ppr e2
-    ppr (OpApp e1 e2 e3)  = ppr e1 <+> ppr e2 <+> ppr e3
+    ppr (PhApp e1 e2)     = asPrefixVar (ppr e1) <+> asPrefixVar (ppr e2)
+    ppr (OpApp e1 e2 e3)  = asPrefixVar (ppr e1) <+> asInfixVar (ppr e2)
+                                                 <+> asPrefixVar (ppr e3)
     ppr (NegApp e)        = text "-" <> ppr e
     ppr (PhPar e)         = parens $ ppr e
     ppr (PhCase scrut mg) = text "case" <+> ppr scrut <+> text "of"
@@ -198,44 +199,44 @@ instance Outputable id => Outputable (PhExpr id) where
     ppr (ExplicitTuple tupArgs) = parens $ hcat $ punctuate comma $ map ppr tupArgs
     ppr (ExplicitList elems) = brackets $ hsep $ punctuate comma $ map ppr elems
     ppr (ArithSeq info) = brackets $ ppr info
-    ppr (Typed t e)     = ppr e <+> text "::" <+> ppr t
+    ppr (Typed t e)     = ppr e <+> dcolon <+> ppr t
 
 instance Outputable PhLit where
-    ppr (LitInt i) = integer i
-    ppr (LitFloat d) = double d
-    ppr (LitChar c) = char '\'' <> char c <> char '\''
+    ppr (LitInt i)    = integer i
+    ppr (LitFloat d)  = double d
+    ppr (LitChar c)   = char '\'' <> char c <> char '\''
     ppr (LitString s) = text $ show s
 
 instance Outputable id => Outputable (MatchGroup id) where
     ppr (MG (map unLoc -> alts) ctxt) = vcat $ map (pprMatch ctxt) alts
 
-pprMatch :: Outputable id => MatchContext -> Match id -> Doc
+pprMatch :: Outputable id => MatchContext -> Match id -> CDoc
 pprMatch ctxt (Match pats rhs) =
-  hsep (map ppr pats) <+> pprRhs (if isCaseOrLamCtxt ctxt then text "->" else text "=") rhs
+  hsep (map ppr pats) <+> pprRhs (if isCaseOrLamCtxt ctxt then arrow else equals) rhs
 
-pprLocals :: Outputable id => LPhLocalBinds id -> Doc
+pprLocals :: Outputable id => LPhLocalBinds id -> CDoc
 pprLocals (unLoc -> LocalBinds [] []) = mempty
 pprLocals (unLoc -> ls) = nest 2 $ text "where" $$ nest 2 (ppr ls)
 
-pprRhs :: Outputable id => Doc -> LRHS id -> Doc
+pprRhs :: Outputable id => CDoc -> LRHS id -> CDoc
 pprRhs ctxt (unLoc -> RHS grhs locals) = pprGrhs ctxt grhs $$ pprLocals locals
 
-pprGrhs :: Outputable id => Doc -> LGRHS id -> Doc
+pprGrhs :: Outputable id => CDoc -> LGRHS id -> CDoc
 pprGrhs ctxt (unLoc -> Unguarded body) = ctxt <+> ppr body
 pprGrhs ctxt (unLoc -> Guarded guards) = nest 2 $ vcat $ map (pprGuard ctxt) guards
 
-pprGuard :: Outputable id => Doc -> LGuard id -> Doc
-pprGuard ctxt (unLoc -> Guard guard body) = text "|" <+> ppr guard <+> ctxt <+> ppr body
+pprGuard :: Outputable id => CDoc -> LGuard id -> CDoc
+pprGuard ctxt (unLoc -> Guard guard body) = vbar <+> ppr guard <+> ctxt <+> ppr body
 
 instance Outputable id => Outputable (Pat id) where
-    ppr (PVar id) = ppr id
+    ppr (PVar id)      = ppr id
     ppr (PCon id args) = ppr id <+> hsep (map ppr args)
-    ppr (PAs id pat) = ppr id <> char '@' <> ppr pat
-    ppr (PLit lit)   = ppr lit
-    ppr PWild        = char '_'
-    ppr (PTuple ps)  = parens $ fsep $ punctuate comma $ map ppr ps
-    ppr (PList ps)   = brackets . fsep . punctuate comma $ map ppr ps
-    ppr (ParPat pat) = parens $ ppr pat
+    ppr (PAs id pat)   = ppr id <> char '@' <> ppr pat
+    ppr (PLit lit)     = ppr lit
+    ppr PWild          = char '_'
+    ppr (PTuple ps)    = parens $ fsep $ punctuate comma $ map ppr ps
+    ppr (PList ps)     = brackets . fsep . punctuate comma $ map ppr ps
+    ppr (ParPat pat)   = parens $ ppr pat
 
 instance Outputable id => Outputable (PhLocalBinds id) where
     ppr (LocalBinds binds sigs) = vcat (map ppr binds ++ map ppr sigs)
