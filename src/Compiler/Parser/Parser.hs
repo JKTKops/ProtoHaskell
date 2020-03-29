@@ -31,7 +31,7 @@ import qualified Text.Parsec.Error as Parsec
 -- Outputs either an error (already pretty printed) or a PhModule.
 
 -- TODO: fail with ErrMsg instead of CDoc
-parse :: SourceName -> Flags -> String -> Either CDoc (PhModule ParsedName)
+parse :: SourceName -> Settings -> String -> Either CDoc (PhModule ParsedName)
 parse srcname flags input = do
     lexemes <- mapLeft text $ lex srcname input
     case runParser (modl <* eof) srcname flags lexemes of

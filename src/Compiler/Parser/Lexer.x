@@ -434,5 +434,5 @@ instance Outputable Token where
         TokIndent -> "<indentation>"
 
 showTokenPretty :: Token -> String
-showTokenPretty = output . prettyQuote . ppr
+showTokenPretty = output . quotes . ppr
 }

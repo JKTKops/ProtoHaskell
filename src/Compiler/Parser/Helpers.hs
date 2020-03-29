@@ -5,7 +5,7 @@ module Compiler.Parser.Helpers
     , module Compiler.BasicTypes.SrcLoc
     , module Compiler.BasicTypes.ParsedName
     , module Compiler.BasicTypes.OccName
-    , module Compiler.BasicTypes.Flags
+    , module Compiler.BasicTypes.Settings
 
     , module Text.Parsec
     , module Control.Monad
@@ -20,7 +20,7 @@ import Compiler.Parser.Errors
 import Compiler.BasicTypes.SrcLoc
 import Compiler.BasicTypes.ParsedName
 import Compiler.BasicTypes.OccName
-import Compiler.BasicTypes.Flags
+import Compiler.BasicTypes.Settings
 
 import qualified Utils.Outputable as Out
 
@@ -51,7 +51,7 @@ type Parser a = Parsec
                   a
 
 data ParseState = ParseState
-    { compFlags      :: Flags
+    { compFlags      :: Settings
     , indentOrd      :: IndentOrdering
     , layoutContexts :: [LayoutContext]
     , endOfPrevToken :: SrcLoc
@@ -127,8 +127,8 @@ anticipate t msg = do
 anticipateOp :: String -> String -> Parser a
 anticipateOp op msg = anticipate (reservedOpToTok op) msg
 
-instance HasCompFlags (Parsec [Lexeme] ParseState) where
-    getCompFlags = compFlags <$> getState
+instance HasSettings (Parsec [Lexeme] ParseState) where
+    getSettings = compFlags <$> getState
 
 {- NOTE: [Overlapping Show instance for Lexeme]
 
@@ -318,15 +318,17 @@ locate p = do
 -- Running Parsers
 -----------------------------------------------------------------------------------------
 
-runParser :: Parser a -> SourceName -> Flags -> [Lexeme] -> Either ParseError a
+runParser :: Parser a -> SourceName -> Settings -> [Lexeme] -> Either ParseError a
 runParser p srcname flags lexemes =
     Parsec.runParser p (initParseState flags) srcname lexemes
 
 -- TODO: don't fail with a CDoc, fail with an ErrMsg
+-- adjust lexer to fail with an ErrMsg as well.
+-- and record the refactoring in WYAH.
 testParser :: Parser a -> String -> Either Out.CDoc a
 testParser p input = do
     lexemes <- mapLeft Out.text $ lex "" input
-    case runParser (initPos *> p <* eof) "" noFlags lexemes of
+    case runParser (initPos *> p <* eof) "" defaultSettings lexemes of
         Right v  -> Right v
         Left err -> Left $ pprParseError err input lexemes
   where mapLeft :: (e -> e') -> Either e a -> Either e' a

@@ -5,7 +5,7 @@ Adapated from GHC.
 -}
 module Control.Monad.IOEnv where
 
-import Compiler.BasicTypes.Flags
+import Compiler.BasicTypes.Settings
 
 import System.IO (fixIO)
 import System.IO.Unsafe (unsafeInterleaveIO)
@@ -57,10 +57,10 @@ data IOEnvFailure = IOEnvFailure
 instance Show IOEnvFailure where show _ = "IOEnv failure"
 instance Exception IOEnvFailure
 
-instance ContainsCompFlags env => HasCompFlags (IOEnv env) where
-    getCompFlags = do env <- getEnv
+instance ContainsSettings env => HasSettings (IOEnv env) where
+    getSettings = do env <- getEnv
                       -- flags won't change often (during compilation, only via options pragmas)
-                      return $! extractCompFlags env
+                     return $! extractSettings env
 
 --------------------------------------------------------------------------------------
 --

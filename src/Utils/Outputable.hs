@@ -18,7 +18,7 @@ module Utils.Outputable
 
     -- * Configure printing for a 'CDoc'
     , setCDocStyle, cdocDeeper, cdocDeeperList, cdocSetDepth
-    , withCDocStyle, withCDocFlags, updCDocFlags, setCDocFlags
+    , withCDocStyle, withCDocSettings, updCDocSettings, setCDocSettings
     , withIsDebugStyle, ifDebugStyle, whenDebugStyle
 
     -- * Common small 'CDoc's
@@ -35,7 +35,7 @@ module Utils.Outputable
     , nest, (<+>), (<>), ($$), ($+$), hcat, hsep, vcat, sep
     , cat, fsep, fcat, punctuate
 
-    , pprWhen, pprUnless , parensIf , prettyQuote , pprWithCommas
+    , pprWhen, pprUnless, parensIf, pprWithCommas
     , asPrefixVar, asInfixVar
 
     -- * Rendering to a handle
@@ -48,7 +48,7 @@ module Utils.Outputable
 
 import qualified Text.PrettyPrint as Pretty
 import qualified Text.PrettyPrint as PrettyExports (Mode)
-import Compiler.BasicTypes.Flags
+import Compiler.BasicTypes.Settings
 
 import Data.Char
 import System.IO
@@ -69,13 +69,13 @@ import qualified Text.Megaparsec as MParsec
 newtype CDoc = CDoc { runCDoc :: CDocContext -> Pretty.Doc }
 
 data CDocContext = CDocContext
-     { cdocStyle :: !CDocStyle
-     , cdocFlags :: !Flags
+     { cdocStyle    :: !CDocStyle
+     , cdocSettings :: !Settings
      -- coloring information coming soon
      }
 
-initCDocContext :: Flags -> CDocStyle -> CDocContext
-initCDocContext flags style = CDocContext style flags
+initCDocContext :: Settings -> CDocStyle -> CDocContext
+initCDocContext stgs style = CDocContext style stgs
 
 data CDocStyle
      -- | Pretty-print for a user. This is for printing
@@ -98,6 +98,7 @@ data CDocStyle
 
 data Depth = FullDepth
            | PartialDepth Int -- stop at 0
+-- | Haven't implemented coloring yet.
 data Colored = Colored
              | Uncolored
 data CodeStyle = CStyle    -- ^ Still don't know if we're targetting C or Java.
@@ -160,15 +161,15 @@ cdocSetDepth depth d = CDoc $ \ctx -> case ctx of
 withCDocStyle :: (CDocStyle -> CDoc) -> CDoc
 withCDocStyle f = CDoc $ \ctx -> runCDoc (f $ cdocStyle ctx) ctx
 
-withCDocFlags :: (Flags -> CDoc) -> CDoc
-withCDocFlags f = CDoc $ \ctx -> runCDoc (f $ cdocFlags ctx) ctx
+withCDocSettings :: (Settings -> CDoc) -> CDoc
+withCDocSettings f = CDoc $ \ctx -> runCDoc (f $ cdocSettings ctx) ctx
 
-updCDocFlags :: (Flags -> Flags) -> CDoc -> CDoc
-updCDocFlags upd d = CDoc $ \ctx ->
-    runCDoc d (ctx{cdocFlags = upd (cdocFlags ctx)})
+updCDocSettings :: (Settings -> Settings) -> CDoc -> CDoc
+updCDocSettings upd d = CDoc $ \ctx ->
+    runCDoc d (ctx{cdocSettings = upd (cdocSettings ctx)})
 
-setCDocFlags :: Flags -> CDoc -> CDoc
-setCDocFlags flags = updCDocFlags (const flags)
+setCDocSettings :: Settings -> CDoc -> CDoc
+setCDocSettings stgs = updCDocSettings (const stgs)
 
 withIsDebugStyle :: (Bool -> CDoc) -> CDoc
 withIsDebugStyle f = withCDocStyle $ f . isDebugStyle
@@ -320,9 +321,6 @@ parensIf False = id
 prettyQuoteDoc :: Pretty.Doc -> Pretty.Doc
 prettyQuoteDoc d = Pretty.char '`' <> d <> Pretty.char '\''
 
-prettyQuote :: CDoc -> CDoc
-prettyQuote = wrapper prettyQuoteDoc
-
 pprWithCommas :: Outputable a => [a] -> CDoc
 pprWithCommas = fsep . punctuate comma . map ppr
 
@@ -363,21 +361,21 @@ hPrintDoc_ hdl mode pprCols doc = do
 
 -- | Print a 'CDoc' to a handle. Clears the color if an exception is thrown during
 -- printing, to try and avoid screwing up the terminal.
-hPrintCDoc :: Handle -> Pretty.Mode -> Flags -> CDocStyle -> CDoc -> IO ()
-hPrintCDoc hdl mode flags sty doc = hPrintDoc_ hdl mode 100 (runCDoc doc ctx)
+hPrintCDoc :: Handle -> Pretty.Mode -> Settings -> CDocStyle -> CDoc -> IO ()
+hPrintCDoc hdl mode stgs sty doc = hPrintDoc_ hdl mode 100 (runCDoc doc ctx)
     -- TODO: colors
     --`finally`
     --    hPrintDoc_ hdl mode cols (runCDoc (colored Color.colReset empty) ctx)
-  where ctx = initCDocContext flags sty
+  where ctx = initCDocContext stgs sty
 
 -- | Like 'hPrintCDoc', but also appends a newline to the output.
-hPrintCDocLn :: Handle -> Pretty.Mode -> Flags -> CDocStyle -> CDoc -> IO ()
-hPrintCDocLn hdl mode flags sty doc = hPrintCDoc hdl mode flags sty (doc $$ blankLine)
+hPrintCDocLn :: Handle -> Pretty.Mode -> Settings -> CDocStyle -> CDoc -> IO ()
+hPrintCDocLn hdl mode stgs sty doc = hPrintCDoc hdl mode stgs sty (doc $$ blankLine)
                                       -- NB. $$ is a no-op if either arg is 'empty'
 
 dummyContext :: CDocContext
 dummyContext = CDocContext
-    { cdocFlags = noFlags
+    { cdocSettings = defaultSettings
     -- this context is typically for use in GHCi while debugging
     -- the compiler, if your terminal doesn't support colors, change it!
     , cdocStyle = UserStyle FullDepth Colored
@@ -386,15 +384,15 @@ dummyContext = CDocContext
 output :: Outputable a => a -> String
 output = show . flip runCDoc dummyContext . ppr
 
-outputWith :: Outputable a => Flags -> CDocStyle -> a -> String
-outputWith flags style = show
-                       . flip runCDoc (initCDocContext flags style)
+outputWith :: Outputable a => Settings -> CDocStyle -> a -> String
+outputWith stgs style = show
+                       . flip runCDoc (initCDocContext stgs style)
                        . ppr
 
-renderWithStyle :: Flags -> CDocStyle -> CDoc -> String
-renderWithStyle flags sty doc =
+renderWithStyle :: Settings -> CDocStyle -> CDoc -> String
+renderWithStyle stgs sty doc =
     -- uses line length of 100
-    Pretty.renderStyle Pretty.style $ runCDoc doc (initCDocContext flags sty)
+    Pretty.renderStyle Pretty.style $ runCDoc doc (initCDocContext stgs sty)
 
 --------------------------------------------------
 -- Class and instances
