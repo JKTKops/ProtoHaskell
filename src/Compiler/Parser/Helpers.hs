@@ -10,7 +10,7 @@ module Compiler.Parser.Helpers
     , module Text.Parsec
     , module Control.Monad
     , module Data.Functor -- for $>
-    )where
+    ) where
 
 import Prelude hiding (lex)
 
@@ -19,6 +19,7 @@ import Compiler.Settings
 import Compiler.Parser.Lexer
 import Compiler.Parser.Errors
 
+import Compiler.BasicTypes.FastString (unpackFS)
 import Compiler.BasicTypes.SrcLoc
 import Compiler.BasicTypes.ParsedName
 import Compiler.BasicTypes.OccName
@@ -178,7 +179,7 @@ mkSrcPos :: SrcLoc -> SourcePos
 mkSrcPos loc = let file = unsafeLocFile loc
                    line = unsafeLocLine loc
                    col  = unsafeLocCol  loc
-                   new  = newPos (T.unpack file) line col
+                   new  = newPos (unpackFS file) line col
                in new
 
 guardIndentation :: Parser ()
@@ -310,7 +311,7 @@ locate p = do
     let srcName = sourceName startPos
         startLine = sourceLine startPos
         startCol  = sourceColumn startPos
-        startLoc  = mkSrcLoc (T.pack srcName) startLine startCol
+        startLoc  = mkSrcLoc srcName startLine startCol
     res <- p
     endPos <- gets endOfPrevToken
     return $ Located (mkSrcSpan startLoc endPos) res

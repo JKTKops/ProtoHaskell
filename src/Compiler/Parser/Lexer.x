@@ -139,7 +139,7 @@ data TokenType
 
 mkL :: TokenType -> AlexInput -> Int -> Alex Lexeme
 mkL toktype (alexStartPos,_,_,str) len = do
-    fname <- T.pack <$> alexGetFilename
+    fname <- alexGetFilename
     alexEndPos <- alexGetPos
     let AlexPn _ startLine startCol = alexStartPos
         AlexPn _ endLine endCol = alexEndPos

@@ -77,9 +77,9 @@ module Compiler.BasicTypes.SrcLoc
     , HasSrcSpan(..)
     ) where
 
+import Compiler.BasicTypes.FastString
 import Utils.Outputable
 
-import Data.Text.Lazy (Text)
 import Data.List (intercalate)
 import Data.Bits
 
@@ -88,18 +88,18 @@ import Data.Bits
 ---------------------------------------------------------------------
 
 -- line/column numbers start at 1, so ex. tabstops are 1/9/17/...
-data RealSrcLoc = SrcLoc { srcLocFile :: !Text, line, col :: !Int }
+data RealSrcLoc = SrcLoc { srcLocFile :: !FastString, line, col :: !Int }
   deriving (Eq, Ord)
 
 data SrcLoc = RealSrcLoc !RealSrcLoc
-            | UnhelpfulLoc !Text
+            | UnhelpfulLoc !FastString
   deriving (Eq, Ord, Show)
 
-mkSrcLoc :: Text -> Int -> Int -> SrcLoc
-mkSrcLoc name line col = RealSrcLoc $ SrcLoc name line col
+mkSrcLoc :: String -> Int -> Int -> SrcLoc
+mkSrcLoc name line col = RealSrcLoc $ SrcLoc (fsLit name) line col
 
-mkRealSrcLoc :: Text -> Int -> Int -> RealSrcLoc
-mkRealSrcLoc = SrcLoc
+mkRealSrcLoc :: String -> Int -> Int -> RealSrcLoc
+mkRealSrcLoc = SrcLoc . fsLit
 
 realSrcLocLine :: RealSrcLoc -> Int
 realSrcLocLine = line
@@ -108,12 +108,12 @@ realSrcLocCol :: RealSrcLoc -> Int
 realSrcLocCol = col
 
 noSrcLoc, generatedSrcLoc, interactiveSrcLoc :: SrcLoc
-noSrcLoc          = UnhelpfulLoc "<no location info>"
-generatedSrcLoc   = UnhelpfulLoc "<compiler-generated code>"
-interactiveSrcLoc = UnhelpfulLoc "<interactive>"
+noSrcLoc          = UnhelpfulLoc $ fsLit "<no location info>"
+generatedSrcLoc   = UnhelpfulLoc $ fsLit "<compiler-generated code>"
+interactiveSrcLoc = UnhelpfulLoc $ fsLit "<interactive>"
 
-mkUnhelpfulSrcLoc :: Text -> SrcLoc
-mkUnhelpfulSrcLoc = UnhelpfulLoc
+mkUnhelpfulSrcLoc :: String -> SrcLoc
+mkUnhelpfulSrcLoc = UnhelpfulLoc . fsLit
 
 advanceSrcLoc :: RealSrcLoc -> Char -> RealSrcLoc
 advanceSrcLoc (SrcLoc f l _) '\n' = SrcLoc f (l + 1) 1
@@ -129,14 +129,14 @@ advanceSrcLoc (SrcLoc f l c) _    = SrcLoc f l (c + 1)
      The end position is one character after the end of the span, so
      (1,1)-(1,1) is a 0-length span, and (1,1)-(1,2) is a 1-length span.
 -}
-data RealSrcSpan = SrcSpan { srcSpanFile :: !Text
+data RealSrcSpan = SrcSpan { srcSpanFile :: !FastString
                            , spanStartLine, spanStartCol
                            , spanEndLine, spanEndCol :: !Int
                            }
   deriving Eq
 
 data SrcSpan = RealSrcSpan !RealSrcSpan
-             | UnhelpfulSpan !Text
+             | UnhelpfulSpan !FastString
   deriving (Eq, Ord, Show)
 
 mkSrcSpan :: SrcLoc -> SrcLoc -> SrcSpan
@@ -154,8 +154,8 @@ wiredInSrcSpan     = UnhelpfulSpan "<wired into compiler>"
 interactiveSrcSpan = UnhelpfulSpan "<interactive>"
 
 -- | Make an unhelpful 'SrcSpan' with no location info
-mkUnhelpfulSrcSpan :: Text -> SrcSpan
-mkUnhelpfulSrcSpan = UnhelpfulSpan
+mkUnhelpfulSrcSpan :: String -> SrcSpan
+mkUnhelpfulSrcSpan = UnhelpfulSpan . fsLit
 
 -- | Turn a RealSrcLoc into a RealSrcSpan covering one point
 realSrcLocSpan :: RealSrcLoc -> RealSrcSpan
@@ -233,7 +233,7 @@ spans span (l, c) = realSrcSpanStart span <= loc && loc <= realSrcSpanEnd span
 -- Unsafe access functions
 -------------------------------------------------------------------------
 
-unsafeLocFile :: SrcLoc -> Text
+unsafeLocFile :: SrcLoc -> FastString
 unsafeLocFile (RealSrcLoc s) = srcLocFile s
 
 unsafeLocLine :: SrcLoc -> Int
@@ -242,7 +242,7 @@ unsafeLocLine (RealSrcLoc s) = line s
 unsafeLocCol :: SrcLoc -> Int
 unsafeLocCol (RealSrcLoc s) = col s
 
-unsafeSpanFile :: SrcSpan -> Text
+unsafeSpanFile :: SrcSpan -> FastString
 unsafeSpanFile (RealSrcSpan s) = srcSpanFile s
 
 unsafeSpanStartLine :: SrcSpan -> Int
@@ -290,7 +290,7 @@ realSrcSpanEnd :: RealSrcSpan -> RealSrcLoc
 realSrcSpanEnd (SrcSpan f _ _ l c) = SrcLoc f l c
 
 -- | Get the filename from good 'SrcSpan's.
-srcSpanFileMaybe :: SrcSpan -> Maybe Text
+srcSpanFileMaybe :: SrcSpan -> Maybe FastString
 srcSpanFileMaybe (RealSrcSpan s)   = Just (srcSpanFile s)
 srcSpanFileMaybe (UnhelpfulSpan _) = Nothing
 
@@ -411,5 +411,5 @@ cmpLocated :: Ord a => Located a -> Located a -> Ordering
 cmpLocated a b = unLoc a `compare` unLoc b
 
 instance (Outputable l, Outputable a) => Outputable (GenLocated l a) where
-    pprPrec p (Located l a) = ifDebugStyle {-then-}(braces (pprPrec p l) <> pprPrec p a)
-                                           {-else-}(pprPrec p a)
+    pprPrec p (Located l a) =
+        whenDebugStyle (braces (pprPrec p l)) <> pprPrec p a
