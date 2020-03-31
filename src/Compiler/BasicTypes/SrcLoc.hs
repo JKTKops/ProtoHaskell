@@ -108,9 +108,9 @@ realSrcLocCol :: RealSrcLoc -> Int
 realSrcLocCol = col
 
 noSrcLoc, generatedSrcLoc, interactiveSrcLoc :: SrcLoc
-noSrcLoc          = UnhelpfulLoc $ fsLit "<no location info>"
-generatedSrcLoc   = UnhelpfulLoc $ fsLit "<compiler-generated code>"
-interactiveSrcLoc = UnhelpfulLoc $ fsLit "<interactive>"
+noSrcLoc          = UnhelpfulLoc "<no location info>"
+generatedSrcLoc   = UnhelpfulLoc "<compiler-generated code>"
+interactiveSrcLoc = UnhelpfulLoc "<interactive>"
 
 mkUnhelpfulSrcLoc :: String -> SrcLoc
 mkUnhelpfulSrcLoc = UnhelpfulLoc . fsLit
