@@ -5,7 +5,7 @@ Adapated from GHC.
 -}
 module Control.Monad.IOEnv where
 
-import Compiler.BasicTypes.Settings
+import Compiler.Settings
 
 import System.IO (fixIO)
 import System.IO.Unsafe (unsafeInterleaveIO)

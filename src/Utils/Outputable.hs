@@ -18,7 +18,7 @@ module Utils.Outputable
 
     -- * Configure printing for a 'CDoc'
     , setCDocStyle, cdocDeeper, cdocDeeperList, cdocSetDepth
-    , withCDocStyle, withCDocSettings, updCDocSettings, setCDocSettings
+    , withCDocSettings, updCDocSettings, setCDocSettings
     , withIsDebugStyle, ifDebugStyle, whenDebugStyle
 
     -- * Common small 'CDoc's
@@ -39,7 +39,7 @@ module Utils.Outputable
     , asPrefixVar, asInfixVar
 
     -- * Rendering to a handle
-    , hPrintCDoc, hPrintCDocLn
+    , hPrintCDoc, hPrintCDocLn, printCDocBasic
 
     -- * Outputable class
     , Outputable(..)
@@ -47,8 +47,8 @@ module Utils.Outputable
     ) where
 
 import qualified Text.PrettyPrint as Pretty
-import qualified Text.PrettyPrint as PrettyExports (Mode)
-import Compiler.BasicTypes.Settings
+import qualified Text.PrettyPrint as PrettyExports (Mode(..))
+import Compiler.Settings
 
 import Data.Char
 import System.IO
@@ -107,6 +107,14 @@ data CodeStyle = CStyle    -- ^ Still don't know if we're targetting C or Java.
 isDebugStyle :: CDocStyle -> Bool
 isDebugStyle DebugStyle = True
 isDebugStyle _          = False
+
+isCodeStyle :: CDocStyle -> Bool
+isCodeStyle CodeStyle{} = True
+isCodeStyle _           = False
+
+codeStyle :: CDocStyle -> Maybe CodeStyle
+codeStyle (CodeStyle cs) = Just cs
+codeStyle _              = Nothing
 
 mkCodeStyle :: CodeStyle -> CDocStyle
 mkCodeStyle = CodeStyle
@@ -182,6 +190,9 @@ ifDebugStyle yes no = withIsDebugStyle $ \b -> if b then yes else no
 whenDebugStyle :: CDoc -> CDoc
 whenDebugStyle d = ifDebugStyle d empty
 
+withCodeStyle :: (Maybe CodeStyle -> CDoc) -> CDoc
+withCodeStyle f = CDoc $ \ctx -> runCDoc (f $ codeStyle $ cdocStyle ctx) ctx
+
 --------------------------------------------------------------------------------------
 --
 -- Basic means of constructing CDocs
@@ -209,13 +220,18 @@ float    = doc2CDoc . Pretty.float
 double   = doc2CDoc . Pretty.double
 rational = doc2CDoc . Pretty.rational
 
+-- The use of lambdas actually affects how GHC will inline these definitions,
+-- and we need them to get inlined after receiving ONE argument.
+-- See the GHC user guide for more information.
+{- HLINT ignore "Redundant lambda" -}
 wrapper :: (Pretty.Doc -> Pretty.Doc) -> CDoc -> CDoc
-wrapper f d = CDoc $ f . runCDoc d
+wrapper f = \d -> CDoc $ f . runCDoc d
 {-# INLINE wrapper #-}
 
 wrapper2 :: (Pretty.Doc -> Pretty.Doc -> Pretty.Doc)
          -> CDoc        -> CDoc       -> CDoc
-wrapper2 f d1 d2 = CDoc $ \sty -> f (runCDoc d1 sty) (runCDoc d2 sty)
+wrapper2 f = \d1 d2 -> CDoc $ \sty -> f (runCDoc d1 sty) (runCDoc d2 sty)
+{-# INLINE wrapper2 #-}
 
 parens, braces, brackets, quotes, doubleQuotes, angles :: CDoc -> CDoc
 parens = wrapper Pretty.parens
@@ -242,6 +258,7 @@ quotes d = CDoc $ \sty ->
 
 semi, comma, colon, dcolon, equals, space, underscore, dot, vbar, arrow              :: CDoc
 larrow, darrow, lparen, rparen, lbrack, rbrack, lbrace, rbrace, backslash, blankLine :: CDoc
+bullet, star :: CDoc
 semi       = char ';'
 comma      = char ','
 colon      = char ':'
@@ -262,6 +279,11 @@ lbrace     = char '{'
 rbrace     = char '}'
 backslash  = char '\\'
 blankLine  = text ""
+bullet     = char '*'
+star       = char '*'
+
+forall :: CDoc
+forall = text "forall"
 
 -- | Indent a 'CDoc' by some amount
 nest :: Int -> CDoc -> CDoc
@@ -372,6 +394,10 @@ hPrintCDoc hdl mode stgs sty doc = hPrintDoc_ hdl mode 100 (runCDoc doc ctx)
 hPrintCDocLn :: Handle -> Pretty.Mode -> Settings -> CDocStyle -> CDoc -> IO ()
 hPrintCDocLn hdl mode stgs sty doc = hPrintCDoc hdl mode stgs sty (doc $$ blankLine)
                                       -- NB. $$ is a no-op if either arg is 'empty'
+
+printCDocBasic ::  CDoc -> IO ()
+printCDocBasic = hPrintCDocLn
+                  stdout Pretty.PageMode defaultSettings (UserStyle FullDepth Colored)
 
 dummyContext :: CDocContext
 dummyContext = CDocContext

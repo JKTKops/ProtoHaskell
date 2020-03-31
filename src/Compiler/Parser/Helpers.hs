@@ -5,7 +5,7 @@ module Compiler.Parser.Helpers
     , module Compiler.BasicTypes.SrcLoc
     , module Compiler.BasicTypes.ParsedName
     , module Compiler.BasicTypes.OccName
-    , module Compiler.BasicTypes.Settings
+    , module Compiler.Settings
 
     , module Text.Parsec
     , module Control.Monad
@@ -14,13 +14,14 @@ module Compiler.Parser.Helpers
 
 import Prelude hiding (lex)
 
+import Compiler.Settings
+
 import Compiler.Parser.Lexer
 import Compiler.Parser.Errors
 
 import Compiler.BasicTypes.SrcLoc
 import Compiler.BasicTypes.ParsedName
 import Compiler.BasicTypes.OccName
-import Compiler.BasicTypes.Settings
 
 import qualified Utils.Outputable as Out
 
