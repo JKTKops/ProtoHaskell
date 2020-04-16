@@ -327,6 +327,20 @@ instance Outputable RealSrcSpan where
 instance Outputable SrcSpan where
     ppr = pprUserSpan True
 
+instance Outputable RealSrcLoc where
+    ppr = pprUserRealLoc True
+
+instance Outputable SrcLoc where
+    ppr = pprUserLoc True
+
+pprUserLoc :: Bool -> SrcLoc -> CDoc
+pprUserLoc _ (UnhelpfulLoc l) = ppr l
+pprUserLoc showPath (RealSrcLoc l) = pprUserRealLoc showPath l
+
+pprUserRealLoc :: Bool -> RealSrcLoc -> CDoc
+pprUserRealLoc showPath loc@(SrcLoc file line col) =
+    pprWhen showPath (ppr file <> colon) <> ppr line <> colon <> ppr col
+
 pprUserSpan :: Bool -> SrcSpan -> CDoc
 pprUserSpan _ (UnhelpfulSpan s) = ppr s
 pprUserSpan showPath (RealSrcSpan s) = pprUserRealSpan showPath s
@@ -334,10 +348,8 @@ pprUserSpan showPath (RealSrcSpan s) = pprUserRealSpan showPath s
 pprUserRealSpan :: Bool -> RealSrcSpan -> CDoc
 pprUserRealSpan showPath span@(SrcSpan file sline scol eline ecol)
   | isPointRealSpan span
-  = hcat [ pprWhen showPath (ppr file <> colon)
-         , int sline <> colon
-         , int scol
-         ]
+  = pprUserRealLoc showPath $ realSrcSpanStart span
+
   | isOneLineRealSpan span
   = hcat [ pprWhen showPath (ppr file <> colon)
          , int sline <> colon
