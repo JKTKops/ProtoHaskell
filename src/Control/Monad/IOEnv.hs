@@ -1,9 +1,21 @@
 {-
 A monad that will be used frequently. Effectively ReaderT env IO.
+However, here we assume that computations may fail, so it's more
+like MaybeT (ReaderT env IO) but performs much better.
 
 Adapated from GHC.
 -}
-module Control.Monad.IOEnv where
+module Control.Monad.IOEnv
+    ( IOEnv
+    , runIOEnv, ioEnvFail
+
+    -- * Mutable variables in IOEnv
+    , MutVar, newMutVar, readMutVar, writeMutVar
+    , updMutVar, atomicUpdMutVar, atomicUpdMutVar'
+
+    -- * Accessing the environment
+    , getEnv, inEnv, updEnv
+    ) where
 
 import Compiler.Settings
 
@@ -19,10 +31,11 @@ import Control.Exception
 
 import Data.IORef
 
--- | Basically ReaderT env IO, custom-rolled so we can make our own instances.
--- Could use deriving-via for the ones that are the same, but keeping it simple.
+-- | Basically ReaderT env IO.
 newtype IOEnv env a = IOEnv { unIOEnv :: env -> IO a }
 
+-- We could use deriving via (probably should in the future)
+-- but this is more fun!
 instance Functor (IOEnv env) where
     fmap f (IOEnv r) = IOEnv $ \env -> fmap f (r env)
 
@@ -43,6 +56,8 @@ instance MonadIO (IOEnv env) where
     liftIO io = IOEnv $ const io
 instance MonadFix (IOEnv env) where
     mfix = fixM
+instance MonadFail (IOEnv env) where
+    fail _ = ioEnvFail
 
 pureM :: a -> IOEnv env a
 pureM a = IOEnv $ \_ -> pure a
@@ -68,18 +83,20 @@ instance ContainsSettings env => HasSettings (IOEnv env) where
 --
 --------------------------------------------------------------------------------------
 
-runIOEnv :: env -> IOEnv env a -> IO a
-runIOEnv = flip unIOEnv
+runIOEnv :: env -> IOEnv env a -> IO (Maybe a)
+runIOEnv env ioEnv = unIOEnv (ioEnvCatch ioEnv) env
 
 fixM :: (a -> IOEnv env a) -> IOEnv env a
 fixM f = IOEnv $ \env -> fixIO $ \r -> unIOEnv (f r) env
 {-# NOINLINE fixM #-} -- according to GHC, this fixes a space leak
 
-tryM :: IOEnv env r -> IOEnv env (Either IOEnvFailure r)
-tryM (IOEnv f) = IOEnv $ tryIOEnvFailure . f
+ioEnvFail :: IOEnv env a
+ioEnvFail = IOEnv $ \_ -> throwIO IOEnvFailure
 
-tryIOEnvFailure :: IO r -> IO (Either IOEnvFailure r)
-tryIOEnvFailure = try
+ioEnvCatch :: IOEnv env a -> IOEnv env (Maybe a)
+ioEnvCatch (IOEnv f) = IOEnv $ \env ->
+    catch (Just <$> f env) $ \IOEnvFailure ->
+        pure Nothing
 
 unsafeInterleaveM :: IOEnv env a -> IOEnv env a
 unsafeInterleaveM (IOEnv m) = IOEnv $ \env -> unsafeInterleaveIO (m env)
