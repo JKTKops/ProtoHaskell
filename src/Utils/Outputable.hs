@@ -5,13 +5,14 @@ This module used to be mainly of my own design, but the 'CDoc' version
 is instead a HEAVILY modified version of GHC's 'Outputable' module.
 
 The two modules are not interchangeable, due to differences in
-naming preferences and the content of 'Flags'.
+naming preferences and the content of 'Settings'.
 -}
 module Utils.Outputable
     ( CDoc -- abstract
     , CDocContext(..), initCDocContext
     , CDocStyle(..), Depth(..), Colored(..), CodeStyle(..)
     , mkCodeStyle
+    , mkUserStyle, mkDumpStyle, mkInfoStyle, mkObjectStyle, mkMessageStyle
 
     -- * Some convenience exports from Text.PrettyPrint.
     , module PrettyExports
@@ -24,7 +25,7 @@ module Utils.Outputable
     -- * Common small 'CDoc's
     , semi, comma, colon, dcolon, equals, space, underscore
     , dot, vbar, arrow, darrow, larrow, lparen, rparen, lbrack
-    , rbrack, lbrace, rbrace, backslash, blankLine
+    , rbrack, lbrace, rbrace, backslash, bullet, star, blankLine
 
     -- * Basic 'CDoc' construction
     , empty, char, text, int, integer, float, double, rational
@@ -118,6 +119,22 @@ codeStyle _              = Nothing
 
 mkCodeStyle :: CodeStyle -> CDocStyle
 mkCodeStyle = CodeStyle
+
+type StyleCreator = Settings -> CDocStyle
+
+mkMessageStyle, mkDumpStyle, mkInfoStyle, mkObjectStyle :: StyleCreator
+mkMessageStyle settings = mkUserStyle settings FullDepth
+mkDumpStyle   _settings = DumpStyle
+mkInfoStyle    settings = mkUserStyle settings FullDepth
+mkObjectStyle _settings = CodeStyle $ error "Just pick a target language already :("
+
+mkUserStyle :: Settings -> Depth -> CDocStyle
+mkUserStyle settings depth
+  | gOpt FPprDebug settings = DebugStyle
+  | otherwise = UserStyle depth c
+  where
+    c | shouldUseColor settings = Colored
+      | otherwise               = Uncolored
 
 instance Outputable CDocStyle where
     ppr UserStyle{}  = text "user-style"
@@ -285,9 +302,19 @@ star       = char '*'
 forall :: CDoc
 forall = text "forall"
 
+{- NOTE: [Operator Fixities]
+In Text.PrettyPrint, the operators are all infixl. In practice, the distinction is
+not all that important for writing correct code. Presumably, the layout algorithm performs
+better on left-nested constructions. To this end, our $$ and $+$ are infixl since they have
+a different precedence. However, my biggest gripe with Text.PrettyPrint is that the <>
+operator clashes with Prelude.<>, and since Prelude.<> is infixr, we must have <+>
+be infixr to match.
+-}
+
 -- | Indent a 'CDoc' by some amount
 nest :: Int -> CDoc -> CDoc
--- | Join two 'CDoc's with a space between them
+-- | Join two 'CDoc's with a space between them.
+-- Note that Text.PrettyPrint operators are infixl, but these are infixr.
 (<+>) :: CDoc -> CDoc -> CDoc
 -- | Join two 'CDoc's vertically. If they don't vertically overlap, they
 -- are joined neatly onto one line.
@@ -299,6 +326,9 @@ nest n = wrapper (Pretty.nest n)
 (<+>) = wrapper2 (Pretty.<+>)
 ($$)  = wrapper2 (Pretty.$$)
 ($+$) = wrapper2 (Pretty.$+$)
+
+infixr 6 <+>
+infixl 5 $$, $+$
 
 listWrapper :: ([Pretty.Doc] -> Pretty.Doc) -> [CDoc] -> CDoc
 listWrapper f ds = CDoc $ \sty -> f [runCDoc d sty | d <- ds]
