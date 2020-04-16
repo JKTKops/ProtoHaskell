@@ -8,11 +8,13 @@ module Compiler.Settings
     ( WarnFlag(..)
     , LangFlag(..)
     , DumpFlag(..)
+    , GeneralFlag(..)
     , Settings    -- abstract
     , defaultSettings
 
       -- * Querying Flags
-    , warnOpt, langOpt, dumpOpt
+    , warnOpt, langOpt, dumpOpt, gOpt
+    , shouldUseColor
 
       -- * Obtaining flags from structures
     , HasSettings(..)
@@ -55,8 +57,8 @@ data DumpFlag
 -- instead have their
 -- own field in the 'Settings' record, because
 -- "unspecified" may mean Auto, rather than Never.
-data GeneralFlag = GeneralFlag -- Don't have any of these yet. These are for cool features
-                               -- after the compiler is done!
+data GeneralFlag
+     = FPprDebug
      deriving (Eq, Ord, Show, Enum, Bounded)
 
 data Settings = Settings
@@ -113,12 +115,3 @@ overrideWith b Auto   = b
 overrideWith _ Always = True
 overrideWith _ Never  = False
 infixr 4 `overrideWith` -- binds tighter than && and ||
-
--- | Reasons associate with messages containing warnings.
--- The message may be something that we always print,
--- it may have been enabled by a flag, or it may have been turned into an
--- error by a flag.
-data WarnReason
-     = NoReason
-     | WarnReason WarnFlag
-     | ErrReason  WarnFlag

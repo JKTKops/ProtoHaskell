@@ -42,6 +42,11 @@ data Bag a
   | ListBag [a]             -- INVARIANT: the list is non-empty
   deriving (Functor)
 
+instance Semigroup (Bag a) where
+    (<>) = unionBags
+instance Monoid (Bag a) where
+    mempty = emptyBag
+
 emptyBag :: Bag a
 emptyBag = EmptyBag
 
