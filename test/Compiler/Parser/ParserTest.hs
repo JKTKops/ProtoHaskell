@@ -2,7 +2,7 @@ module Compiler.Parser.ParserTest (tests) where
 
 import Prelude hiding (lex)
 
-import Compiler.BasicTypes.Flags
+import Compiler.Settings
 import Compiler.Parser.Parser
 
 import Test
@@ -21,12 +21,13 @@ shouldSucceed = goldenPShow "Should Succeed"
                                     Left _ -> FailFast "parse failed"
                                     Right _ -> OK)
 
+-- pshow behaves strangely since CDoc's show instance is not derived
 shouldFail :: IO TestTree
-shouldFail = goldenPShow "Should Fail"
-                         "test/Compiler/Parser/testcases/shouldfail"
-                         runParse
-                         (\case
-                                 Left _ -> OK
-                                 Right _ -> FailFast "parse succeeded")
+shouldFail = goldenOutput "Should Fail"
+                          "test/Compiler/Parser/testcases/shouldfail"
+                          runParse
+                          (\case
+                                  Left _  -> OK
+                                  Right _ -> FailFast "parse succeeded")
 
-runParse fn = parse fn noFlags
+runParse fn = parse fn defaultSettings

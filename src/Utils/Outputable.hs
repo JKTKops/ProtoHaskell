@@ -44,7 +44,7 @@ module Utils.Outputable
 
     -- * Outputable class
     , Outputable(..)
-    , output, outputWith, renderWithStyle
+    , output, outputWith, outputM, outputWithM, renderWithStyle
     ) where
 
 import qualified Text.PrettyPrint as Pretty
@@ -52,6 +52,7 @@ import qualified Text.PrettyPrint as PrettyExports (Mode(..))
 import Compiler.Settings
 
 import Data.Char
+import Data.Functor ((<&>))
 import System.IO
 
 --------------------------------------------------
@@ -429,21 +430,34 @@ printCDocBasic ::  CDoc -> IO ()
 printCDocBasic = hPrintCDocLn
                   stdout Pretty.PageMode defaultSettings (UserStyle FullDepth Colored)
 
+-- this style is typically for use in GHCi while debugging
+-- the compiler, if your terminal doesn't support colors, change it!
+dummyStyle = UserStyle FullDepth Colored
+
 dummyContext :: CDocContext
 dummyContext = CDocContext
     { cdocSettings = defaultSettings
-    -- this context is typically for use in GHCi while debugging
-    -- the compiler, if your terminal doesn't support colors, change it!
-    , cdocStyle = UserStyle FullDepth Colored
+    , cdocStyle    = dummyStyle
     }
 
+-- | Intended for debugging in GHCi; uses the 'defaultSettings' and the style
+-- @UserStyle FullDepth Colored@.
 output :: Outputable a => a -> String
 output = show . flip runCDoc dummyContext . ppr
+
+-- | See 'output'.
+instance Show CDoc where show = output
 
 outputWith :: Outputable a => Settings -> CDocStyle -> a -> String
 outputWith stgs style = show
                        . flip runCDoc (initCDocContext stgs style)
                        . ppr
+
+outputM :: (Functor m, HasSettings m, Outputable a) => a -> m String
+outputM = outputWithM dummyStyle . ppr
+
+outputWithM :: (Functor m, HasSettings m, Outputable a) => CDocStyle -> a -> m String
+outputWithM style thing = getSettings <&> \s -> outputWith s style thing
 
 renderWithStyle :: Settings -> CDocStyle -> CDoc -> String
 renderWithStyle stgs sty doc =

@@ -80,8 +80,15 @@ data RHS id
            }
      deriving (Eq, Ord, Show)
 
--- NOTE: [GRHS]
--- Called "guarded right hand sides" even if there are actually no guards
+{- NOTE: [GRHS]
+Called "guarded right hand sides" even if there are actually no guards
+
+Why do we need this thing? Why can't we simply unpack RHS into Match?
+The short answer is that pattern bindings (see PhSyn.hs) need a PhLocalBinds too!
+Life is easier if we simply put them directly in the RHS and handle both ways of entering
+a GRHS uniformly later.
+-}
+
 -- General plan for PatternGuards in the future: instead of unguarded/guarded distinction,
 -- have one GRHS per guard, which is shaped like GRHS [LGuardStmt] LPhExpr
 -- where LGuardStmt is just an LStmt (same as statements in a do-block, meaning distinguished

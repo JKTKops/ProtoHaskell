@@ -4,7 +4,6 @@ module Compiler.Parser.LexerTest (tests) where
 
 import Prelude hiding (lex)
 
-import Compiler.BasicTypes.Flags
 import Compiler.BasicTypes.SrcLoc
 import Compiler.Parser.Lexer
 import Utils.Outputable

@@ -25,10 +25,11 @@ pprParseError pe src lexemes =
             (Just _,  Nothing) -> Source
             (Just _,  Just _)  -> SourceAndLexeme
             (Nothing, Just _)  -> Lexeme
-        spaces = replicate (length (show line) + 1) ' '
-        template src arrows = spaces ++ "|\n" ++
-                              show line ++ " | " ++ src ++ "\n" ++
-                              spaces ++ "| " ++ arrows
+        spaces = hcat $ replicate (length (show line) + 1) space
+        template src arrows =
+             (spaces <> vbar)
+          $$ (text (show line) <+> vbar <+> src)
+          $$ (spaces <> vbar <+> arrows)
     in mkErrorMessage infoAmount info pos msgs template
 
 data InfoAmount = NoInfo | Source | SourceAndLexeme | Lexeme
@@ -60,8 +61,8 @@ mkErrorMessage :: InfoAmount                   -- How detailed can our source/ar
                -> (Maybe String, Maybe Lexeme) -- Components for source/arrows
                -> SourcePos                    -- Position of error
                -> [Message]                    -- Parsec error messages
-               -> (String -> String -> String) -- Callback to template
-                                                 -- source/arrows into msg
+               -> (CDoc -> CDoc -> CDoc)       -- Callback to template
+                                               -- source/arrows into msg
                -> CDoc
 mkErrorMessage infoAmt info pos msgs template =
     let prettySource = case infoAmt of
@@ -76,30 +77,29 @@ mkErrorMessage infoAmt info pos msgs template =
             (leadingWS, body) = span isSpace src
             initSrcLoc = mkRealSrcLoc "" (sourceLine pos) 1
             bodyStartLoc = foldl advanceSrcLoc initSrcLoc leadingWS
-            arrowWs = replicate (col - realSrcLocCol bodyStartLoc) ' '
-        in (body, arrowWs)
+            arrowWs = replicate (col - realSrcLocCol bodyStartLoc) space
+        in (text body, hcat arrowWs)
 
     templateSource =
         let (Just src, _) = info
             (body, arrowWs) = getBodyAndArrowWs src
-            arrows = "^"
-        in pprString (template body (arrowWs ++ arrows))
+            arrows = char '^'
+        in template body (arrowWs <> arrows)
 
     templateSourceAndLexeme =
         let (Just src, Just (Located (RealSrcSpan span) _)) = info
             (body, arrowWs) = getBodyAndArrowWs src
             mNumArrows = realSrcSpanLength span
-            --arrows = replicate (realSrcSpanLength span) '^'
         in case mNumArrows of
             Nothing -> text "<Can't display source>"
-            Just num -> pprString (template body (arrowWs ++ replicate num '^'))
+            Just num -> template body (arrowWs <> hcat (replicate num $ char '^'))
 
     templateLexeme =
         let (_, Just (Located _ token)) = info
-            body = output token
-            arrows = replicate (length body) '^'
-        in case length (lines body) of
-            1 -> pprString $ template body arrows
+            body = ppr token
+            arrows = hcat $ replicate (length (show token)) $ char '^'
+        in case length (lines (show token)) of
+            1 -> template body arrows
             _ -> text "<Can't display source>"
 
 header :: SourcePos -> CDoc
