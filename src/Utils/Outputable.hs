@@ -14,9 +14,6 @@ module Utils.Outputable
     , mkCodeStyle
     , mkUserStyle, mkDumpStyle, mkInfoStyle, mkObjectStyle, mkMessageStyle
 
-    -- * Some convenience exports from Text.PrettyPrint.
-    , module PrettyExports
-
     -- * Configure printing for a 'CDoc'
     , setCDocStyle, cdocDeeper, cdocDeeperList, cdocSetDepth
     , withCDocSettings, updCDocSettings, setCDocSettings
@@ -28,27 +25,33 @@ module Utils.Outputable
     , rbrack, lbrace, rbrace, backslash, bullet, star, blankLine
 
     -- * Basic 'CDoc' construction
-    , empty, char, text, int, integer, float, double, rational
+    , empty, char, text, int, integer, float, double
     , pprString
 
     -- * Common 'CDoc' combinators
     , parens, braces, brackets, quotes, doubleQuotes, angles
-    , nest, (<+>), (<>), ($$), ($+$), hcat, hsep, vcat, sep
+    , nest, indent, hang, (<+>), (<>), ($$), ($+$), hcat, hsep, vcat, sep
     , cat, fsep, fcat, punctuate
 
     , pprWhen, pprUnless, parensIf, pprWithCommas
     , asPrefixVar, asInfixVar
 
+    -- * Coloring
+    , black, red, green, yellow, blue, magenta, cyan, white
+    , dullBlack, dullRed, dullGreen, dullYellow, dullBlue
+    , dullMagenta, dullCyan, dullWhite
+
     -- * Rendering to a handle
-    , hPrintCDoc, hPrintCDocLn, printCDocBasic
+--    , hPrintCDoc, hPrintCDocLn, printCDocBasic
+    , printCDoc, printCDocLn
 
     -- * Outputable class
     , Outputable(..)
-    , output, outputWith, outputM, outputWithM, renderWithStyle
+    , output, outputWith, outputM, outputWithM, --renderWithStyle
     ) where
 
-import qualified Text.PrettyPrint as Pretty
-import qualified Text.PrettyPrint as PrettyExports (Mode(..))
+import qualified Data.Text.Prettyprint.Doc as Pretty
+import           Data.Text.Prettyprint.Doc.Render.Terminal
 import Compiler.Settings
 
 import Data.Char
@@ -68,7 +71,8 @@ import qualified Text.Megaparsec as MParsec
 -- Exported Doc Type
 --------------------------------------------------
 
-newtype CDoc = CDoc { runCDoc :: CDocContext -> Pretty.Doc }
+newtype CDoc = CDoc { runCDoc :: CDocContext -> PrettyDoc }
+type PrettyDoc = Pretty.Doc AnsiStyle
 
 data CDocContext = CDocContext
      { cdocStyle    :: !CDocStyle
@@ -158,7 +162,7 @@ setCDocStyle style d = CDoc $ \ctx -> runCDoc d ctx{cdocStyle = style}
 
 cdocDeeper :: CDoc -> CDoc
 cdocDeeper d = CDoc $ \ctx -> case ctx of
-    CDocContext{cdocStyle = UserStyle (PartialDepth 0) _} -> Pretty.text "..."
+    CDocContext{cdocStyle = UserStyle (PartialDepth 0) _} -> Pretty.pretty ("..." :: String)
     CDocContext{cdocStyle = UserStyle (PartialDepth n) c} ->
         runCDoc d ctx{cdocStyle = UserStyle (PartialDepth (n - 1)) c}
     _ -> runCDoc d ctx
@@ -169,7 +173,7 @@ cdocDeeperList f ds
   | null ds   = f []
   | otherwise = CDoc worker
   where worker ctx@CDocContext{cdocStyle = UserStyle (PartialDepth n) c}
-          | n == 0    = Pretty.text "..."
+          | n == 0    = Pretty.pretty ("..." :: String)
           | otherwise = runCDoc (f (go 0 ds))
                           ctx{cdocStyle = UserStyle (PartialDepth (n - 1)) c}
           where go _ [] = []
@@ -217,7 +221,7 @@ withCodeStyle f = CDoc $ \ctx -> runCDoc (f $ codeStyle $ cdocStyle ctx) ctx
 --
 --------------------------------------------------------------------------------------
 
-doc2CDoc :: Pretty.Doc -> CDoc
+doc2CDoc :: PrettyDoc -> CDoc
 doc2CDoc = CDoc . const
 
 empty    :: CDoc
@@ -227,26 +231,24 @@ int      :: Int      -> CDoc
 integer  :: Integer  -> CDoc
 float    :: Float    -> CDoc
 double   :: Double   -> CDoc
-rational :: Rational -> CDoc
 
-empty    = doc2CDoc   Pretty.empty
-char     = doc2CDoc . Pretty.char
-text     = doc2CDoc . Pretty.text
-int      = doc2CDoc . Pretty.int
-integer  = doc2CDoc . Pretty.integer
-float    = doc2CDoc . Pretty.float
-double   = doc2CDoc . Pretty.double
-rational = doc2CDoc . Pretty.rational
+empty    = doc2CDoc   Pretty.emptyDoc
+char     = doc2CDoc . Pretty.pretty
+text     = doc2CDoc . Pretty.pretty
+int      = doc2CDoc . Pretty.pretty
+integer  = doc2CDoc . Pretty.pretty
+float    = doc2CDoc . Pretty.pretty
+double   = doc2CDoc . Pretty.pretty
 
 -- The use of lambdas actually affects how GHC will inline these definitions,
 -- and we need them to get inlined after receiving ONE argument.
 -- See the GHC user guide for more information.
 {- HLINT ignore "Redundant lambda" -}
-wrapper :: (Pretty.Doc -> Pretty.Doc) -> CDoc -> CDoc
+wrapper :: (PrettyDoc -> PrettyDoc) -> CDoc -> CDoc
 wrapper f = \d -> CDoc $ f . runCDoc d
 {-# INLINE wrapper #-}
 
-wrapper2 :: (Pretty.Doc -> Pretty.Doc -> Pretty.Doc)
+wrapper2 :: (PrettyDoc -> PrettyDoc -> PrettyDoc)
          -> CDoc        -> CDoc       -> CDoc
 wrapper2 f = \d1 d2 -> CDoc $ \sty -> f (runCDoc d1 sty) (runCDoc d2 sty)
 {-# INLINE wrapper2 #-}
@@ -255,7 +257,7 @@ parens, braces, brackets, quotes, doubleQuotes, angles :: CDoc -> CDoc
 parens = wrapper Pretty.parens
 braces = wrapper Pretty.braces
 brackets = wrapper Pretty.brackets
-doubleQuotes = wrapper Pretty.doubleQuotes
+doubleQuotes = wrapper Pretty.dquotes
 angles d = char '<' <> d <> char '>'
 
 -- | Wrap a 'CDoc' in single quotes, but only if the 'CDoc' does not begin
@@ -310,28 +312,47 @@ better on left-nested constructions. To this end, our $$ and $+$ are infixl sinc
 a different precedence. However, my biggest gripe with Text.PrettyPrint is that the <>
 operator clashes with Prelude.<>, and since Prelude.<> is infixr, we must have <+>
 be infixr to match.
+
+Further note: We no longer use Text.PrettyPrint, but the fixity of <+> is still relevant
+because <> is Semigroup.<>.
 -}
 
--- | Indent a 'CDoc' by some amount
+{- | Increase the nesting level of following lines of text by a given amount.
+
+> >>> nest 4 $ vsep ["lorem", "ipsum", "dolor"]
+> lorem
+>     ipsum
+>     dolor
+
+-}
 nest :: Int -> CDoc -> CDoc
+-- | Indent a doc by a specified amount.
+indent :: Int -> CDoc -> CDoc
+-- | Lay out the CDoc with the nesting level set as current column + n.
+-- Distinct from 'nest', which uses current nesting level + n.
+hang :: Int -> CDoc -> CDoc
 -- | Join two 'CDoc's with a space between them.
 -- Note that Text.PrettyPrint operators are infixl, but these are infixr.
 (<+>) :: CDoc -> CDoc -> CDoc
--- | Join two 'CDoc's vertically. If they don't vertically overlap, they
--- are joined neatly onto one line.
+-- | Join two 'CDoc's vertically.
+-- Formerly, if they didn't vertically overlap, they
+-- were joined neatly onto one line. This behavior was removed after the switch
+-- to the prettyprinter library.
 ($$) :: CDoc -> CDoc -> CDoc
 -- | Join two 'CDoc's vertically
 ($+$) :: CDoc -> CDoc -> CDoc
 
 nest n = wrapper (Pretty.nest n)
+indent n = wrapper (Pretty.indent n)
+hang n = wrapper (Pretty.hang n)
 (<+>) = wrapper2 (Pretty.<+>)
-($$)  = wrapper2 (Pretty.$$)
-($+$) = wrapper2 (Pretty.$+$)
+($$)  = ($+$)
+($+$) = wrapper2 $ \x y -> Pretty.align (Pretty.vsep [x, y])
 
 infixr 6 <+>
 infixl 5 $$, $+$
 
-listWrapper :: ([Pretty.Doc] -> Pretty.Doc) -> [CDoc] -> CDoc
+listWrapper :: ([PrettyDoc] -> PrettyDoc) -> [CDoc] -> CDoc
 listWrapper f ds = CDoc $ \sty -> f [runCDoc d sty | d <- ds]
 
 hcat, hsep, vcat, sep, cat, fsep, fcat :: [CDoc] -> CDoc
@@ -347,9 +368,9 @@ sep  = listWrapper Pretty.sep
 cat  = listWrapper Pretty.cat
 -- | "Paragraph fill." Behaves a lot like 'sep', but it keeps putting
 -- things on one line until it can't fit any more.
-fsep = listWrapper Pretty.fsep
+fsep = listWrapper Pretty.fillSep
 -- | Behaves like 'fsep', but uses <> instead of <+>
-fcat = listWrapper Pretty.fcat
+fcat = listWrapper Pretty.fillCat
 
 punctuate :: CDoc -> [CDoc] -> [CDoc]
 punctuate _ [] = []
@@ -358,7 +379,7 @@ punctuate p (d:ds) = go d ds
         go d (e:es) = (d <> p) : go e es
 
 pprString :: String -> CDoc
-pprString = vcat . map text . lines
+pprString = doc2CDoc . Pretty.pretty . Text.pack
 
 pprWhen :: Bool -> CDoc -> CDoc
 pprWhen True d  = d
@@ -371,8 +392,8 @@ parensIf :: Bool -> CDoc -> CDoc
 parensIf True  = parens
 parensIf False = id
 
-prettyQuoteDoc :: Pretty.Doc -> Pretty.Doc
-prettyQuoteDoc d = Pretty.char '`' <> d <> Pretty.char '\''
+prettyQuoteDoc :: PrettyDoc -> PrettyDoc
+prettyQuoteDoc d = Pretty.pretty '`' <> d <> Pretty.pretty '\''
 
 pprWithCommas :: Outputable a => [a] -> CDoc
 pprWithCommas = fsep . punctuate comma . map ppr
@@ -392,43 +413,79 @@ isOperatorDoc d = let str = output d in
     not (null str) && isSymbol (head str)
 
 --------------------------------------------------------------------------------------
+-- Coloring
+--------------------------------------------------------------------------------------
+
+ifUseColor :: (CDoc -> CDoc) -> CDoc -> CDoc
+ifUseColor f doc = withCDocStyle $ \case
+    UserStyle _ Colored -> f doc
+    _otherwise          -> doc
+
+coloredVivid, coloredDull :: Color -> CDoc -> CDoc
+coloredVivid c = ifUseColor (wrapper $ Pretty.annotate $ color c)
+coloredDull  c = ifUseColor (wrapper $ Pretty.annotate $ colorDull c)
+
+black, red, green, yellow, blue, magenta, cyan, white :: CDoc -> CDoc
+black   = coloredVivid Black
+red     = coloredVivid Red
+green   = coloredVivid Green
+yellow  = coloredVivid Yellow
+blue    = coloredVivid Blue
+magenta = coloredVivid Magenta
+cyan    = coloredVivid Cyan
+white   = coloredVivid White
+
+dullBlack, dullRed, dullGreen, dullYellow  :: CDoc -> CDoc
+dullBlue, dullMagenta, dullCyan, dullWhite :: CDoc -> CDoc
+
+dullBlack   = coloredDull Black
+dullRed     = coloredDull Red
+dullGreen   = coloredDull Green
+dullYellow  = coloredDull Yellow
+dullBlue    = coloredDull Blue
+dullMagenta = coloredDull Magenta
+dullCyan    = coloredDull Cyan
+dullWhite   = coloredDull White
+
+--------------------------------------------------------------------------------------
 --
 --                             RENDERING
 --
 --------------------------------------------------------------------------------------
 
--- from ghc compiler/Utils/Pretty.hs, which is Text.PrettyPrint but slightly modified
--- In ghc it is called printDoc_ and takes args in a slightly different order.
-hPrintDoc_ :: Handle -> Pretty.Mode -> Int -> Pretty.Doc -> IO ()
-hPrintDoc_ hdl mode pprCols doc = do
-    Pretty.fullRender mode pprCols 1.5 put done doc
-    hFlush hdl
-        -- for performance reasons, GHC contains a modified copy of
-        -- Text.PrettyPrint. One difference is that 'TextDetails' contains
-        -- more cases, for fast strings, fast z strings, etc.
-  where put (Pretty.Chr c)  next = hPutChar hdl c >> next
-        put (Pretty.Str s)  next = hPutStr  hdl s >> next
-        put (Pretty.PStr s) next = hPutStr  hdl s >> next
+-- -- from ghc compiler/Utils/Pretty.hs, which is Text.PrettyPrint but slightly modified
+-- -- In ghc it is called printDoc_ and takes args in a slightly different order.
+-- hPrintDoc_ :: Handle -> Pretty.Mode -> Int -> Pretty.Doc -> IO ()
+-- hPrintDoc_ hdl mode pprCols doc = do
+--     Pretty.fullRender mode pprCols 1.5 put done doc
+--     hFlush hdl
+--         -- for performance reasons, GHC contains a modified copy of
+--         -- Text.PrettyPrint. One difference is that 'TextDetails' contains
+--         -- more cases, for fast strings, fast z strings, etc.
+--   where put (Pretty.Chr c)  next = hPutChar hdl c >> next
+--         put (Pretty.Str s)  next = hPutStr  hdl s >> next
+--         put (Pretty.PStr s) next = hPutStr  hdl s >> next
 
-        done = pure ()
+--         done = pure ()
 
--- | Print a 'CDoc' to a handle. Clears the color if an exception is thrown during
--- printing, to try and avoid screwing up the terminal.
-hPrintCDoc :: Handle -> Pretty.Mode -> Settings -> CDocStyle -> CDoc -> IO ()
-hPrintCDoc hdl mode stgs sty doc = hPrintDoc_ hdl mode 100 (runCDoc doc ctx)
-    -- TODO: colors
-    --`finally`
-    --    hPrintDoc_ hdl mode cols (runCDoc (colored Color.colReset empty) ctx)
-  where ctx = initCDocContext stgs sty
+-- -- | Print a 'CDoc' to a handle. Clears the color if an exception is thrown during
+-- -- printing, to try and avoid screwing up the terminal.
+-- hPrintCDoc :: Handle -> Pretty.Mode -> Settings -> CDocStyle -> CDoc -> IO ()
+-- hPrintCDoc hdl mode stgs sty doc = hPrintDoc_ hdl mode 100 (runCDoc doc ctx)
+--     -- TODO: colors
+--     --`finally`
+--     --    hPrintDoc_ hdl mode cols (runCDoc (colored Color.colReset empty) ctx)
+--   where ctx = initCDocContext stgs sty
 
--- | Like 'hPrintCDoc', but also appends a newline to the output.
-hPrintCDocLn :: Handle -> Pretty.Mode -> Settings -> CDocStyle -> CDoc -> IO ()
-hPrintCDocLn hdl mode stgs sty doc = hPrintCDoc hdl mode stgs sty (doc $$ blankLine)
-                                      -- NB. $$ is a no-op if either arg is 'empty'
+-- -- | Like 'hPrintCDoc', but also appends a newline to the output.
+-- hPrintCDocLn :: Handle -> Pretty.Mode -> Settings -> CDocStyle -> CDoc -> IO ()
+-- hPrintCDocLn hdl mode stgs sty doc = hPrintCDoc hdl mode stgs sty (doc $$ blankLine)
 
-printCDocBasic ::  CDoc -> IO ()
-printCDocBasic = hPrintCDocLn
-                  stdout Pretty.PageMode defaultSettings (UserStyle FullDepth Colored)
+printCDoc ::  CDoc -> IO ()
+printCDoc doc = putDoc $ runCDoc doc dummyContext
+
+printCDocLn :: CDoc -> IO ()
+printCDocLn = printCDoc . ($$ empty)
 
 -- this style is typically for use in GHCi while debugging
 -- the compiler, if your terminal doesn't support colors, change it!
@@ -459,10 +516,10 @@ outputM = outputWithM dummyStyle . ppr
 outputWithM :: (Functor m, HasSettings m, Outputable a) => CDocStyle -> a -> m String
 outputWithM style thing = getSettings <&> \s -> outputWith s style thing
 
-renderWithStyle :: Settings -> CDocStyle -> CDoc -> String
-renderWithStyle stgs sty doc =
-    -- uses line length of 100
-    Pretty.renderStyle Pretty.style $ runCDoc doc (initCDocContext stgs sty)
+-- renderWithStyle :: Settings -> CDocStyle -> CDoc -> String
+-- renderWithStyle stgs sty doc =
+--     -- uses line length of 100
+--     Pretty.renderStyle Pretty.style $ runCDoc doc (initCDocContext stgs sty)
 
 --------------------------------------------------
 -- Class and instances
@@ -574,7 +631,7 @@ instance ( Outputable a, Outputable b, Outputable c, Outputable d
                    ppr g])
 
 instance Outputable Text.Text where
-    ppr = ppr . Text.unpack
+    ppr = doc2CDoc . Pretty.pretty
 
 instance Outputable Parsec.ParseError where
     ppr = text . show

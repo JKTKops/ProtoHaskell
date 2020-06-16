@@ -42,7 +42,8 @@ dependencies:
 - mtl
 - megaparsec
 - parsec
-- pretty
+- prettyprinter
+- prettyprinter-ansi-terminal
 - text
 
 library:
