@@ -1,0 +1,52 @@
+Right 
+  ( Module 
+    { modName = Nothing
+    , modDecls = 
+      [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/basic.hs 1 1 31 ) 
+        ( Binding 
+          ( PatBind 
+            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/basic.hs 1 1 5 ) 
+              ( PVar 
+                ( UnQual 
+                  ( OccName 
+                    { nameSpace = VarName
+                    , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/basic.hs 1 1 5
+                    , nameFS = main
+                    } 
+                  )
+                )
+              )
+            ) 
+            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/basic.hs 1 6 31 ) 
+              ( RHS 
+                { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/basic.hs 1 6 31 ) 
+                  ( Unguarded 
+                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/basic.hs 1 8 31 ) 
+                      ( PhApp 
+                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/basic.hs 1 8 16 ) 
+                          ( PhVar 
+                            ( UnQual 
+                              ( OccName 
+                                { nameSpace = VarName
+                                , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/basic.hs 1 8 16
+                                , nameFS = putStrLn
+                                } 
+                              )
+                            )
+                          )
+                        ) 
+                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/basic.hs 1 17 31 ) 
+                          ( PhLit ( LitString "Hello world!" ) )
+                        )
+                      )
+                    )
+                  )
+                , localBinds = Located ( UnhelpfulSpan <no location info> ) ( LocalBinds [] [] )
+                } 
+              )
+            )
+          )
+        )
+      ]
+    } 
+  )

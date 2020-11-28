@@ -1,4 +1,4 @@
-{-
+{- |
 Handles everything to do with messages. Creating, storing, sorting, outputting,
 modifying, etc., output, dump, debug, warning, and error messages.
 
@@ -90,8 +90,8 @@ formatMessageDoc MessageDoc
   {mdImportant = important, mdContext = context, mdSupplementary = supl} =
     vcat $ map (bullet <+>) components
   where
-    seperatedComponents = [important] : filter (not . null) [context, supl]
-    components = map vcat seperatedComponents
+    separatedComponents = [important] : filter (not . null) [context, supl]
+    components = map vcat separatedComponents
 
 formatMessage :: Message -> CDoc
 formatMessage Message{mSpan, mDoc, mSeverity, mReason} =

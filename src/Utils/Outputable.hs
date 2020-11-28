@@ -41,9 +41,9 @@ module Utils.Outputable
     , dullBlack, dullRed, dullGreen, dullYellow, dullBlue
     , dullMagenta, dullCyan, dullWhite
 
-    -- * Rendering to a handle
+    -- * Rendering
 --    , hPrintCDoc, hPrintCDocLn, printCDocBasic
-    , printCDoc, printCDocLn
+    , putCDoc, putCDocLn
 
     -- * Outputable class
     , Outputable(..)
@@ -453,6 +453,8 @@ dullWhite   = coloredDull White
 --
 --------------------------------------------------------------------------------------
 
+-- TODO: Re-implement these with prettyprinter package
+
 -- -- from ghc compiler/Utils/Pretty.hs, which is Text.PrettyPrint but slightly modified
 -- -- In ghc it is called printDoc_ and takes args in a slightly different order.
 -- hPrintDoc_ :: Handle -> Pretty.Mode -> Int -> Pretty.Doc -> IO ()
@@ -472,7 +474,6 @@ dullWhite   = coloredDull White
 -- -- printing, to try and avoid screwing up the terminal.
 -- hPrintCDoc :: Handle -> Pretty.Mode -> Settings -> CDocStyle -> CDoc -> IO ()
 -- hPrintCDoc hdl mode stgs sty doc = hPrintDoc_ hdl mode 100 (runCDoc doc ctx)
---     -- TODO: colors
 --     --`finally`
 --     --    hPrintDoc_ hdl mode cols (runCDoc (colored Color.colReset empty) ctx)
 --   where ctx = initCDocContext stgs sty
@@ -481,11 +482,13 @@ dullWhite   = coloredDull White
 -- hPrintCDocLn :: Handle -> Pretty.Mode -> Settings -> CDocStyle -> CDoc -> IO ()
 -- hPrintCDocLn hdl mode stgs sty doc = hPrintCDoc hdl mode stgs sty (doc $$ blankLine)
 
-printCDoc ::  CDoc -> IO ()
-printCDoc doc = putDoc $ runCDoc doc dummyContext
+-- TODO: this definition leaves the terminal covered if an error occurs while printing
+-- which is pretty common due to laziness.
+putCDoc ::  CDoc -> IO ()
+putCDoc doc = putDoc $ runCDoc doc dummyContext
 
-printCDocLn :: CDoc -> IO ()
-printCDocLn = printCDoc . ($$ empty)
+putCDocLn :: CDoc -> IO ()
+putCDocLn = putCDoc . ($$ empty)
 
 -- this style is typically for use in GHCi while debugging
 -- the compiler, if your terminal doesn't support colors, change it!

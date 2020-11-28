@@ -3,3 +3,5 @@ ProtoHaskell.cabal
 *~
 .\#*
 .history
+.idea/
+ProtoHaskell.iml
