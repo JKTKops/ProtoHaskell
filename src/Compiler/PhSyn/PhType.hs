@@ -1,7 +1,5 @@
 module Compiler.PhSyn.PhType where
 
-import Data.String
-
 import Compiler.BasicTypes.SrcLoc
 import Utils.Outputable
 

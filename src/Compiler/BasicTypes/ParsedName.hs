@@ -14,6 +14,7 @@ import Data.Text.Lazy (Text)
 import Compiler.BasicTypes.SrcLoc
 import Compiler.BasicTypes.OccName
 import Compiler.BasicTypes.Name
+import Compiler.BasicTypes.Unique
 
 import Utils.Outputable
 
@@ -50,6 +51,9 @@ instance HasOccName ParsedName where
 
 instance HasSrcSpan ParsedName where
     srcSpanOf = srcSpanOf . occNameOf
+
+instance HasUnique ParsedName where
+    getUnique = getUnique . occNameOf
 
 parsedNameOcc :: ParsedName -> OccName
 parsedNameOcc (UnQual n) = n

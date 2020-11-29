@@ -99,11 +99,11 @@ gOpt gf s = gf `Set.member` generalFlags s
 shouldUseColor :: Settings -> Bool
 shouldUseColor stngs = canUseColor stngs `overrideWith` useColor stngs
 
--- We intend to make monads instances of this class
+-- We intend to make monads instances of this class...
 class HasSettings m where
     getSettings :: m Settings
 
--- And non-monads instances of this class.
+-- ... and non-monads instances of this class.
 class ContainsSettings a where
     extractSettings :: a -> Settings
 

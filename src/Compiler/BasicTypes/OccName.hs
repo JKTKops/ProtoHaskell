@@ -87,7 +87,7 @@ instance HasUnique OccName where
 -- unique of the Name typically uniquely identifies the entity as well.
 
 instance Outputable OccName where
-    ppr (OccName _ _ fs) = text $ show fs
+    ppr (OccName _ _ fs) = ftext fs
 
 mkOccName :: NameSpace -> SrcSpan -> Text -> OccName
 mkOccName ns span txt = OccName ns span (mkFastStringText txt)

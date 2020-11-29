@@ -25,8 +25,7 @@ module Utils.Outputable
     , rbrack, lbrace, rbrace, backslash, bullet, star, blankLine
 
     -- * Basic 'CDoc' construction
-    , empty, char, text, int, integer, float, double
-    , pprString
+    , empty, char, string, text, int, integer, float, double
 
     -- * Common 'CDoc' combinators
     , parens, braces, brackets, quotes, doubleQuotes, angles
@@ -56,6 +55,7 @@ import Compiler.Settings
 
 import Data.Char
 import Data.Functor ((<&>))
+import Data.String (IsString(..))
 
 --------------------------------------------------
 -- Imports for providing instances
@@ -71,6 +71,10 @@ import qualified Text.Megaparsec as MParsec
 --------------------------------------------------
 
 newtype CDoc = CDoc { runCDoc :: CDocContext -> PrettyDoc }
+
+instance IsString CDoc where
+    fromString = string
+
 type PrettyDoc = Pretty.Doc AnsiStyle
 
 data CDocContext = CDocContext
@@ -224,15 +228,17 @@ doc2CDoc :: PrettyDoc -> CDoc
 doc2CDoc = CDoc . const
 
 empty    :: CDoc
-char     :: Char     -> CDoc
-text     :: String   -> CDoc
-int      :: Int      -> CDoc
-integer  :: Integer  -> CDoc
-float    :: Float    -> CDoc
-double   :: Double   -> CDoc
+char     :: Char      -> CDoc
+string   :: String    -> CDoc
+text     :: Text.Text -> CDoc
+int      :: Int       -> CDoc
+integer  :: Integer   -> CDoc
+float    :: Float     -> CDoc
+double   :: Double    -> CDoc
 
 empty    = doc2CDoc   Pretty.emptyDoc
 char     = doc2CDoc . Pretty.pretty
+string   = doc2CDoc . Pretty.pretty
 text     = doc2CDoc . Pretty.pretty
 int      = doc2CDoc . Pretty.pretty
 integer  = doc2CDoc . Pretty.pretty
@@ -390,9 +396,6 @@ punctuate _ [] = []
 punctuate p (d:ds) = go d ds
   where go d []     = [d]
         go d (e:es) = (d <> p) : go e es
-
-pprString :: String -> CDoc
-pprString = doc2CDoc . Pretty.pretty . Text.pack
 
 pprWhen :: Bool -> CDoc -> CDoc
 pprWhen True d  = d
@@ -558,13 +561,16 @@ instance Outputable CDoc where
 
 instance Outputable Char where
     ppr = char
-    pprList = {-doubleQuotes .-} pprString
+    pprList = string
 
 instance Outputable Bool where
-    ppr = text . show
+    ppr True  = text "True"
+    ppr False = text "False"
 
 instance Outputable Ordering where
-    ppr = text . show
+    ppr LT = text "LT"
+    ppr EQ = text "EQ"
+    ppr GT = text "GT"
 
 instance Outputable Int where
     ppr = int
@@ -648,13 +654,13 @@ instance ( Outputable a, Outputable b, Outputable c, Outputable d
                    ppr g])
 
 instance Outputable Text.Text where
-    ppr = doc2CDoc . Pretty.pretty
+    ppr = text
 
 instance Outputable Parsec.ParseError where
-    ppr = text . show
+    ppr = string . show
 
 -- We are not currently using MegaParsec.
 instance ( MParsec.Stream s
          , MParsec.ShowErrorComponent e
          ) => Outputable (MParsec.ParseErrorBundle s e) where
-    ppr = text . MParsec.errorBundlePretty
+    ppr = string . MParsec.errorBundlePretty

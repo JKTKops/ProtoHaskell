@@ -92,14 +92,14 @@ formatMessageDoc MessageDoc
     vcat $ map (bullet <+>) components
   where
     separatedComponents = [important] : filter (not . null) [context, supl]
-    components = map vcat separatedComponents
+    components = map (align . vcat) separatedComponents
 
 formatMessage :: Message -> CDoc
 formatMessage Message{mSpan, mDoc, mSeverity, mReason} =
     withCDocSettings $ \s ->
         setCDocStyle (mkMessageStyle s) $
             (ppr (srcSpanStart mSpan) <> colon <+> annotation <+> formatReason mReason) $$
-            nest 4 (formatMessageDoc mDoc)
+            indent 4 (formatMessageDoc mDoc)
   where
     formatReason :: MessageReason -> CDoc
     formatReason NoReason = empty

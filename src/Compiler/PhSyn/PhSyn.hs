@@ -40,7 +40,7 @@ data ConDecl id
 instance Outputable b => Outputable (PhModule b) where
     ppr (Module Nothing decls) = vcat (map ppr decls)
     ppr (Module (Just name) decls) =
-        vcat $ (text "module" <+> text (T.unpack $ unLoc name) <+> text "where") :
+        vcat $ (text "module" <+> text (unLoc name) <+> text "where") :
         map ppr decls
 
 instance Outputable id => Outputable (PhDecl id) where

@@ -78,7 +78,7 @@ instance Outputable FastString where
     ppr = ftext
 
 ftext :: FastString -> CDoc
-ftext = text . unpackFS
+ftext = text . fs_text
 
 --------------------------------------------------------------------------------------
 --

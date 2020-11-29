@@ -4,7 +4,7 @@ module Compiler.Parser.Parser
 
 import Prelude hiding (lex)
 
-import Utils.Outputable (CDoc, text)
+import Utils.Outputable as Out (CDoc, string)
 
 import Compiler.Parser.Errors
 import Compiler.Parser.Helpers
@@ -15,13 +15,6 @@ import Compiler.PhSyn.PhExpr
 import Compiler.PhSyn.PhType
 
 import Data.Text.Lazy (Text)
-import qualified Data.Text.Lazy as T
-
-import Data.Function ((&))
-import Control.Monad.Identity (Identity)
-
-import qualified Text.Parsec as Parsec
-import qualified Text.Parsec.Error as Parsec
 
 -----------------------------------------------------------------------------------------
 -- Main parse driver
@@ -33,7 +26,7 @@ import qualified Text.Parsec.Error as Parsec
 -- TODO: fail with ErrMsg instead of CDoc
 parse :: SourceName -> Settings -> String -> Either CDoc (PhModule ParsedName)
 parse srcname flags input = do
-    lexemes <- mapLeft text $ lex srcname input
+    lexemes <- mapLeft Out.string $ lex srcname input
     case runParser (modl <* eof) srcname flags lexemes of
         Right modl -> Right modl
         Left parseErr -> Left $ pprParseError parseErr input lexemes
@@ -44,6 +37,7 @@ parse srcname flags input = do
 -----------------------------------------------------------------------------------------
 -- Component Parsers
 -----------------------------------------------------------------------------------------
+{-HLINT ignore "Use <$>" -}
 
 modl :: Parser (PhModule ParsedName)
 modl = Module <$> optionMaybe modlHeader <*> parseTopDecls
@@ -150,9 +144,6 @@ parseMatch :: MatchContext -> Parser (Match ParsedName)
 parseMatch ctx = do
     pats <- many1 Pattern.parseLocated
     rhs  <- locate $ parseRHS ctx
-    mLocalBinds <- if ctx /= LamCtxt
-        then optionMaybe (token TokWhere >> parseLocalBinds) <?> "where clause"
-        else return Nothing
     return Match { matchPats = pats, rhs }
 
 -- | Parses the right hand side of a binding.

@@ -241,7 +241,7 @@ reservedOpToTok = \case
 mkTokEOF _ _ = Located undefined TokEOF
 
 data Token
-       -- ^ Special Characters
+       -- Special Characters
      = TokLParen
      | TokRParen
      | TokComma
@@ -253,26 +253,26 @@ data Token
      | TokBackquote
      | TokUnderscore -- Not truly special, as it's legal in identifiers
 
-       -- ^ Literals
+       -- Literals
      | TokLitInteger Text
      | TokLitFloat   Text
      | TokLitChar    Text
      | TokLitString  Text
 
-       -- ^ Reserved Words
+       -- Reserved Words
      | TokCase   | TokClass   | TokData   | TokDefault  | TokDeriving
      | TokDo     | TokElse    | TokIf     | TokImport   | TokIn
      | TokInfix  | TokInfixL  | TokInfixR | TokInstance | TokLet
      | TokModule | TokNewtype | TokOf     | TokThen     | TokType
      | TokWhere
 
-       -- ^ Reserved Operators
+       -- Reserved Operators
      | TokTwoDots -- ".."
      | TokColon | TokDoubleColon | TokEqual  | TokLambda
      | TokBar   | TokLArrow      | TokRArrow | TokAt
      | TokTilde | TokPredArrow
 
-       -- ^ Other
+       -- Other
      | TokVarId      Text
      | TokQualVarId  Text Text
      | TokConId      Text

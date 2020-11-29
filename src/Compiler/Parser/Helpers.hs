@@ -26,11 +26,10 @@ import Compiler.BasicTypes.OccName
 
 import qualified Utils.Outputable as Out
 
-import Data.Maybe (catMaybes, isJust)
+import Data.Maybe (isJust)
 import Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as T
 
-import Data.Function ((&))
 import Data.Functor  (($>))
 import Control.Arrow ((>>>))
 import Control.Monad
@@ -321,21 +320,20 @@ locate p = do
 -----------------------------------------------------------------------------------------
 
 runParser :: Parser a -> SourceName -> Settings -> [Lexeme] -> Either ParseError a
-runParser p srcname flags lexemes =
-    Parsec.runParser p (initParseState flags) srcname lexemes
+runParser p srcname flags = Parsec.runParser p (initParseState flags) srcname
 
 -- TODO: don't fail with a CDoc, fail with an ErrMsg
 -- adjust lexer to fail with an ErrMsg as well.
 -- and record the refactoring in WYAH.
 testParser :: Parser a -> String -> Either Out.CDoc a
 testParser p input = do
-    lexemes <- mapLeft Out.text $ lex "" input
+    lexemes <- mapLeft Out.string $ lex "" input
     case runParser (initPos *> p <* eof) "" defaultSettings lexemes of
         Right v  -> Right v
         Left err -> Left $ pprParseError err input lexemes
   where mapLeft :: (e -> e') -> Either e a -> Either e' a
         mapLeft f (Left e)  = Left (f e)
-        mapLeft f (Right a) = Right a
+        mapLeft _ (Right a) = Right a
 
 initPos :: Parser ()
 initPos = do

@@ -214,7 +214,7 @@ instance Outputable PhLit where
     ppr (LitInt i)    = integer i
     ppr (LitFloat d)  = double d
     ppr (LitChar c)   = char '\'' <> char c <> char '\''
-    ppr (LitString s) = text $ show s
+    ppr (LitString s) = string $ show s -- need show to do escaping
 
 instance Outputable id => Outputable (MatchGroup id) where
     ppr (MG (map unLoc -> alts) ctxt) = vcat $ map (pprMatch ctxt) alts

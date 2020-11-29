@@ -20,22 +20,23 @@ import Utils.Outputable
 data Name = Name
     { n_sort :: NameSort
     , n_occ  :: !OccName
-    , n_uniq :: !Unique -- N.B. this unique disambiguates OccName's with the same unique
+    , n_uniq :: !Unique -- N.B. this unique disambiguates OccNames with the same unique
                         -- because all OccNames with the same text share a unique.
     }
   deriving Show
 
 data NameSort
-     = UserDefined -- internal to module being compiled
-                   -- will add External in the future
+     = Internal -- internal to the module being compiled
+    -- | External Module
      | WiredIn
      | System
   deriving (Eq, Ord, Show, Enum, Bounded)
 
 instance Outputable NameSort where
-    ppr UserDefined = text "user-defined"
-    ppr WiredIn = text "wired-in"
-    ppr System  = text "system"
+    ppr Internal = text "internal"
+    -- ppr External (Module _pkg name) = text "external" <+> parens (text name)
+    ppr WiredIn  = text "wired-in"
+    ppr System   = text "system"
 
 instance HasSrcSpan Name where
     srcSpanOf = srcSpanOf . nameOccName

@@ -10,10 +10,10 @@ import Compiler.Parser.Lexer
 import Data.Char
 
 pprParseError :: ParseError -> String -> [Lexeme] -> CDoc
-pprParseError pe "" [] = text $ show pe -- Use text . show instead of ppr in case
-                                        -- definition of ppr changes to use this function
-pprParseError pe "" _  = text $ show pe
-pprParseError pe _  [] = text $ show pe
+pprParseError pe "" [] = string $ show pe -- Use string . show instead of ppr in case
+                                          -- definition of ppr changes to use this function
+pprParseError pe "" _  = string $ show pe
+pprParseError pe _  [] = string $ show pe
 pprParseError pe src lexemes =
     let pos  = errorPos pe
         msgs = errorMessages pe
@@ -28,7 +28,7 @@ pprParseError pe src lexemes =
         spaces = hcat $ replicate (length (show line) + 1) space
         template src arrows =
              (spaces <> vbar)
-          $$ (text (show line) <+> vbar <+> src)
+          $$ (string (show line) <+> vbar <+> src)
           $$ (spaces <> vbar <+> arrows)
     in mkErrorMessage infoAmount info pos msgs template
 
@@ -78,7 +78,7 @@ mkErrorMessage infoAmt info pos msgs template =
             initSrcLoc = mkRealSrcLoc "" (sourceLine pos) 1
             bodyStartLoc = foldl advanceSrcLoc initSrcLoc leadingWS
             arrowWs = replicate (col - realSrcLocCol bodyStartLoc) space
-        in (text body, hcat arrowWs)
+        in (string body, hcat arrowWs)
 
     templateSource =
         let (Just src, _) = info
@@ -103,8 +103,8 @@ mkErrorMessage infoAmt info pos msgs template =
             _ -> text "<Can't display source>"
 
 header :: SourcePos -> CDoc
-header pos = text $ "Parse error at " ++ showPos pos ++ ":"
+header pos = text "Parse error at" <+> string (showPos pos) <> ":"
 
 errMsgBody :: [Message] -> CDoc
-errMsgBody = text . showErrorMessages "or" "unknown parse error"
-                                      "expecting" "unexpected" "end of input"
+errMsgBody = string . showErrorMessages "or" "unknown parse error"
+                                        "expecting" "unexpected" "end of input"
