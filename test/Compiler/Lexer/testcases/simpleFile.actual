@@ -1,0 +1,5 @@
+Right [<indentation>, module, SimpleFile, where, <indentation>, foo, ::, Foo,
+       <indentation>, foo, =, undefined, <indentation>, bar, ::, (, Bar, ->,
+       Foo, ), ->, Bar, ->, Foo, <indentation>, bar, f, b, =, f, b,
+       <indentation>, bar', ::, (, Bar, ->, Foo, ), ->, Bar, ->, Foo,
+       <indentation>, bar', =, id]
