@@ -127,7 +127,7 @@ anticipate t msg = do
     unexpected $ showTokenPretty t ++ ", perhaps you meant " ++ msg ++ "?"
 
 anticipateOp :: String -> String -> Parser a
-anticipateOp op msg = anticipate (reservedOpToTok op) msg
+anticipateOp op = anticipate (reservedOpToTok op)
 
 instance HasSettings (Parsec [Lexeme] ParseState) where
     getSettings = compFlags <$> getState

@@ -24,10 +24,9 @@ import System.IO.Unsafe (unsafeInterleaveIO)
 
 import Control.Applicative (Alternative(..))
 import Control.Monad (MonadPlus(..))
-import Control.Monad.IO.Class
-import Control.Monad.Fail
-import Control.Monad.Fix
-import Control.Exception
+import Control.Monad.IO.Class (MonadIO(..))
+import Control.Monad.Fix (MonadFix(..))
+import Control.Exception (catch, throwIO, Exception)
 
 import Data.IORef
 

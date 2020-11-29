@@ -1,13 +1,13 @@
 module Compiler.BasicTypes.Unique where
 
-import Utils.Outputable
-import Data.IORef
+import Utils.Outputable (Outputable(ppr), text)
 
 data Unique = Unique !UniqueSection !Int
   deriving (Eq, Ord, Show)
 
+-- | Provenance of Uniques.
 data UniqueSection
-     -- * PHC passes
+    -- PHC passes
      = ParseSection
      | RenameSection
      | TypeCheckSection
@@ -16,7 +16,7 @@ data UniqueSection
      | TidyCoreSection
      | ToSTGSection
 
-     -- * Other reasons we might need a unique:
+     -- Other reasons we might need a unique:
      | WiredInSection
      | FastStringSection
   deriving (Eq, Ord, Show, Enum, Bounded)

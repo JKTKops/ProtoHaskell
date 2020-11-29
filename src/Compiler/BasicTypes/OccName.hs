@@ -43,7 +43,6 @@ module Compiler.BasicTypes.OccName
     ) where
 
 import Data.Text.Lazy (Text)
-import qualified Data.Text.Lazy as T
 import Data.Char (isAlphaNum)
 
 import Compiler.BasicTypes.SrcLoc

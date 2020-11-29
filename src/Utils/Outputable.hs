@@ -30,8 +30,8 @@ module Utils.Outputable
 
     -- * Common 'CDoc' combinators
     , parens, braces, brackets, quotes, doubleQuotes, angles
-    , nest, indent, hang, (<+>), (<>), ($$), ($+$), hcat, hsep, vcat, sep
-    , cat, fsep, fcat, punctuate
+    , nest, indent, hang, (<+>), (<>), ($$), ($+$), align, hcat, hsep
+    , vcat, sep, cat, fsep, fcat, punctuate
 
     , pprWhen, pprUnless, parensIf, pprWithCommas
     , asPrefixVar, asInfixVar
@@ -56,7 +56,6 @@ import Compiler.Settings
 
 import Data.Char
 import Data.Functor ((<&>))
-import System.IO
 
 --------------------------------------------------
 -- Imports for providing instances
@@ -249,7 +248,7 @@ wrapper f = \d -> CDoc $ f . runCDoc d
 {-# INLINE wrapper #-}
 
 wrapper2 :: (PrettyDoc -> PrettyDoc -> PrettyDoc)
-         -> CDoc        -> CDoc       -> CDoc
+         -> CDoc       -> CDoc      -> CDoc
 wrapper2 f = \d1 d2 -> CDoc $ \sty -> f (runCDoc d1 sty) (runCDoc d2 sty)
 {-# INLINE wrapper2 #-}
 
@@ -331,7 +330,9 @@ indent :: Int -> CDoc -> CDoc
 -- | Lay out the CDoc with the nesting level set as current column + n.
 -- Distinct from 'nest', which uses current nesting level + n.
 hang :: Int -> CDoc -> CDoc
--- | Join two 'CDoc's with a space between them.
+-- | Join two 'CDoc's with a space between them. If either is empty, the
+-- space is omitted.
+--
 -- Note that Text.PrettyPrint operators are infixl, but these are infixr.
 (<+>) :: CDoc -> CDoc -> CDoc
 -- | Join two 'CDoc's vertically.
@@ -345,12 +346,24 @@ hang :: Int -> CDoc -> CDoc
 nest n = wrapper (Pretty.nest n)
 indent n = wrapper (Pretty.indent n)
 hang n = wrapper (Pretty.hang n)
-(<+>) = wrapper2 (Pretty.<+>)
+
+-- prettyprinter's <+> combinator, for whatever reason, doesn't bother
+-- to check if either side is EmptyDoc. This is less robust, but at least
+-- it should work... basically always.
+(<+>) = wrapper2 $ \left right ->
+    if null (show left)
+    then right
+    else if null (show right)
+         then left
+         else left Pretty.<+> right
 ($$)  = ($+$)
 ($+$) = wrapper2 $ \x y -> Pretty.align (Pretty.vsep [x, y])
 
 infixr 6 <+>
 infixl 5 $$, $+$
+
+align :: CDoc -> CDoc
+align = wrapper Pretty.align
 
 listWrapper :: ([PrettyDoc] -> PrettyDoc) -> [CDoc] -> CDoc
 listWrapper f ds = CDoc $ \sty -> f [runCDoc d sty | d <- ds]
@@ -492,6 +505,7 @@ putCDocLn = putCDoc . ($$ empty)
 
 -- this style is typically for use in GHCi while debugging
 -- the compiler, if your terminal doesn't support colors, change it!
+dummyStyle :: CDocStyle
 dummyStyle = UserStyle FullDepth Colored
 
 dummyContext :: CDocContext
@@ -536,7 +550,7 @@ class Outputable a where
     pprPrec _ = ppr
 
     pprList :: [a] -> CDoc
-    pprList xs = brackets $ fsep $ punctuate comma $ map ppr xs
+    pprList xs = brackets $ align $ fsep $ punctuate comma $ map ppr xs
     {-# MINIMAL ppr | pprPrec #-}
 
 instance Outputable CDoc where
@@ -578,11 +592,11 @@ instance (Outputable a, Outputable b) => Outputable (a, b) where
 
 instance Outputable a => Outputable (Maybe a) where
     ppr Nothing  = text "Nothing"
-    ppr (Just x) = text "Just" <+> ppr x
+    ppr (Just x) = text "Just" <+> align (ppr x)
 
 instance (Outputable a, Outputable b) => Outputable (Either a b) where
-    ppr (Left x)  = text "Left"  <+> ppr x
-    ppr (Right y) = text "Right" <+> ppr y
+    ppr (Left x)  = text "Left"  <+> align (ppr x)
+    ppr (Right y) = text "Right" <+> align (ppr y)
 
 instance (Outputable key, Outputable e) => Outputable (Map.Map key e) where
     ppr m = ppr $ Map.toList m

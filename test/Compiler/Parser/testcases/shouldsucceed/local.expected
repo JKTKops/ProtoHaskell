@@ -1,40 +1,40 @@
-Right 
-  ( Module 
+Right
+  ( Module
     { modName = Nothing
-    , modDecls = 
-      [ Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 1 1 3 21 ) 
-        ( Signature 
-          ( TypeSig 
-            [ UnQual 
-              ( OccName 
+    , modDecls =
+      [ Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 1 1 3 21 )
+        ( Signature
+          ( TypeSig
+            [ UnQual
+              ( OccName
                 { nameSpace = VarName
                 , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 3 1 6
                 , nameFS = test1
-                } 
+                }
               )
-            ] 
-            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 3 10 21 ) 
-              ( PhAppTy 
-                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 3 10 12 ) 
-                  ( PhVarTy 
-                    ( UnQual 
-                      ( OccName 
+            ]
+            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 3 10 21 )
+              ( PhAppTy
+                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 3 10 12 )
+                  ( PhVarTy
+                    ( UnQual
+                      ( OccName
                         { nameSpace = TcClsName
                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 3 10 12
                         , nameFS = IO
-                        } 
+                        }
                       )
                     )
                   )
-                ) 
-                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 3 13 21 ) 
-                  ( PhVarTy 
-                    ( UnQual 
-                      ( OccName 
+                )
+                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 3 13 21 )
+                  ( PhVarTy
+                    ( UnQual
+                      ( OccName
                         { nameSpace = TcClsName
                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 3 13 21
                         , nameFS = TestTree
-                        } 
+                        }
                       )
                     )
                   )
@@ -43,61 +43,61 @@ Right
             )
           )
         )
-      , Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 1 7 39 ) 
-        ( Binding 
-          ( PatBind 
-            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 1 6 ) 
-              ( PVar 
-                ( UnQual 
-                  ( OccName 
+      , Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 1 7 39 )
+        ( Binding
+          ( PatBind
+            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 1 6 )
+              ( PVar
+                ( UnQual
+                  ( OccName
                     { nameSpace = VarName
                     , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 1 6
                     , nameFS = test1
-                    } 
+                    }
                   )
                 )
               )
-            ) 
-            ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 7 7 39 ) 
-              ( RHS 
-                { grhs = Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 7 6 29 ) 
-                  ( Unguarded 
-                    ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 9 6 29 ) 
-                      ( PhApp 
-                        ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 9 5 53 ) 
-                          ( PhApp 
-                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 9 42 ) 
-                              ( PhApp 
-                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 9 20 ) 
-                                  ( PhVar 
-                                    ( UnQual 
-                                      ( OccName 
+            )
+            ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 7 7 39 )
+              ( RHS
+                { grhs = Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 7 6 29 )
+                  ( Unguarded
+                    ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 9 6 29 )
+                      ( PhApp
+                        ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 9 5 53 )
+                          ( PhApp
+                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 9 42 )
+                              ( PhApp
+                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 9 20 )
+                                  ( PhVar
+                                    ( UnQual
+                                      ( OccName
                                         { nameSpace = VarName
                                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 9 20
                                         , nameFS = goldenPShow
-                                        } 
+                                        }
                                       )
                                     )
                                   )
-                                ) 
-                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 21 42 ) 
+                                )
+                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 4 21 42 )
                                   ( PhLit ( LitString "Parser Golden Tests" ) )
                                 )
                               )
-                            ) 
-                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 5 21 53 ) 
+                            )
+                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 5 21 53 )
                               ( PhLit ( LitString "test/Compiler/Parser/testcases" ) )
                             )
                           )
-                        ) 
-                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 6 21 29 ) 
-                          ( PhVar 
-                            ( UnQual 
-                              ( OccName 
+                        )
+                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 6 21 29 )
+                          ( PhVar
+                            ( UnQual
+                              ( OccName
                                 { nameSpace = VarName
                                 , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 6 21 29
                                 , nameFS = runParse
-                                } 
+                                }
                               )
                             )
                           )
@@ -105,77 +105,77 @@ Right
                       )
                     )
                   )
-                , localBinds = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 9 39 ) 
-                  ( LocalBinds 
-                    [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 9 39 ) 
-                      ( FunBind 
-                        ( UnQual 
-                          ( OccName 
+                , localBinds = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 9 39 )
+                  ( LocalBinds
+                    [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 9 39 )
+                      ( FunBind
+                        ( UnQual
+                          ( OccName
                             { nameSpace = VarName
                             , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 9 17
                             , nameFS = runParse
-                            } 
+                            }
                           )
-                        ) 
-                        ( MG 
-                          { mgAlts = 
-                            [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 18 39 ) 
-                              ( Match 
-                                { matchPats = 
-                                  [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 18 20 ) 
-                                    ( PVar 
-                                      ( UnQual 
-                                        ( OccName 
+                        )
+                        ( MG
+                          { mgAlts =
+                            [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 18 39 )
+                              ( Match
+                                { matchPats =
+                                  [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 18 20 )
+                                    ( PVar
+                                      ( UnQual
+                                        ( OccName
                                           { nameSpace = VarName
                                           , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 18 20
                                           , nameFS = fn
-                                          } 
+                                          }
                                         )
                                       )
                                     )
                                   ]
-                                , rhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 21 39 ) 
-                                  ( RHS 
-                                    { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 21 39 ) 
-                                      ( Unguarded 
-                                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 23 39 ) 
-                                          ( PhApp 
-                                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 23 31 ) 
-                                              ( PhApp 
-                                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 23 28 ) 
-                                                  ( PhVar 
-                                                    ( UnQual 
-                                                      ( OccName 
+                                , rhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 21 39 )
+                                  ( RHS
+                                    { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 21 39 )
+                                      ( Unguarded
+                                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 23 39 )
+                                          ( PhApp
+                                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 23 31 )
+                                              ( PhApp
+                                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 23 28 )
+                                                  ( PhVar
+                                                    ( UnQual
+                                                      ( OccName
                                                         { nameSpace = VarName
                                                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 23 28
                                                         , nameFS = parse
-                                                        } 
+                                                        }
                                                       )
                                                     )
                                                   )
-                                                ) 
-                                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 29 31 ) 
-                                                  ( PhVar 
-                                                    ( UnQual 
-                                                      ( OccName 
+                                                )
+                                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 29 31 )
+                                                  ( PhVar
+                                                    ( UnQual
+                                                      ( OccName
                                                         { nameSpace = VarName
                                                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 29 31
                                                         , nameFS = fn
-                                                        } 
+                                                        }
                                                       )
                                                     )
                                                   )
                                                 )
                                               )
-                                            ) 
-                                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 32 39 ) 
-                                              ( PhVar 
-                                                ( UnQual 
-                                                  ( OccName 
+                                            )
+                                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 32 39 )
+                                              ( PhVar
+                                                ( UnQual
+                                                  ( OccName
                                                     { nameSpace = VarName
                                                     , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 7 32 39
                                                     , nameFS = noFlags
-                                                    } 
+                                                    }
                                                   )
                                                 )
                                               )
@@ -184,55 +184,55 @@ Right
                                         )
                                       )
                                     , localBinds = Located ( UnhelpfulSpan <no location info> ) ( LocalBinds [] [] )
-                                    } 
+                                    }
                                   )
-                                } 
+                                }
                               )
                             ]
                           , mgCtxt = FunCtxt
-                          } 
+                          }
                         )
                       )
                     ] []
                   )
-                } 
+                }
               )
             )
           )
         )
-      , Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 9 1 21 ) 
-        ( Signature 
-          ( TypeSig 
-            [ UnQual 
-              ( OccName 
+      , Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 9 1 21 )
+        ( Signature
+          ( TypeSig
+            [ UnQual
+              ( OccName
                 { nameSpace = VarName
                 , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 9 1 6
                 , nameFS = test2
-                } 
+                }
               )
-            ] 
-            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 9 10 21 ) 
-              ( PhAppTy 
-                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 9 10 12 ) 
-                  ( PhVarTy 
-                    ( UnQual 
-                      ( OccName 
+            ]
+            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 9 10 21 )
+              ( PhAppTy
+                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 9 10 12 )
+                  ( PhVarTy
+                    ( UnQual
+                      ( OccName
                         { nameSpace = TcClsName
                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 9 10 12
                         , nameFS = IO
-                        } 
+                        }
                       )
                     )
                   )
-                ) 
-                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 9 13 21 ) 
-                  ( PhVarTy 
-                    ( UnQual 
-                      ( OccName 
+                )
+                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 9 13 21 )
+                  ( PhVarTy
+                    ( UnQual
+                      ( OccName
                         { nameSpace = TcClsName
                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 9 13 21
                         , nameFS = TestTree
-                        } 
+                        }
                       )
                     )
                   )
@@ -241,152 +241,152 @@ Right
             )
           )
         )
-      , Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 1 13 41 ) 
-        ( Binding 
-          ( PatBind 
-            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 1 6 ) 
-              ( PVar 
-                ( UnQual 
-                  ( OccName 
+      , Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 1 13 41 )
+        ( Binding
+          ( PatBind
+            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 1 6 )
+              ( PVar
+                ( UnQual
+                  ( OccName
                     { nameSpace = VarName
                     , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 1 6
                     , nameFS = test2
-                    } 
+                    }
                   )
                 )
               )
-            ) 
-            ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 7 13 41 ) 
-              ( RHS 
-                { grhs = Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 7 13 41 ) 
-                  ( Unguarded 
-                    ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 9 13 41 ) 
-                      ( PhLet 
-                        ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 13 12 43 ) 
-                          ( LocalBinds 
-                            [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 13 41 ) 
-                              ( PatBind 
-                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 13 17 ) 
-                                  ( PVar 
-                                    ( UnQual 
-                                      ( OccName 
+            )
+            ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 7 13 41 )
+              ( RHS
+                { grhs = Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 7 13 41 )
+                  ( Unguarded
+                    ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 9 13 41 )
+                      ( PhLet
+                        ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 13 12 43 )
+                          ( LocalBinds
+                            [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 13 41 )
+                              ( PatBind
+                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 13 17 )
+                                  ( PVar
+                                    ( UnQual
+                                      ( OccName
                                         { nameSpace = VarName
                                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 13 17
                                         , nameFS = name
-                                        } 
+                                        }
                                       )
                                     )
                                   )
-                                ) 
-                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 18 41 ) 
-                                  ( RHS 
-                                    { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 18 41 ) 
-                                      ( Unguarded 
-                                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 20 41 ) 
+                                )
+                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 18 41 )
+                                  ( RHS
+                                    { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 18 41 )
+                                      ( Unguarded
+                                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 10 20 41 )
                                           ( PhLit ( LitString "Parser Golden Tests" ) )
                                         )
                                       )
                                     , localBinds = Located ( UnhelpfulSpan <no location info> ) ( LocalBinds [] [] )
-                                    } 
+                                    }
                                   )
                                 )
                               )
-                            , Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 11 13 52 ) 
-                              ( PatBind 
-                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 11 13 16 ) 
-                                  ( PVar 
-                                    ( UnQual 
-                                      ( OccName 
+                            , Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 11 13 52 )
+                              ( PatBind
+                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 11 13 16 )
+                                  ( PVar
+                                    ( UnQual
+                                      ( OccName
                                         { nameSpace = VarName
                                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 11 13 16
                                         , nameFS = dir
-                                        } 
+                                        }
                                       )
                                     )
                                   )
-                                ) 
-                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 11 18 52 ) 
-                                  ( RHS 
-                                    { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 11 18 52 ) 
-                                      ( Unguarded 
-                                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 11 20 52 ) 
+                                )
+                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 11 18 52 )
+                                  ( RHS
+                                    { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 11 18 52 )
+                                      ( Unguarded
+                                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 11 20 52 )
                                           ( PhLit ( LitString "test/Compiler/Parser/testcases" ) )
                                         )
                                       )
                                     , localBinds = Located ( UnhelpfulSpan <no location info> ) ( LocalBinds [] [] )
-                                    } 
+                                    }
                                   )
                                 )
                               )
-                            , Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 13 43 ) 
-                              ( FunBind 
-                                ( UnQual 
-                                  ( OccName 
+                            , Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 13 43 )
+                              ( FunBind
+                                ( UnQual
+                                  ( OccName
                                     { nameSpace = VarName
                                     , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 13 21
                                     , nameFS = runParse
-                                    } 
+                                    }
                                   )
-                                ) 
-                                ( MG 
-                                  { mgAlts = 
-                                    [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 22 43 ) 
-                                      ( Match 
-                                        { matchPats = 
-                                          [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 22 24 ) 
-                                            ( PVar 
-                                              ( UnQual 
-                                                ( OccName 
+                                )
+                                ( MG
+                                  { mgAlts =
+                                    [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 22 43 )
+                                      ( Match
+                                        { matchPats =
+                                          [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 22 24 )
+                                            ( PVar
+                                              ( UnQual
+                                                ( OccName
                                                   { nameSpace = VarName
                                                   , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 22 24
                                                   , nameFS = fn
-                                                  } 
+                                                  }
                                                 )
                                               )
                                             )
                                           ]
-                                        , rhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 25 43 ) 
-                                          ( RHS 
-                                            { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 25 43 ) 
-                                              ( Unguarded 
-                                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 27 43 ) 
-                                                  ( PhApp 
-                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 27 35 ) 
-                                                      ( PhApp 
-                                                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 27 32 ) 
-                                                          ( PhVar 
-                                                            ( UnQual 
-                                                              ( OccName 
+                                        , rhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 25 43 )
+                                          ( RHS
+                                            { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 25 43 )
+                                              ( Unguarded
+                                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 27 43 )
+                                                  ( PhApp
+                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 27 35 )
+                                                      ( PhApp
+                                                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 27 32 )
+                                                          ( PhVar
+                                                            ( UnQual
+                                                              ( OccName
                                                                 { nameSpace = VarName
                                                                 , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 27 32
                                                                 , nameFS = parse
-                                                                } 
+                                                                }
                                                               )
                                                             )
                                                           )
-                                                        ) 
-                                                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 33 35 ) 
-                                                          ( PhVar 
-                                                            ( UnQual 
-                                                              ( OccName 
+                                                        )
+                                                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 33 35 )
+                                                          ( PhVar
+                                                            ( UnQual
+                                                              ( OccName
                                                                 { nameSpace = VarName
                                                                 , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 33 35
                                                                 , nameFS = fn
-                                                                } 
+                                                                }
                                                               )
                                                             )
                                                           )
                                                         )
                                                       )
-                                                    ) 
-                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 36 43 ) 
-                                                      ( PhVar 
-                                                        ( UnQual 
-                                                          ( OccName 
+                                                    )
+                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 36 43 )
+                                                      ( PhVar
+                                                        ( UnQual
+                                                          ( OccName
                                                             { nameSpace = VarName
                                                             , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 12 36 43
                                                             , nameFS = noFlags
-                                                            } 
+                                                            }
                                                           )
                                                         )
                                                       )
@@ -395,72 +395,72 @@ Right
                                                 )
                                               )
                                             , localBinds = Located ( UnhelpfulSpan <no location info> ) ( LocalBinds [] [] )
-                                            } 
+                                            }
                                           )
-                                        } 
+                                        }
                                       )
                                     ]
                                   , mgCtxt = FunCtxt
-                                  } 
+                                  }
                                 )
                               )
                             ] []
                           )
-                        ) 
-                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 12 41 ) 
-                          ( PhApp 
-                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 12 32 ) 
-                              ( PhApp 
-                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 12 28 ) 
-                                  ( PhApp 
-                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 12 23 ) 
-                                      ( PhVar 
-                                        ( UnQual 
-                                          ( OccName 
+                        )
+                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 12 41 )
+                          ( PhApp
+                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 12 32 )
+                              ( PhApp
+                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 12 28 )
+                                  ( PhApp
+                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 12 23 )
+                                      ( PhVar
+                                        ( UnQual
+                                          ( OccName
                                             { nameSpace = VarName
                                             , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 12 23
                                             , nameFS = goldenPShow
-                                            } 
+                                            }
                                           )
                                         )
                                       )
-                                    ) 
-                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 24 28 ) 
-                                      ( PhVar 
-                                        ( UnQual 
-                                          ( OccName 
+                                    )
+                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 24 28 )
+                                      ( PhVar
+                                        ( UnQual
+                                          ( OccName
                                             { nameSpace = VarName
                                             , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 24 28
                                             , nameFS = name
-                                            } 
+                                            }
                                           )
                                         )
                                       )
                                     )
                                   )
-                                ) 
-                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 29 32 ) 
-                                  ( PhVar 
-                                    ( UnQual 
-                                      ( OccName 
+                                )
+                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 29 32 )
+                                  ( PhVar
+                                    ( UnQual
+                                      ( OccName
                                         { nameSpace = VarName
                                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 29 32
                                         , nameFS = dir
-                                        } 
+                                        }
                                       )
                                     )
                                   )
                                 )
                               )
-                            ) 
-                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 33 41 ) 
-                              ( PhVar 
-                                ( UnQual 
-                                  ( OccName 
+                            )
+                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 33 41 )
+                              ( PhVar
+                                ( UnQual
+                                  ( OccName
                                     { nameSpace = VarName
                                     , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 13 33 41
                                     , nameFS = runParse
-                                    } 
+                                    }
                                   )
                                 )
                               )
@@ -471,44 +471,44 @@ Right
                     )
                   )
                 , localBinds = Located ( UnhelpfulSpan <no location info> ) ( LocalBinds [] [] )
-                } 
+                }
               )
             )
           )
         )
-      , Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 16 1 21 ) 
-        ( Signature 
-          ( TypeSig 
-            [ UnQual 
-              ( OccName 
+      , Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 16 1 21 )
+        ( Signature
+          ( TypeSig
+            [ UnQual
+              ( OccName
                 { nameSpace = VarName
                 , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 16 1 6
                 , nameFS = test3
-                } 
+                }
               )
-            ] 
-            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 16 10 21 ) 
-              ( PhAppTy 
-                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 16 10 12 ) 
-                  ( PhVarTy 
-                    ( UnQual 
-                      ( OccName 
+            ]
+            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 16 10 21 )
+              ( PhAppTy
+                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 16 10 12 )
+                  ( PhVarTy
+                    ( UnQual
+                      ( OccName
                         { nameSpace = TcClsName
                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 16 10 12
                         , nameFS = IO
-                        } 
+                        }
                       )
                     )
                   )
-                ) 
-                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 16 13 21 ) 
-                  ( PhVarTy 
-                    ( UnQual 
-                      ( OccName 
+                )
+                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 16 13 21 )
+                  ( PhVarTy
+                    ( UnQual
+                      ( OccName
                         { nameSpace = TcClsName
                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 16 13 21
                         , nameFS = TestTree
-                        } 
+                        }
                       )
                     )
                   )
@@ -517,212 +517,212 @@ Right
             )
           )
         )
-      , Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 1 21 42 ) 
-        ( Binding 
-          ( PatBind 
-            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 1 6 ) 
-              ( PVar 
-                ( UnQual 
-                  ( OccName 
+      , Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 1 21 42 )
+        ( Binding
+          ( PatBind
+            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 1 6 )
+              ( PVar
+                ( UnQual
+                  ( OccName
                     { nameSpace = VarName
                     , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 1 6
                     , nameFS = test3
-                    } 
+                    }
                   )
                 )
               )
-            ) 
-            ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 7 21 42 ) 
-              ( RHS 
-                { grhs = Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 7 21 42 ) 
-                  ( Unguarded 
-                    ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 9 21 42 ) 
-                      ( PhLet 
-                        ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 13 20 43 ) 
-                          ( LocalBinds 
-                            [ Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 13 19 31 ) 
-                              ( PatBind 
-                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 13 14 ) 
-                                  ( PVar 
-                                    ( UnQual 
-                                      ( OccName 
+            )
+            ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 7 21 42 )
+              ( RHS
+                { grhs = Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 7 21 42 )
+                  ( Unguarded
+                    ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 9 21 42 )
+                      ( PhLet
+                        ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 13 20 43 )
+                          ( LocalBinds
+                            [ Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 13 19 31 )
+                              ( PatBind
+                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 13 14 )
+                                  ( PVar
+                                    ( UnQual
+                                      ( OccName
                                         { nameSpace = VarName
                                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 13 14
                                         , nameFS = p
-                                        } 
+                                        }
                                       )
                                     )
                                   )
-                                ) 
-                                ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 15 19 31 ) 
-                                  ( RHS 
-                                    { grhs = Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 15 19 31 ) 
-                                      ( Unguarded 
-                                        ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 17 19 31 ) 
-                                          ( PhLet 
-                                            ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 21 18 60 ) 
-                                              ( LocalBinds 
-                                                [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 21 49 ) 
-                                                  ( PatBind 
-                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 21 25 ) 
-                                                      ( PVar 
-                                                        ( UnQual 
-                                                          ( OccName 
+                                )
+                                ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 15 19 31 )
+                                  ( RHS
+                                    { grhs = Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 15 19 31 )
+                                      ( Unguarded
+                                        ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 17 19 31 )
+                                          ( PhLet
+                                            ( Located ( RealSrcSpan SrcSpanMultiLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 21 18 60 )
+                                              ( LocalBinds
+                                                [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 21 49 )
+                                                  ( PatBind
+                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 21 25 )
+                                                      ( PVar
+                                                        ( UnQual
+                                                          ( OccName
                                                             { nameSpace = VarName
                                                             , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 21 25
                                                             , nameFS = name
-                                                            } 
+                                                            }
                                                           )
                                                         )
                                                       )
-                                                    ) 
-                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 26 49 ) 
-                                                      ( RHS 
-                                                        { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 26 49 ) 
-                                                          ( Unguarded 
-                                                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 28 49 ) 
+                                                    )
+                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 26 49 )
+                                                      ( RHS
+                                                        { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 26 49 )
+                                                          ( Unguarded
+                                                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 17 28 49 )
                                                               ( PhLit ( LitString "Parser Golden Tests" ) )
                                                             )
                                                           )
                                                         , localBinds = Located ( UnhelpfulSpan <no location info> ) ( LocalBinds [] [] )
-                                                        } 
+                                                        }
                                                       )
                                                     )
                                                   )
-                                                , Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 18 21 60 ) 
-                                                  ( PatBind 
-                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 18 21 24 ) 
-                                                      ( PVar 
-                                                        ( UnQual 
-                                                          ( OccName 
+                                                , Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 18 21 60 )
+                                                  ( PatBind
+                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 18 21 24 )
+                                                      ( PVar
+                                                        ( UnQual
+                                                          ( OccName
                                                             { nameSpace = VarName
                                                             , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 18 21 24
                                                             , nameFS = dir
-                                                            } 
+                                                            }
                                                           )
                                                         )
                                                       )
-                                                    ) 
-                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 18 26 60 ) 
-                                                      ( RHS 
-                                                        { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 18 26 60 ) 
-                                                          ( Unguarded 
-                                                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 18 28 60 ) 
+                                                    )
+                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 18 26 60 )
+                                                      ( RHS
+                                                        { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 18 26 60 )
+                                                          ( Unguarded
+                                                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 18 28 60 )
                                                               ( PhLit ( LitString "test/Compiler/Parser/testcases" ) )
                                                             )
                                                           )
                                                         , localBinds = Located ( UnhelpfulSpan <no location info> ) ( LocalBinds [] [] )
-                                                        } 
+                                                        }
                                                       )
                                                     )
                                                   )
                                                 ] []
                                               )
-                                            ) 
-                                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 19 20 31 ) 
-                                              ( ExplicitTuple 
-                                                [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 19 21 25 ) 
-                                                  ( PhVar 
-                                                    ( UnQual 
-                                                      ( OccName 
+                                            )
+                                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 19 20 31 )
+                                              ( ExplicitTuple
+                                                [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 19 21 25 )
+                                                  ( PhVar
+                                                    ( UnQual
+                                                      ( OccName
                                                         { nameSpace = VarName
                                                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 19 21 25
                                                         , nameFS = name
-                                                        } 
+                                                        }
                                                       )
                                                     )
                                                   )
-                                                , Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 19 27 30 ) 
-                                                  ( PhVar 
-                                                    ( UnQual 
-                                                      ( OccName 
+                                                , Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 19 27 30 )
+                                                  ( PhVar
+                                                    ( UnQual
+                                                      ( OccName
                                                         { nameSpace = VarName
                                                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 19 27 30
                                                         , nameFS = dir
-                                                        } 
+                                                        }
                                                       )
                                                     )
                                                   )
-                                                ] 
+                                                ]
                                               )
                                             )
                                           )
                                         )
                                       )
                                     , localBinds = Located ( UnhelpfulSpan <no location info> ) ( LocalBinds [] [] )
-                                    } 
+                                    }
                                   )
                                 )
                               )
-                            , Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 13 43 ) 
-                              ( FunBind 
-                                ( UnQual 
-                                  ( OccName 
+                            , Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 13 43 )
+                              ( FunBind
+                                ( UnQual
+                                  ( OccName
                                     { nameSpace = VarName
                                     , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 13 21
                                     , nameFS = runParse
-                                    } 
+                                    }
                                   )
-                                ) 
-                                ( MG 
-                                  { mgAlts = 
-                                    [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 22 43 ) 
-                                      ( Match 
-                                        { matchPats = 
-                                          [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 22 24 ) 
-                                            ( PVar 
-                                              ( UnQual 
-                                                ( OccName 
+                                )
+                                ( MG
+                                  { mgAlts =
+                                    [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 22 43 )
+                                      ( Match
+                                        { matchPats =
+                                          [ Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 22 24 )
+                                            ( PVar
+                                              ( UnQual
+                                                ( OccName
                                                   { nameSpace = VarName
                                                   , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 22 24
                                                   , nameFS = fn
-                                                  } 
+                                                  }
                                                 )
                                               )
                                             )
                                           ]
-                                        , rhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 25 43 ) 
-                                          ( RHS 
-                                            { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 25 43 ) 
-                                              ( Unguarded 
-                                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 27 43 ) 
-                                                  ( PhApp 
-                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 27 35 ) 
-                                                      ( PhApp 
-                                                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 27 32 ) 
-                                                          ( PhVar 
-                                                            ( UnQual 
-                                                              ( OccName 
+                                        , rhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 25 43 )
+                                          ( RHS
+                                            { grhs = Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 25 43 )
+                                              ( Unguarded
+                                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 27 43 )
+                                                  ( PhApp
+                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 27 35 )
+                                                      ( PhApp
+                                                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 27 32 )
+                                                          ( PhVar
+                                                            ( UnQual
+                                                              ( OccName
                                                                 { nameSpace = VarName
                                                                 , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 27 32
                                                                 , nameFS = parse
-                                                                } 
+                                                                }
                                                               )
                                                             )
                                                           )
-                                                        ) 
-                                                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 33 35 ) 
-                                                          ( PhVar 
-                                                            ( UnQual 
-                                                              ( OccName 
+                                                        )
+                                                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 33 35 )
+                                                          ( PhVar
+                                                            ( UnQual
+                                                              ( OccName
                                                                 { nameSpace = VarName
                                                                 , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 33 35
                                                                 , nameFS = fn
-                                                                } 
+                                                                }
                                                               )
                                                             )
                                                           )
                                                         )
                                                       )
-                                                    ) 
-                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 36 43 ) 
-                                                      ( PhVar 
-                                                        ( UnQual 
-                                                          ( OccName 
+                                                    )
+                                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 36 43 )
+                                                      ( PhVar
+                                                        ( UnQual
+                                                          ( OccName
                                                             { nameSpace = VarName
                                                             , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 20 36 43
                                                             , nameFS = noFlags
-                                                            } 
+                                                            }
                                                           )
                                                         )
                                                       )
@@ -731,72 +731,72 @@ Right
                                                 )
                                               )
                                             , localBinds = Located ( UnhelpfulSpan <no location info> ) ( LocalBinds [] [] )
-                                            } 
+                                            }
                                           )
-                                        } 
+                                        }
                                       )
                                     ]
                                   , mgCtxt = FunCtxt
-                                  } 
+                                  }
                                 )
                               )
                             ] []
                           )
-                        ) 
-                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 12 42 ) 
-                          ( PhApp 
-                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 12 33 ) 
-                              ( PhApp 
-                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 12 31 ) 
-                                  ( PhApp 
-                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 12 19 ) 
-                                      ( PhVar 
-                                        ( UnQual 
-                                          ( OccName 
+                        )
+                        ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 12 42 )
+                          ( PhApp
+                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 12 33 )
+                              ( PhApp
+                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 12 31 )
+                                  ( PhApp
+                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 12 19 )
+                                      ( PhVar
+                                        ( UnQual
+                                          ( OccName
                                             { nameSpace = VarName
                                             , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 12 19
                                             , nameFS = uncurry
-                                            } 
+                                            }
                                           )
                                         )
                                       )
-                                    ) 
-                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 20 31 ) 
-                                      ( PhVar 
-                                        ( UnQual 
-                                          ( OccName 
+                                    )
+                                    ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 20 31 )
+                                      ( PhVar
+                                        ( UnQual
+                                          ( OccName
                                             { nameSpace = VarName
                                             , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 20 31
                                             , nameFS = goldenPShow
-                                            } 
+                                            }
                                           )
                                         )
                                       )
                                     )
                                   )
-                                ) 
-                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 32 33 ) 
-                                  ( PhVar 
-                                    ( UnQual 
-                                      ( OccName 
+                                )
+                                ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 32 33 )
+                                  ( PhVar
+                                    ( UnQual
+                                      ( OccName
                                         { nameSpace = VarName
                                         , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 32 33
                                         , nameFS = p
-                                        } 
+                                        }
                                       )
                                     )
                                   )
                                 )
                               )
-                            ) 
-                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 34 42 ) 
-                              ( PhVar 
-                                ( UnQual 
-                                  ( OccName 
+                            )
+                            ( Located ( RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 34 42 )
+                              ( PhVar
+                                ( UnQual
+                                  ( OccName
                                     { nameSpace = VarName
                                     , occNameSrcSpan = RealSrcSpan SrcSpanOneLine test/Compiler/Parser/testcases/shouldsucceed/local.hs 21 34 42
                                     , nameFS = runParse
-                                    } 
+                                    }
                                   )
                                 )
                               )
@@ -807,11 +807,11 @@ Right
                     )
                   )
                 , localBinds = Located ( UnhelpfulSpan <no location info> ) ( LocalBinds [] [] )
-                } 
+                }
               )
             )
           )
         )
-      ] 
-    } 
+      ]
+    }
   )

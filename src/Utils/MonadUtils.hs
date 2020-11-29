@@ -22,8 +22,6 @@ module Utils.MonadUtils
 
 import Control.Applicative
 import Control.Monad
-import Control.Monad.Fix
-import Control.Monad.IO.Class
 import Data.Foldable (sequenceA_, foldlM, foldrM)
 import Data.List (unzip4, unzip5, zipWith4)
 

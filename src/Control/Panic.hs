@@ -3,9 +3,8 @@ module Control.Panic where
 import Control.Exception
 import System.Environment (getProgName)
 import System.IO.Unsafe (unsafePerformIO)
-import Debug.Trace (trace)
 
-import Paths_ProtoHaskell
+import Paths_ProtoHaskell (version)
 
 -- | These are exceptions that we will never catch. If one of these happens,
 -- the compiler is crashing.

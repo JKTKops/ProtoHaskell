@@ -198,13 +198,13 @@ instance Outputable id => Outputable (PhExpr id) where
     ppr (NegApp e)        = text "-" <> ppr e
     ppr (PhPar e)         = parens $ ppr e
     ppr (PhCase scrut mg) = text "case" <+> ppr scrut <+> text "of"
-                            $$ nest 2 (ppr mg)
+                            $$ indent 2 (ppr mg)
     ppr (PhIf p t f)      = text "if" <+> ppr p
                             <+> text "then" <+> ppr t
                             <+> text "else" <+> ppr f
-    ppr (PhLet binds e)   = text "let" <+> nest 4 (ppr binds)
+    ppr (PhLet binds e)   = text "let" <+> align (ppr binds)
                             $$ text "in" <+> ppr e
-    ppr (PhDo stmts)      = text "do" <+> nest 3 (vcat $ map ppr stmts)
+    ppr (PhDo stmts)      = text "do" <+> align (vcat $ map ppr stmts)
     ppr (ExplicitTuple tupArgs) = parens $ hcat $ punctuate comma $ map ppr tupArgs
     ppr (ExplicitList elems) = brackets $ hsep $ punctuate comma $ map ppr elems
     ppr (ArithSeq info) = brackets $ ppr info
@@ -225,14 +225,18 @@ pprMatch ctxt (Match pats rhs) = pprWhen (ctxt == LamCtxt) backslash <>
 
 pprLocals :: Outputable id => LPhLocalBinds id -> CDoc
 pprLocals (unLoc -> LocalBinds [] []) = mempty
-pprLocals (unLoc -> ls) = nest 2 $ text "where" $$ nest 2 (ppr ls)
+pprLocals (unLoc -> ls) = text "where" $$ indent 2 (ppr ls)
 
 pprRhs :: Outputable id => CDoc -> LRHS id -> CDoc
-pprRhs ctxt (unLoc -> RHS grhs locals) = pprGrhs ctxt grhs $$ pprLocals locals
+pprRhs ctxt (unLoc -> RHS grhs locals) = attachLocals $ pprGrhs ctxt grhs 
+  where
+    attachLocals
+      | (unLoc -> LocalBinds [] []) <- locals = id
+      | otherwise = ($$ pprLocals locals)
 
 pprGrhs :: Outputable id => CDoc -> LGRHS id -> CDoc
 pprGrhs ctxt (unLoc -> Unguarded body) = ctxt <+> ppr body
-pprGrhs ctxt (unLoc -> Guarded guards) = nest 2 $ vcat $ map (pprGuard ctxt) guards
+pprGrhs ctxt (unLoc -> Guarded guards) = vcat $ map (pprGuard ctxt) guards
 
 pprGuard :: Outputable id => CDoc -> LGuard id -> CDoc
 pprGuard ctxt (unLoc -> Guard guard body) = vbar <+> ppr guard <+> ctxt <+> ppr body
@@ -251,13 +255,13 @@ instance Outputable id => Outputable (PhLocalBinds id) where
     ppr (LocalBinds binds sigs) = vcat (map ppr binds ++ map ppr sigs)
 
 instance Outputable id => Outputable (PhBind id) where
-    ppr (FunBind id mg)   = ppr id <+> ppr mg
+    ppr (FunBind id mg)    = ppr id <+> ppr mg
     ppr (PatBind pat body) = ppr pat <+> pprRhs (text "=") body
 
 instance Outputable id => Outputable (Stmt id) where
     ppr (SExpr e) = ppr e
     ppr (SGenerator pat e) = ppr pat <+> larrow <+> ppr e
-    ppr (SLet binds) = text "let" <+> nest 4 (ppr binds)
+    ppr (SLet binds) = text "let" <+> align (ppr binds)
 
 instance Outputable id => Outputable (ArithSeqInfo id) where
     ppr (From e) = ppr e <+> text ".."

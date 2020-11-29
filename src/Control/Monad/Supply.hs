@@ -15,15 +15,13 @@ import Control.Monad.Supply.Class
 import Data.Functor.Identity
 
 import Control.Monad.Except
-import Control.Monad.Reader
-import Control.Monad.Writer
 
 newtype SupplyT s m a = SupplyT (StateT [s] m a)
   deriving ( Functor, Applicative, Monad
            , MonadTrans, MonadIO, MonadFix)
 
 runSupplyT :: Monad m => SupplyT s m a -> [s] -> m a
-runSupplyT (SupplyT m) init = evalStateT m init
+runSupplyT (SupplyT m) = evalStateT m
 
 type Supply s = SupplyT s Identity
 

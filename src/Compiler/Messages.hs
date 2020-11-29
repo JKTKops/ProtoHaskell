@@ -25,7 +25,8 @@ import Data.Bag
 newtype Messages = Messages
     { getMessages :: ( WarningMessages
                      , ErrorMessages
-                     )}
+                     )
+    }
 type WarningMessages = Bag WarningMessage
 type ErrorMessages   = Bag ErrorMessage
 

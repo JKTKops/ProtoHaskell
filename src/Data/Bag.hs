@@ -27,7 +27,6 @@ import Utils.Outputable
 import Utils.MonadUtils
 
 import Control.Monad
-import Data.Data
 import Data.Maybe (mapMaybe)
 import Data.List (partition, mapAccumL, foldl')
 import qualified Data.Foldable as Foldable

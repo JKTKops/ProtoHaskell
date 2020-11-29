@@ -16,7 +16,7 @@ Implementation ideas are partially taken from GHC, but mostly just the module AP
 module Compiler.BasicTypes.FastString where
 
 import Compiler.BasicTypes.Unique
-import Utils.Outputable (Outputable(..), text)
+import Utils.Outputable (CDoc, Outputable(..), text)
 
 import Data.Functor (($>))
 
@@ -77,6 +77,7 @@ instance HasUnique FastString where
 instance Outputable FastString where
     ppr = ftext
 
+ftext :: FastString -> CDoc
 ftext = text . unpackFS
 
 --------------------------------------------------------------------------------------
@@ -164,4 +165,5 @@ nilFS = fsLit ""
 isUnderscoreFS :: FastString -> Bool
 isUnderscoreFS = (== fsLit "_")
 
+fsLit :: String -> FastString
 fsLit = mkFastString
